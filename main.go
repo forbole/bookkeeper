@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"time"
 
@@ -43,6 +44,10 @@ func main() {
 	// date, coin price, account balance
 	outputcsv := balances.GetCSV()
 	fmt.Println(outputcsv)
+	err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin.CoinType), []byte(outputcsv), 0777)
+    if err != nil {
+        panic(err)
+    }
 }
 
 //
