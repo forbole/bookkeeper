@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Coin struct{
 	CoinType string
@@ -17,14 +20,14 @@ func NewCoin(cointype string, quantity float64, startDate time.Time)Coin{
 }
 
 type Balance struct{
-	Coin Coin
+	Coin *Coin
 	VSCurrency string
-	Price uint64 // The price on that time
+	Price float32 // The coin price on that time
 	Date time.Time // The time that the balance due
-	Balance uint64 // The balance on that account
+	Balance float32 // The balance on that account
 }
 
-func NewBalance(coin Coin, price uint64, date time.Time,balance uint64,vSCurrency string)Balance{
+func NewBalance(coin *Coin, price float32, date time.Time,balance float32,vSCurrency string)Balance{
 	return Balance{
 		Coin:coin,
 		Price: price,
@@ -32,4 +35,15 @@ func NewBalance(coin Coin, price uint64, date time.Time,balance uint64,vSCurrenc
 		Balance:balance,
 		VSCurrency: vSCurrency,
 	}
+}
+
+type Balances []Balance
+
+func (v Balances) GetCSV() string{
+	outputcsv:="date,coin,VSCurrency coin price, account balance\n"
+	for _,b:=range v{
+		outputcsv+=fmt.Sprintf("%s,%s,%s,%f,%f\n",
+			b.Date.String(),b.Coin.CoinType,b.VSCurrency,b.Price,b.Balance)
+	}
+	return outputcsv
 }
