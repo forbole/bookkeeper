@@ -6,6 +6,7 @@ import (
 
 	"github.com/HarleyAppleChoi/bookeeper/types"
 	coingecko "github.com/superoo7/go-gecko/v3"
+
 )
 
 // It parse single type of coin and return its balance sheet in certain period
@@ -32,7 +33,7 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (t
 				break
 			}
 
-			balances = append(balances, types.NewBalance(&c, prices[countday][1],
+			balances = append(balances, types.NewBalance(c.CoinType, prices[countday][1],
 				dateNow,
 				prices[countday][1]*float32(datequantity.Quantity), vsCurrency))
 
@@ -53,3 +54,32 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (t
 
 	return balances, nil
 }
+
+// This get multiple coins and return their total value from Jan 2020 to now 
+// It assume the coins in coins has same time period
+// It have such a bad complexity :( 
+func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko.Client)(types.Balances,error){
+	coinsbalances := make([]types.Balances,len(coins))
+	for i,c := range coins{
+		b,err:=ParseBalanceSheet(c,vsCurrency,CG)
+		if err!=nil{
+			return nil,err
+		}
+		coinsbalances[i]=b
+	}
+	
+	totalValue :=make(types.Balances,len(coinsbalances[0]))
+
+	for i,balance:=range coinsbalances[0]{
+		coinTotalValue:=float32(0)
+		typesOfCoins:=""
+		for j,_ := range coinsbalances{
+			coinTotalValue+=coinsbalances[j][i].Balance
+			typesOfCoins+=coinsbalances[j][i].Coin+"&"
+		}
+
+		totalValue[i]=types.NewBalance(typesOfCoins,0,balance.Date,coinTotalValue,vsCurrency)
+	}
+	return totalValue,nil
+}
+
