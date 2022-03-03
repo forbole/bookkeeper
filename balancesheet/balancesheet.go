@@ -29,13 +29,13 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (t
 	for i, datequantity := range c.DateQuantities {
 		for countday < len(prices) {
 			dateNow := initialDate.Add(time.Hour * time.Duration(24*countday))
-			if i!=len(c.DateQuantities)-1 && dateNow.After(c.DateQuantities[i+1].Date) {
+			if i!=len(c.DateQuantities)-1 && (dateNow.After(c.DateQuantities[i+1].Date) || dateNow.Equal(c.DateQuantities[i+1].Date)) {
 				break
 			}
 
 			balances = append(balances, types.NewBalance(c.CoinType, prices[countday][1],
 				dateNow,
-				prices[countday][1]*float32(datequantity.Quantity), vsCurrency))
+				prices[countday][1]*float32(datequantity.Quantity), vsCurrency,datequantity.Quantity))
 
 			countmonth += 1
 
@@ -78,7 +78,7 @@ func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko
 			typesOfCoins+=coinsbalances[j][i].Coin+"&"
 		}
 
-		totalValue[i]=types.NewBalance(typesOfCoins,0,balance.Date,coinTotalValue,vsCurrency)
+		totalValue[i]=types.NewBalance(typesOfCoins,0,balance.Date,coinTotalValue,vsCurrency,0)
 	}
 	return totalValue,nil
 }

@@ -34,28 +34,30 @@ func NewCoin(cointype string, dateQuantities []DateQuantity) Coin {
 type Balance struct {
 	Coin       string
 	VSCurrency string
+	Quantity float64
 	Price      float32   // The coin price on that time
 	Date       time.Time // The time that the balance due
 	Balance    float32   // The balance on that account
 }
 
-func NewBalance(coin string, price float32, date time.Time, balance float32, vSCurrency string) Balance {
+func NewBalance(coin string, price float32, date time.Time, balance float32, vSCurrency string,quantity float64) Balance {
 	return Balance{
 		Coin:       coin,
 		Price:      price,
 		Date:       date,
 		Balance:    balance,
 		VSCurrency: vSCurrency,
+		Quantity: quantity,
 	}
 }
 
 type Balances []Balance
 
 func (v Balances) GetCSV() string {
-	outputcsv := "date,coin,VSCurrency, coin price, account balance\n"
+	outputcsv := "date,coin,VSCurrency,quantity, coin price, account balance\n"
 	for _, b := range v {
-		outputcsv += fmt.Sprintf("%s,%s,%s,%f,%f\n",
-			b.Date.String(), b.Coin, b.VSCurrency, b.Price, b.Balance)
+		outputcsv += fmt.Sprintf("%s,%s,%s,%f,%f,%f\n",
+			b.Date.String(), b.Coin, b.VSCurrency, b.Quantity, b.Price, b.Balance)
 	}
 	return outputcsv
 }

@@ -51,6 +51,11 @@ func main() {
 		coin,eth,
 	},vsCurrency,CG)
 
+	ethBalance,err := balancesheet.ParseBalanceSheet(eth, vsCurrency, CG)
+	if err!=nil{
+		panic(err)
+	}
+
 	// Output the .csv file contains the
 	// schema
 	// date, coin price, account balance
@@ -62,6 +67,11 @@ func main() {
     }
 
 	err=OutputCsv(totalBalance)
+	if err!=nil{
+		panic(err)
+	}
+
+	err=OutputCsv(ethBalance)
 	if err!=nil{
 		panic(err)
 	}
