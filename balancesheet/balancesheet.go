@@ -58,7 +58,7 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (t
 // This get multiple coins and return their total value from Jan 2020 to now 
 // It assume the coins in coins has same time period
 // It have such a bad complexity :( 
-func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko.Client)(types.Balances,error){
+func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko.Client)(types.TotalBalances,error){
 	coinsbalances := make([]types.Balances,len(coins))
 	for i,c := range coins{
 		b,err:=ParseBalanceSheet(c,vsCurrency,CG)
@@ -68,17 +68,17 @@ func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko
 		coinsbalances[i]=b
 	}
 	
-	totalValue :=make(types.Balances,len(coinsbalances[0]))
+	totalValue :=make(types.TotalBalances,len(coinsbalances[0]))
 
-	for i,balance:=range coinsbalances[0]{
+	for i,b:=range coinsbalances[0]{
 		coinTotalValue:=float32(0)
-		typesOfCoins:=""
+		CoinBalance:=make([]types.Balance,len(coins))
 		for j,_ := range coinsbalances{
 			coinTotalValue+=coinsbalances[j][i].Balance
-			typesOfCoins+=coinsbalances[j][i].Coin+"&"
+			CoinBalance[j]=coinsbalances[j][i]
 		}
 
-		totalValue[i]=types.NewBalance(typesOfCoins,0,balance.Date,coinTotalValue,vsCurrency,0)
+		totalValue[i]=types.NewTotalBalance(CoinBalance,coinTotalValue,b.Date,)
 	}
 	return totalValue,nil
 }

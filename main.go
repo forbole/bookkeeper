@@ -66,7 +66,9 @@ func main() {
         panic(err)
     }
 
-	err=OutputCsv(totalBalance)
+	totalCsv:=totalBalance.GetCSV()
+	fmt.Println(totalCsv)
+	err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0777)
 	if err!=nil{
 		panic(err)
 	}
