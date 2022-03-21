@@ -1,4 +1,4 @@
-module github.com/Forbole/bookkeeper
+module github.com/forbole/bookkeeper
 
 go 1.17
 
