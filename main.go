@@ -7,8 +7,8 @@ import (
 
 	"net/http"
 
-	"github.com/HarleyAppleChoi/bookeeper/types"
-	"github.com/HarleyAppleChoi/bookeeper/balancesheet"
+	"github.com/forbole/bookkeeper/balancesheet"
+	"github.com/forbole/bookkeeper/types"
 
 	coingecko "github.com/superoo7/go-gecko/v3"
 )

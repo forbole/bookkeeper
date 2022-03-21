@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/HarleyAppleChoi/bookeeper/types"
+	"github.com/forbole/bookkeeper/types"
 	coingecko "github.com/superoo7/go-gecko/v3"
 
 )
