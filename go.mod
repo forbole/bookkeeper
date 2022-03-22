@@ -2,6 +2,12 @@ module github.com/forbole/bookkeeper
 
 go 1.17
 
-require github.com/superoo7/go-gecko v1.0.0
+require (
+	github.com/spf13/cobra v1.4.0
+	github.com/superoo7/go-gecko v1.0.0
+)
 
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+require (
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+)

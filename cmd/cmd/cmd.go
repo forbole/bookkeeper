@@ -1,9 +1,10 @@
-package main
+package parse
 
 import (
 	"fmt"
-	"io/ioutil"
 	"time"
+
+	"io/ioutil"
 
 	"net/http"
 
@@ -11,9 +12,21 @@ import (
 	"github.com/forbole/bookkeeper/types"
 
 	coingecko "github.com/superoo7/go-gecko/v3"
+
+	"github.com/spf13/cobra"
 )
 
-func main() {
+// ParseCmd returns the command that should be run when we want to start parsing a chain state.
+func ParseCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:     "bookkeeper",
+		Short:   "Start parsing the blockchain data",
+		RunE: Execute,
+	}
+}
+
+
+func Execute(_ *cobra.Command, _ []string)error {
 	//coingecko
 	httpClient := &http.Client{
 		Timeout: time.Second * 10,
@@ -44,7 +57,7 @@ func main() {
 	// For now just using the price
 	balances, err := balancesheet.ParseBalanceSheet(coin, vsCurrency, CG)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	
 	totalBalance,err :=balancesheet.TotalValueBalanceSheet([]types.Coin{
@@ -53,7 +66,7 @@ func main() {
 
 	ethBalance,err := balancesheet.ParseBalanceSheet(eth, vsCurrency, CG)
 	if err!=nil{
-		panic(err)
+		return err
 	}
 
 	// Output the .csv file contains the
@@ -63,20 +76,21 @@ func main() {
 	fmt.Println(outputcsv)
 	err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin), []byte(outputcsv), 0777)
     if err != nil {
-        panic(err)
+        return err
     }
 
 	totalCsv:=totalBalance.GetCSV()
 	fmt.Println(totalCsv)
 	err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0777)
 	if err!=nil{
-		panic(err)
+		return err
 	}
 
 	err=OutputCsv(ethBalance)
 	if err!=nil{
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func OutputCsv(b types.Balances)error{
