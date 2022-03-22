@@ -9,6 +9,8 @@ type IndividualChain struct{
 	ChainName string `json:"chain_name"`
 	Validators []ValidatorDetail `json:"validators"`
 	FundHoldingAccount []string `json:"fund_holding_account"`
+	GrpcEndpoint string `json:"grpc_endpoint"`
+	RpcEndpoint string `json:"rpc_endpoint"`
 }
 
 type ValidatorDetail struct{
