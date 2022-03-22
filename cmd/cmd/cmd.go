@@ -2,16 +2,18 @@ package parse
 
 import (
 	"fmt"
-	"time"
+	//"time"
 
 	"io/ioutil"
 
-	"net/http"
+	//"net/http"
 
-	"github.com/forbole/bookkeeper/balancesheet"
+	//"github.com/forbole/bookkeeper/balancesheet"
 	"github.com/forbole/bookkeeper/types"
+	"github.com/forbole/bookkeeper/input"
 
-	coingecko "github.com/superoo7/go-gecko/v3"
+
+	//coingecko "github.com/superoo7/go-gecko/v3"
 
 	"github.com/spf13/cobra"
 )
@@ -27,8 +29,13 @@ func ParseCmd() *cobra.Command {
 
 
 func Execute(_ *cobra.Command, _ []string)error {
+	data,err:=input.ImportJsonInput("./input.json")
+	if err!=nil{
+		return err
+	}
+	fmt.Println(*data)
 	//coingecko
-	httpClient := &http.Client{
+	/* httpClient := &http.Client{
 		Timeout: time.Second * 10,
 	}
 	CG := coingecko.NewClient(httpClient)
@@ -89,7 +96,7 @@ func Execute(_ *cobra.Command, _ []string)error {
 	err=OutputCsv(ethBalance)
 	if err!=nil{
 		return err
-	}
+	} */
 	return nil
 }
 
