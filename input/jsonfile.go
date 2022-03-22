@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func ImportJsonInput(location string)(*Data,error){
-	jsonFile, err := os.Open(location)
+func ImportJsonInput(path string)(*Data,error){
+	jsonFile, err := os.Open(path)
 	if err!=nil{
 		return nil,err
 	}

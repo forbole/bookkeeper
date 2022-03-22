@@ -18,18 +18,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const(
+	flagInputJsonPath = "input_json_path"
+)
+
 // ParseCmd returns the command that should be run when we want to start parsing a chain state.
 func ParseCmd() *cobra.Command {
-	return &cobra.Command{
+	cmd := cobra.Command{
 		Use:     "bookkeeper",
 		Short:   "Start parsing the blockchain data",
 		RunE: Execute,
 	}
+	cmd.Flags().String(flagInputJsonPath,"./input.json", "The path that the input file should read from")
+    return &cmd
 }
 
 
-func Execute(_ *cobra.Command, _ []string)error {
-	data,err:=input.ImportJsonInput("./input.json")
+func Execute(cmd *cobra.Command, arg []string)error {
+	jsonPath, _ := cmd.Flags().GetString(flagInputJsonPath)
+
+	data,err:=input.ImportJsonInput(jsonPath)
 	if err!=nil{
 		return err
 	}
