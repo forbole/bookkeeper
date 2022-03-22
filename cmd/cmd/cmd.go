@@ -42,6 +42,8 @@ func Execute(cmd *cobra.Command, arg []string)error {
 		return err
 	}
 	fmt.Println(*data)
+
+	
 	//coingecko
 	/* httpClient := &http.Client{
 		Timeout: time.Second * 10,
