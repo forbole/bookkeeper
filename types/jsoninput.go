@@ -19,8 +19,10 @@ type ValidatorDetail struct{
 }
 
 type EmailAccount struct{
-	Address string `json:"address"`
 	Name string `json:"name"`
+	Password string `json:"password"`
+	Address string `json:"address"`
+	Host string `json:"host"`
 }
 
 type EmailDetails struct{

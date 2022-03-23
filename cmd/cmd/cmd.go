@@ -11,11 +11,13 @@ import (
 	//"github.com/forbole/bookkeeper/balancesheet"
 	"github.com/forbole/bookkeeper/types"
 	"github.com/forbole/bookkeeper/input"
+	"github.com/forbole/bookkeeper/email"
 
 
 	//coingecko "github.com/superoo7/go-gecko/v3"
 
 	"github.com/spf13/cobra"
+	
 )
 
 const(
@@ -43,7 +45,11 @@ func Execute(cmd *cobra.Command, arg []string)error {
 	}
 	fmt.Println(*data)
 
-	
+	err=email.SendEmail(data.EmailDetails)
+	if err!=nil{
+		return err
+	}
+
 	//coingecko
 	/* httpClient := &http.Client{
 		Timeout: time.Second * 10,
