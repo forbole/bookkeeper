@@ -45,7 +45,7 @@ func Execute(cmd *cobra.Command, arg []string)error {
 	}
 	fmt.Println(*data)
 
-	err=email.SendEmail(data.EmailDetails)
+	err=email.SendEmail(data.EmailDetails,"bitcoin.csv")
 	if err!=nil{
 		return err
 	}
