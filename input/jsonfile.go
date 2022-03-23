@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+
+	"github.com/forbole/bookkeeper/types"
 )
 
-func ImportJsonInput(path string)(*Data,error){
+func ImportJsonInput(path string)(*types.Data,error){
 	jsonFile, err := os.Open(path)
 	if err!=nil{
 		return nil,err
@@ -19,7 +21,7 @@ func ImportJsonInput(path string)(*Data,error){
 		return nil,err
 	}
 
-	var input Data
+	var input types.Data
 	json.Unmarshal(byteValue,&input)
 
 	return &input,nil

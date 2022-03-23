@@ -1,4 +1,4 @@
-package input
+package types
 
 type BigChainType struct{
 	ChainType string `json:"chain_type"`
@@ -18,6 +18,19 @@ type ValidatorDetail struct{
 	SelfDelegationAddress string `json:"self_delegation_address"`
 }
 
+type EmailAccount struct{
+	Address string `json:"address"`
+	Name string `json:"name"`
+}
+
+type EmailDetails struct{
+	From EmailAccount `json:"from"`
+	To []string `json:"to"`
+	Subject string `json:"subject"`
+	Details string `json:"details"`
+}
+
 type Data struct{
-	Data []BigChainType `json:"data"`
+	Chains []BigChainType `json:"chains"`
+	EmailDetails EmailDetails `json:"email_details"`
 }

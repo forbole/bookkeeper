@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/forbole/bdjuno/v2/utils"
+	"github.com/forbole/bookkeeper/module/utils"
 )
 
 // GetAccountBalances implements bankkeeper.Source
@@ -21,3 +21,4 @@ func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, err
 
 	return balRes.Balances, nil
 }
+
