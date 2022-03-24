@@ -24,7 +24,7 @@ Which the json config file should follow the following schema:
               "validator_address":<validator address>,
               "self_delegation_address":<self delegation address>
             }],
-          "fund_holding_account":[<Array of fund holding account>]
+          "fund_holding_account":[<Array of fund holding accounts>]
         }
       ]
     }
