@@ -11,6 +11,7 @@ type IndividualChain struct{
 	FundHoldingAccount []string `json:"fund_holding_account"`
 	GrpcEndpoint string `json:"grpc_endpoint"`
 	RpcEndpoint string `json:"rpc_endpoint"`
+	LcdEndpoint string `json:"lcd_endpoint"`
 }
 
 type ValidatorDetail struct{

@@ -1,19 +1,57 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"time"
+)
 
-// AccountBalance represents the balance of an account at a given height
-type AccountBalance struct {
-	Address string
-	Balance sdk.Coins
-	Height  int64
-}
-
-// NewAccountBalance allows to build a new AccountBalance instance
-func NewAccountBalance(address string, balance sdk.Coins, height int64) AccountBalance {
-	return AccountBalance{
-		Address: address,
-		Balance: balance,
-		Height:  height,
-	}
+type BankRecipientRPC struct {
+	TotalCount string `json:"total_count"`
+	Count      string `json:"count"`
+	PageNumber string `json:"page_number"`
+	PageTotal  string `json:"page_total"`
+	Limit      string `json:"limit"`
+	Txs        []struct {
+		Height string `json:"height"`
+		Txhash string `json:"txhash"`
+		Data   string `json:"data"`
+		RawLog string `json:"raw_log"`
+		Logs   []struct {
+			Events []struct {
+				Type       string `json:"type"`
+				Attributes []struct {
+					Key   string `json:"key"`
+					Value string `json:"value"`
+				} `json:"attributes"`
+			} `json:"events"`
+		} `json:"logs"`
+		GasWanted string `json:"gas_wanted"`
+		GasUsed   string `json:"gas_used"`
+		Tx        struct {
+			Type  string `json:"type"`
+			Value struct {
+				Msg []struct {
+					Type  string `json:"type"`
+					Value struct {
+						FromAddress string `json:"from_address"`
+						ToAddress   string `json:"to_address"`
+						Amount      []struct {
+							Denom  string `json:"denom"`
+							Amount string `json:"amount"`
+						} `json:"amount"`
+					} `json:"value"`
+				} `json:"msg"`
+				Fee struct {
+					Amount []struct {
+						Denom  string `json:"denom"`
+						Amount string `json:"amount"`
+					} `json:"amount"`
+					Gas string `json:"gas"`
+				} `json:"fee"`
+				Signatures    []interface{} `json:"signatures"`
+				Memo          string        `json:"memo"`
+				TimeoutHeight string        `json:"timeout_height"`
+			} `json:"value"`
+		} `json:"tx"`
+		Timestamp time.Time `json:"timestamp"`
+	} `json:"txs"`
 }
