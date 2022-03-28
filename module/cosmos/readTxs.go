@@ -31,11 +31,13 @@ func GetTxs(details types.IndividualChain)error{
 				return fmt.Errorf("Error to unmarshal json object:%s",err)
 			}
 			fmt.Println(logs)
-			bz,err:=logs[0].Events[1].Attributes[1].Value.MarshalJSON()
+			attribute:=ConvertAttributeToMap(logs[0].Events[0].Attributes)
+			fmt.Println(attribute["action"])
+			//bz,err:=logs[0].Events[1].Attributes[1].Value.MarshalJSON()
 			if err!=nil{
 				return err
 			}
-			fmt.Println(string(bz))
+			//fmt.Println(string(bz))
 			// Seperate different message here
 
 		}
@@ -43,6 +45,14 @@ func GetTxs(details types.IndividualChain)error{
 		//fmt.Println(txs)
 	}
 	return nil
+}
+
+func ConvertAttributeToMap(array []cosmostypes.Attributes)map[string]json.RawMessage{
+    resultingMap := map[string]json.RawMessage{}
+    for _, m := range array {
+            resultingMap[m.Key] = m.Value
+        }
+	return resultingMap
 }
 
 func readTxs(api string, address string)(*cosmostypes.TxSearchRespond,error){
