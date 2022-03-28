@@ -21,32 +21,44 @@ func GetTxs(details types.IndividualChain)error{
 			return err
 		}
 		for _,tx:=range txs.Result.Txs{
+			
 			rawlog:=strings.ReplaceAll(tx.TxResult.Log,`"{`,`{`)
 			rawlog=strings.ReplaceAll(rawlog,`}"`,`}`)
+			rawlog=strings.ReplaceAll(rawlog,`\n`,`,`) 
 			rawlog=strings.ReplaceAll(rawlog,`\`,``) 
 			
 			var logs []cosmostypes.RawLog
 			err=json.Unmarshal([]byte(rawlog),&logs)
 			if err!=nil{
-				return fmt.Errorf("Error to unmarshal json object:%s",err)
+				return fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
+				err,tx.TxResult.Log,tx.Hash)
 			}
-			fmt.Println(logs)
-			attribute:=ConvertAttributeToMap(logs[0].Events[0].Attributes)
-			fmt.Println(attribute["action"])
-			//bz,err:=logs[0].Events[1].Attributes[1].Value.MarshalJSON()
+
 			if err!=nil{
 				return err
 			}
-			//fmt.Println(string(bz))
-			// Seperate different message here
-
+			fmt.Println(tx.Hash)
+			for _,log:=range logs{
+				for _,event:=range log.Events{
+					//Catagorise each event and put it in a table
+					attribute:=ConvertAttributeToMap(event.Attributes)
+					bz,err:=attribute["action"].MarshalJSON()
+					if err!=nil{
+						return err
+					}
+					fmt.Println(string(bz))
+						switch string(bz) {
+						case "delegate":
+							
+						}
+				}
+			}
 		}
-		
-		//fmt.Println(txs)
 	}
 	return nil
 }
 
+// ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes
 func ConvertAttributeToMap(array []cosmostypes.Attributes)map[string]json.RawMessage{
     resultingMap := map[string]json.RawMessage{}
     for _, m := range array {
@@ -56,7 +68,7 @@ func ConvertAttributeToMap(array []cosmostypes.Attributes)map[string]json.RawMes
 }
 
 func readTxs(api string, address string)(*cosmostypes.TxSearchRespond,error){
-	limit:=2
+	limit:=30
 	page:=1
 	query:=fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 	api,address,page,limit)

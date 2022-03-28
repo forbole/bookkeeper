@@ -11,7 +11,7 @@ import (
 
 	//"github.com/forbole/bookkeeper/balancesheet"
 	//"github.com/cosmos/cosmos-sdk/client"
-	"github.com/forbole/bookkeeper/email"
+
 	"github.com/forbole/bookkeeper/input"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/types"
@@ -48,13 +48,13 @@ func Execute(cmd *cobra.Command, arg []string)error {
 	}
 	fmt.Println(*data)
 
-	inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
+	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	err=email.SendEmail(data.EmailDetails,inputfile)
+	/* err=email.SendEmail(data.EmailDetails,inputfile)
 	if err!=nil{
 		return err
 	}
-
+ */
 	err=cosmos.GetTxs(data.Chains[0].Details[0])
 	if err!=nil{
 		return err
