@@ -12,6 +12,7 @@ func BankSend(api string, address string, limit int, page int)error{
 	defer resp.Body.Close()
 
 	bz, err := ioutil.ReadAll(resp.Body)
+	bz 	
 
 	var bankreceipt types.BankRecipientRPC
 	err=json.Unmarshal(bz,&bankreceipt)

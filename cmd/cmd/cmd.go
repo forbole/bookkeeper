@@ -1,9 +1,7 @@
 package parse
 
 import (
-	"context"
 	"fmt"
-	"net/http"
 
 	//"time"
 
@@ -15,7 +13,9 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/input"
+	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/types"
+
 	//"google.golang.org/grpc"
 
 	//coingecko "github.com/superoo7/go-gecko/v3"
@@ -55,6 +55,11 @@ func Execute(cmd *cobra.Command, arg []string)error {
 		return err
 	}
 
+	err=cosmos.GetTxs(data.Chains[0].Details[0])
+	if err!=nil{
+		return err
+	}
+
 	/* grpcConn, err := grpc.Dial(data.Chains[0].Details[0].GrpcEndpoint, grpc.WithInsecure())
 	if err != nil {
 		panic(err)
@@ -67,12 +72,7 @@ func Execute(cmd *cobra.Command, arg []string)error {
 	//https://api.cosmos.network/txs?message.module=bank&transfer.recipient=cosmos17m58y24rayd72mqqgsr7npetlh74r6umksju7c&page=2&limit=1
 	//https://rpc.desmos.forbole.com/tx_search?query="message.sender='desmos1tknem46cl5mlxkpqmls2nct38rtkvyq7xk9lj2'"
 	
-	res,err:=http.Get(fmt.Sprintf("%s/txs?message.module=bank&transfer.recipient=%s&limit=%d&page=%d"))
-	if err!=nil{
-		return err
-	}
-
-
+	
 
 	//coingecko
 	/* httpClient := &http.Client{
