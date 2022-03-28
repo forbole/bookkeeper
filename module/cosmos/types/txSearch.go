@@ -1,5 +1,7 @@
 package types
 
+import "encoding/json"
+
 type TxSearchRespond struct {
 	Jsonrpc string `json:"jsonrpc"`
 	ID      int    `json:"id"`
@@ -39,4 +41,19 @@ type TxSearchRespond struct {
 		} `json:"txs"`
 		TotalCount string `json:"total_count"`
 	} `json:"result"`
+}
+
+
+type RawLog struct {
+	Events []Event `json:"events"`
+}
+
+type Event struct {
+	Type       string `json:"type"`
+	Attributes []Attributes `json:"attributes"`
+}
+
+type Attributes struct{
+	Key   string `json:"key"`
+	Value json.RawMessage `json:"value"`
 }
