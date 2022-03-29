@@ -14,14 +14,16 @@ import (
 	"github.com/forbole/bookkeeper/types"
 )
 
-func GetTxs(details types.IndividualChain)error{
-	for _,account := range details.FundHoldingAccount{
-		txs,err:=readTxs(details.RpcEndpoint,account)
+// GetTxs get all the transactions from a fund raising address or self delegation address
+func GetTxs(details types.IndividualChain)([]types.BalanceEntry,error){
+	var balanceEntries []types.BalanceEntry
+	for _,address := range details.FundHoldingAccount{
+		txs,err:=readTxs(details.RpcEndpoint,address)
 		if err!=nil{
-			return err
+			return nil,err
 		}
+		
 		for _,tx:=range txs.Result.Txs{
-			
 			rawlog:=strings.ReplaceAll(tx.TxResult.Log,`"{`,`{`)
 			rawlog=strings.ReplaceAll(rawlog,`}"`,`}`)
 			rawlog=strings.ReplaceAll(rawlog,`\n`,`,`) 
@@ -30,12 +32,12 @@ func GetTxs(details types.IndividualChain)error{
 			var logs []cosmostypes.RawLog
 			err=json.Unmarshal([]byte(rawlog),&logs)
 			if err!=nil{
-				return fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
-				err,tx.TxResult.Log,tx.Hash)
-			}
-
-			if err!=nil{
-				return err
+				var entry types.BalanceEntry
+				entry.TxHash=tx.Hash
+				entry.MsgType="Error reading Log for that tx"
+				continue
+				/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
+				err,tx.TxResult.Log,tx.Hash) */
 			}
 			fmt.Println(tx.Hash)
 			for _,log:=range logs{
@@ -43,45 +45,55 @@ func GetTxs(details types.IndividualChain)error{
 				for _,event:=range log.Events{
 					//Catagorise each event and put it in a table
 					attribute:=ConvertAttributeToMap(event.Attributes)
-					bz,err:=attribute["action"].MarshalJSON()
-					if err!=nil{
-						return err
-					}
-					bamount,err:=attribute["amount"].MarshalJSON()
-					if err!=nil{
-						return err
-					}
-					fmt.Println(fmt.Sprintf("type:%s",event.Type))
+					//fmt.Println(fmt.Sprintf("type:%s",event.Type))
 					// check if we are the receiver (write on + side)
 					if event.Type=="coin_received"{
-						bzreceiver,err:=attribute["receiver"].MarshalJSON()
+						bz,err:=attribute["receiver"].MarshalJSON()
 						if err!=nil{
-							return err
+							return nil,err
 						}
-						if string(bz)!=account{
+						receiver:=string(bz)
+						receiver=strings.ReplaceAll(receiver,"\"","")
+						
+						if receiver!=address{
+							continue
+						}  
+						bzamount,err:=attribute["amount"].MarshalJSON()
+						if err!=nil{
+							return nil,err
+						}
+						fmt.Println(fmt.Sprintf("Receive amount:%s\nReceiver:%s",string(bzamount),receiver))
+					}
+					if event.Type=="coin_spent"{
+						bz,err:=attribute["spender"].MarshalJSON()
+						if err!=nil{
+							return nil,err
+						}
+
+						spender:=string(bz)
+						spender=strings.ReplaceAll(spender,"\"","")
+						if string(spender)!=address{
 							continue
 						}
 						bzamount,err:=attribute["amount"].MarshalJSON()
 						if err!=nil{
+							return nil,err
+						}
+						amount:=string(bzamount)
+						amount=strings.ReplaceAll(amount,"\"","")
+						amount=strings.ReplaceAll(amount,details.Denom,"")
+
+						
+						fmt.Println(fmt.Sprintf("Spent amount:%s\nspender:%s",amount,spender))
+					}
+					if event.Type=="message"{
+						bzaction,err:=attribute["action"].MarshalJSON()
+						if err!=nil{
 							return err
 						}
-						
-
+						fmt.Println(fmt.Sprintf("action:%s",string(bzaction)))
 
 					}
-					fmt.Println(fmt.Sprintf("action:%s",string(bz)))
-					fmt.Println(fmt.Sprintf("amount:%s\n",string(bamount)))
-						switch string(bz) {
-						case "/cosmos.staking.v1beta1.MsgDelegate":
-						break;
-						case "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission":
-						break;
-						case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
-						break;
-						default:
-						
-						}
-
 				}
 			}
 		}
