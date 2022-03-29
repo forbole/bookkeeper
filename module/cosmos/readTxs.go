@@ -39,6 +39,7 @@ func GetTxs(details types.IndividualChain)error{
 			}
 			fmt.Println(tx.Hash)
 			for _,log:=range logs{
+				fmt.Println(fmt.Sprintf("MsgIndex:%d",log.MsgIndex))
 				for _,event:=range log.Events{
 					//Catagorise each event and put it in a table
 					attribute:=ConvertAttributeToMap(event.Attributes)
@@ -46,11 +47,41 @@ func GetTxs(details types.IndividualChain)error{
 					if err!=nil{
 						return err
 					}
-					fmt.Println(string(bz))
-						switch string(bz) {
-						case "delegate":
-							
+					bamount,err:=attribute["amount"].MarshalJSON()
+					if err!=nil{
+						return err
+					}
+					fmt.Println(fmt.Sprintf("type:%s",event.Type))
+					// check if we are the receiver (write on + side)
+					if event.Type=="coin_received"{
+						bzreceiver,err:=attribute["receiver"].MarshalJSON()
+						if err!=nil{
+							return err
 						}
+						if string(bz)!=account{
+							continue
+						}
+						bzamount,err:=attribute["amount"].MarshalJSON()
+						if err!=nil{
+							return err
+						}
+						
+
+
+					}
+					fmt.Println(fmt.Sprintf("action:%s",string(bz)))
+					fmt.Println(fmt.Sprintf("amount:%s\n",string(bamount)))
+						switch string(bz) {
+						case "/cosmos.staking.v1beta1.MsgDelegate":
+						break;
+						case "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission":
+						break;
+						case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
+						break;
+						default:
+						
+						}
+
 				}
 			}
 		}

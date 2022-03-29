@@ -46,6 +46,7 @@ type TxSearchRespond struct {
 
 type RawLog struct {
 	Events []Event `json:"events"`
+	MsgIndex int `json:"msg_index,omitempty"`
 }
 
 type Event struct {
