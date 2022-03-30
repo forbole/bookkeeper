@@ -15,9 +15,11 @@ import (
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain)(types.BalanceEntries,error){
-	var balanceEntries []types.BalanceEntry
+func GetTxs(details types.IndividualChain)([]types.AddressBalanceEntry,error){
+	var accountbalanceEntries []types.AddressBalanceEntry
+
 	for _,address := range details.FundHoldingAccount{
+		var balanceEntries []types.BalanceEntry
 		txs,err:=readTxs(details.RpcEndpoint,address)
 		if err!=nil{
 			return nil,err
@@ -112,8 +114,10 @@ func GetTxs(details types.IndividualChain)(types.BalanceEntries,error){
 
 			}
 		}
+		accountbalanceEntries=append(accountbalanceEntries,
+			 types.NewAccountBalanceSheet(address,balanceEntries))
 	}
-	return balanceEntries,nil
+	return accountbalanceEntries,nil
 }
 
 // ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes

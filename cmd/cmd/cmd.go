@@ -12,6 +12,7 @@ import (
 	//"github.com/forbole/bookkeeper/balancesheet"
 	//"github.com/cosmos/cosmos-sdk/client"
 
+	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/input"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/types"
@@ -50,22 +51,29 @@ func Execute(cmd *cobra.Command, arg []string)error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	/* err=email.SendEmail(data.EmailDetails,inputfile)
-	if err!=nil{
-		return err
-	}
- */
-	balanceEntries,err:=cosmos.GetTxs(data.Chains[0].Details[0])
+
+	accountEntries,err:=cosmos.GetTxs(data.Chains[0].Details[0])
 	if err!=nil{
 		return err
 	}
 
-	outputcsv := balanceEntries.GetCSV()
-	fmt.Println(outputcsv)
-	err = ioutil.WriteFile(("output.csv"), []byte(outputcsv), 0777)
-    if err != nil {
-        return err
-    }
+	var filenames []string
+	for _,account:=range accountEntries{
+		outputcsv := account.BalanceEntry.GetCSV()
+		fmt.Println(outputcsv)
+		filename:=fmt.Sprintf("%s.csv",account.Address)
+		filenames = append(filenames, filename)
+		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+		if err != nil {
+			return err
+		}
+	}
+	
+
+	err=email.SendEmail(data.EmailDetails,filenames)
+	if err!=nil{
+		return err
+	}
 
 	/* grpcConn, err := grpc.Dial(data.Chains[0].Details[0].GrpcEndpoint, grpc.WithInsecure())
 	if err != nil {
