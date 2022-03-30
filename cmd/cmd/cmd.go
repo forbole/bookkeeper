@@ -55,10 +55,17 @@ func Execute(cmd *cobra.Command, arg []string)error {
 		return err
 	}
  */
-	err=cosmos.GetTxs(data.Chains[0].Details[0])
+	balanceEntries,err:=cosmos.GetTxs(data.Chains[0].Details[0])
 	if err!=nil{
 		return err
 	}
+
+	outputcsv := balanceEntries.GetCSV()
+	fmt.Println(outputcsv)
+	err = ioutil.WriteFile(("output.csv"), []byte(outputcsv), 0777)
+    if err != nil {
+        return err
+    }
 
 	/* grpcConn, err := grpc.Dial(data.Chains[0].Details[0].GrpcEndpoint, grpc.WithInsecure())
 	if err != nil {

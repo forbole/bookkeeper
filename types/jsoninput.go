@@ -7,6 +7,7 @@ type BigChainType struct{
 
 type IndividualChain struct{
 	ChainName string `json:"chain_name"`
+	Denom string `json:"denom"`
 	Validators []ValidatorDetail `json:"validators"`
 	FundHoldingAccount []string `json:"fund_holding_account"`
 	GrpcEndpoint string `json:"grpc_endpoint"`
@@ -36,4 +37,8 @@ type EmailDetails struct{
 type Data struct{
 	Chains []BigChainType `json:"chains"`
 	EmailDetails EmailDetails `json:"email_details"`
+}
+
+func (v IndividualChain) DecodeAount(){
+	
 }
