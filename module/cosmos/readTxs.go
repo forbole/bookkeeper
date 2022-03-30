@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 
 	//"regexp"
@@ -35,7 +34,7 @@ func GetTxs(details types.IndividualChain)(types.BalanceEntries,error){
 			err=json.Unmarshal([]byte(rawlog),&logs)
 			if err!=nil{
 				balanceEntries=append(balanceEntries,
-					types.NewBalanceEntry(tx.Height,tx.Hash,0,0,"Error reading Log for that tx"))
+					types.NewBalanceEntry(tx.Height,tx.Hash,"0","0","Error reading Log for that tx"))
 				continue
 				/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
 				err,tx.TxResult.Log,tx.Hash) */
@@ -44,8 +43,8 @@ func GetTxs(details types.IndividualChain)(types.BalanceEntries,error){
 			for _,log:=range logs{
 				// There will be one transaction
 				fmt.Println(fmt.Sprintf("MsgIndex:%d",log.MsgIndex))
-				in:=0
-				out:=0
+				in:="0"
+				out:="0"
 				msgType:=""
 
 				// Read event for that log
@@ -54,56 +53,48 @@ func GetTxs(details types.IndividualChain)(types.BalanceEntries,error){
 					attribute:=ConvertAttributeToMap(event.Attributes)
 					//fmt.Println(fmt.Sprintf("type:%s",event.Type))
 					// check if we are the receiver (write on + side)
-					if event.Type=="coin_received"{
-						bz,err:=attribute["receiver"].MarshalJSON()
+					if event.Type=="transfer"{
+						// get the amount for the transafer
+						bzamount,err:=attribute["amount"].MarshalJSON()
+						if err!=nil{
+							return nil,err
+						}
+						amount:=strings.ReplaceAll(string(bzamount),"\"","")
+						//amount=strings.ReplaceAll(amount,details.Denom,"")
+						//a,err:=strconv.Atoi(amount)
+						if err!=nil{
+							return nil,err
+						}
+						in=amount
+						
+						// check if recipient is transfer
+						bz,err:=attribute["recipient"].MarshalJSON()
 						if err!=nil{
 							return nil,err
 						}
 						receiver:=string(bz)
 						receiver=strings.ReplaceAll(receiver,"\"","")
 						
-						if receiver!=address{
-							continue
-						}  
-						bzamount,err:=attribute["amount"].MarshalJSON()
-						if err!=nil{
-							return nil,err
-						}
-						amount:=strings.ReplaceAll(string(bzamount),"\"","")
-						amount=strings.ReplaceAll(amount,details.Denom,"")
-						a,err:=strconv.Atoi(amount)
-						if err!=nil{
-							return nil,err
-						}
-						in=a
-						
-						fmt.Println(fmt.Sprintf("Receive amount:%d\nReceiver:%s",in,receiver))
-					}
-					if event.Type=="coin_spent"{
-						bz,err:=attribute["spender"].MarshalJSON()
+						if receiver==address{
+							in=amount
+						} else{
+
+						bz,err=attribute["spender"].MarshalJSON()
 						if err!=nil{
 							return nil,err
 						}
 
 						spender:=string(bz)
 						spender=strings.ReplaceAll(spender,"\"","")
-						if string(spender)!=address{
-							continue
+						if string(spender)==address{
+							out=amount
 						}
-						bzamount,err:=attribute["amount"].MarshalJSON()
-						if err!=nil{
-							return nil,err
+					}
+						if in!="0"{
+							fmt.Println(fmt.Sprintf("Received amount:%d\nReceiver:%s",in,receiver))
+						} else if out!="0"{
+							fmt.Println(fmt.Sprintf("Spent amount:%d\nSpender:%s",out,receiver))
 						}
-						amount:=string(bzamount)
-						amount=strings.ReplaceAll(amount,"\"","")
-						amount=strings.ReplaceAll(amount,details.Denom,"")
-						b,err:=strconv.Atoi(amount)
-						if err!=nil{
-							return nil,err
-						}
-						out=b
-
-						fmt.Println(fmt.Sprintf("Spent amount:%d\nspender:%s",out,spender))
 					}
 					if event.Type=="message"{
 						bzaction,err:=attribute["action"].MarshalJSON()
