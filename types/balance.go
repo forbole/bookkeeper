@@ -5,6 +5,7 @@ import (
 )
 
 // BalanceEntry represent a row of csv
+// This is raw tx data for a address
 type BalanceEntry struct {
 	Height  string
 	TxHash  string
@@ -36,12 +37,12 @@ func (v BalanceEntries) GetCSV() string {
 
 type AddressBalanceEntry struct {
 	Address      string
-	BalanceEntry BalanceEntries
+	Rows BalanceEntries
 }
 
 func NewAccountBalanceSheet(address string, balanceEntry []BalanceEntry) AddressBalanceEntry {
 	return AddressBalanceEntry{
 		Address:      address,
-		BalanceEntry: balanceEntry,
+		Rows: balanceEntry,
 	}
 }

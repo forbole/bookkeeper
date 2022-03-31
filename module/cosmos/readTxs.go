@@ -129,8 +129,8 @@ func readlogs(logs []cosmostypes.RawLog,address,hash,height string)([]types.Bala
 				if err != nil {
 					return nil, err
 				}
-				fmt.Println(fmt.Sprintf("action:%s", string(bzaction)))
-				msgType = string(bzaction)
+				msgType=strings.ReplaceAll(string(bzaction),"\"","")
+				fmt.Println(fmt.Sprintf("action:%s", msgType))
 			}
 		}
 		balanceEntries = append(balanceEntries,
@@ -138,7 +138,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash,height string)([]types.Bala
 	}
 
 	
-		return balanceEntries,nil
+	return balanceEntries,nil
 }
 
 // ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes

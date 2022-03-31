@@ -55,9 +55,19 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		return err
 	}
 
+	rewardCommissions:=make([]*types.AddressRewardCommission,len(accountEntries))
+	for i,a:=range accountEntries{
+		rewardCommission,err:=cosmos.GetRewardCommission(a,"uatom")
+		if err!=nil{
+			return err
+		}
+		rewardCommissions[i]=rewardCommission
+	}
+
+
 	var filenames []string
-	for _, account := range accountEntries {
-		outputcsv := account.BalanceEntry.GetCSV()
+	for _, account := range rewardCommissions {
+		outputcsv := account.Rows.GetCSV()
 		fmt.Println(outputcsv)
 		filename := fmt.Sprintf("%s.csv", account.Address)
 		filenames = append(filenames, filename)
