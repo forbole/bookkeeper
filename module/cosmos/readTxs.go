@@ -49,83 +49,96 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 					err,tx.TxResult.Log,tx.Hash) */
 				}
 				fmt.Println(tx.Hash)
-				for _, log := range logs {
-					// There will be one transaction
-					fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
-					in := "0"
-					out := "0"
-					msgType := ""
+				balanceEntry,err:=readlogs(logs,address,tx.Hash,tx.Height)
+				if err!=nil{
+					return nil,err
+				}
 
-					// Read event for that log
-					for _, event := range log.Events {
-						//Catagorise each event and put it in a table
-						attribute := ConvertAttributeToMap(event.Attributes)
-						//fmt.Println(fmt.Sprintf("type:%s",event.Type))
-						// check if we are the receiver (write on + side)
-						if event.Type == "transfer" {
-							// get the amount for the transafer
-							bzamount, err := attribute["amount"].MarshalJSON()
-							if err != nil {
-								return nil, err
-							}
-							amount := strings.ReplaceAll(string(bzamount), "\"", "")
-							//amount=strings.ReplaceAll(amount,details.Denom,"")
-							//a,err:=strconv.Atoi(amount)
-							if err != nil {
-								return nil, err
-							}
-							in = amount
-
-							// check if recipient is transfer
-							bz, err := attribute["recipient"].MarshalJSON()
-							if err != nil {
-								return nil, err
-							}
-							receiver := string(bz)
-							receiver = strings.ReplaceAll(receiver, "\"", "")
-
-							if receiver == address {
-								in = amount
-							} else {
-
-								bz, err = attribute["spender"].MarshalJSON()
-								if err != nil {
-									return nil, err
-								}
-
-								spender := string(bz)
-								spender = strings.ReplaceAll(spender, "\"", "")
-								if string(spender) == address {
-									out = amount
-								}
-							}
-							if in != "0" {
-								fmt.Println(fmt.Sprintf("Received amount:%s\nReceiver:%s", in, receiver))
-							} else if out != "0" {
-								fmt.Println(fmt.Sprintf("Spent amount:%s\nSpender:%s", out, receiver))
-							}
-						}
-						if event.Type == "message" {
-							bzaction, err := attribute["action"].MarshalJSON()
-							if err != nil {
-								return nil, err
-							}
-							fmt.Println(fmt.Sprintf("action:%s", string(bzaction)))
-							msgType = string(bzaction)
-
-						}
-					}
-
-					balanceEntries = append(balanceEntries,
-						types.NewBalanceEntry(tx.Height, tx.Hash, in, out, msgType))
-
+				balanceEntries = append(balanceEntries,
+					balanceEntry...)
 				}
 			}
 			accountbalanceEntries = append(accountbalanceEntries,
 				types.NewAccountBalanceSheet(address, balanceEntries))
 		}
-	}
+	
 	return accountbalanceEntries, nil
+}
+
+func readlogs(logs []cosmostypes.RawLog,address,hash,height string)([]types.BalanceEntry,error){
+	var balanceEntries []types.BalanceEntry
+
+	for _, log := range logs {
+		// There will be one transaction
+		fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
+		in := "0"
+		out := "0"
+		msgType := ""
+
+		// Read event for that log
+		for _, event := range log.Events {
+			//Catagorise each event and put it in a table
+			attribute := ConvertAttributeToMap(event.Attributes)
+			//fmt.Println(fmt.Sprintf("type:%s",event.Type))
+			// check if we are the receiver (write on + side)
+			if event.Type == "transfer" {
+				// get the amount for the transafer
+				bzamount, err := attribute["amount"].MarshalJSON()
+				if err != nil {
+					return nil, err
+				}
+				amount := strings.ReplaceAll(string(bzamount), "\"", "")
+				//amount=strings.ReplaceAll(amount,details.Denom,"")
+				//a,err:=strconv.Atoi(amount)
+				if err != nil {
+					return nil, err
+				}
+				in = amount
+
+				// check if recipient is transfer
+				bz, err := attribute["recipient"].MarshalJSON()
+				if err != nil {
+					return nil, err
+				}
+				receiver := string(bz)
+				receiver = strings.ReplaceAll(receiver, "\"", "")
+
+				if receiver == address {
+					in = amount
+				} else {
+
+					bz, err = attribute["spender"].MarshalJSON()
+					if err != nil {
+						return nil, err
+					}
+
+					spender := string(bz)
+					spender = strings.ReplaceAll(spender, "\"", "")
+					if string(spender) == address {
+						out = amount
+					}
+				}
+				if in != "0" {
+					fmt.Println(fmt.Sprintf("Received amount:%s\nReceiver:%s", in, receiver))
+				} else if out != "0" {
+					fmt.Println(fmt.Sprintf("Spent amount:%s\nSpender:%s", out, receiver))
+				}
+			}
+			if event.Type == "message" {
+				bzaction, err := attribute["action"].MarshalJSON()
+				if err != nil {
+					return nil, err
+				}
+				fmt.Println(fmt.Sprintf("action:%s", string(bzaction)))
+				msgType = string(bzaction)
+			}
+		}
+		balanceEntries = append(balanceEntries,
+			types.NewBalanceEntry(height, hash, in, out, msgType))
+	}
+
+	
+		return balanceEntries,nil
 }
 
 // ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes
