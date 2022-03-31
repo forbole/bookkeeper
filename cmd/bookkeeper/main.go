@@ -1,10 +1,11 @@
 package main
+
 import (
-	cmdcmd "github.com/forbole/bookkeeper/cmd/cmd"
 	"os"
 
-
+	cmdcmd "github.com/forbole/bookkeeper/cmd/cmd"
 )
+
 func main() {
 	cmd := cmdcmd.ParseCmd()
 	err := cmd.Execute()

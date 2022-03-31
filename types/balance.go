@@ -1,0 +1,47 @@
+package types
+
+import (
+	"fmt"
+)
+
+// BalanceEntry represent a row of csv
+type BalanceEntry struct {
+	Height  string
+	TxHash  string
+	In      string
+	Out     string
+	MsgType string
+}
+
+func NewBalanceEntry(height string, txHash string, in string, out string, msgType string) BalanceEntry {
+	return BalanceEntry{
+		Height:  height,
+		TxHash:  txHash,
+		In:      in,
+		Out:     out,
+		MsgType: msgType,
+	}
+}
+
+type BalanceEntries []BalanceEntry
+
+func (v BalanceEntries) GetCSV() string {
+	outputcsv := "height,txHash,receive_amount,sent_amount, msgType\n"
+	for _, b := range v {
+		outputcsv += fmt.Sprintf("%s,%s,%s,%s,%s\n",
+			b.Height, b.TxHash, b.In, b.Out, b.MsgType)
+	}
+	return outputcsv
+}
+
+type AddressBalanceEntry struct {
+	Address      string
+	BalanceEntry BalanceEntries
+}
+
+func NewAccountBalanceSheet(address string, balanceEntry []BalanceEntry) AddressBalanceEntry {
+	return AddressBalanceEntry{
+		Address:      address,
+		BalanceEntry: balanceEntry,
+	}
+}

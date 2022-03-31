@@ -43,18 +43,17 @@ type TxSearchRespond struct {
 	} `json:"result"`
 }
 
-
 type RawLog struct {
-	Events []Event `json:"events"`
-	MsgIndex int `json:"msg_index,omitempty"`
+	Events   []Event `json:"events"`
+	MsgIndex int     `json:"msg_index,omitempty"`
 }
 
 type Event struct {
-	Type       string `json:"type"`
+	Type       string       `json:"type"`
 	Attributes []Attributes `json:"attributes"`
 }
 
-type Attributes struct{
-	Key   string `json:"key"`
+type Attributes struct {
+	Key   string          `json:"key"`
 	Value json.RawMessage `json:"value"`
 }
