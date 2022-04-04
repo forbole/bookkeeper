@@ -4,13 +4,13 @@ import "fmt"
 
 type RewardCommission struct{
 	TxHash string
-	Height string
+	Height int
 	Commission int
 	Reward int
 	Denom string
 }
 
-func NewRewardCommission(txHash,height,denom string,commission,reward int)RewardCommission{
+func NewRewardCommission(txHash string,height int,denom string,commission,reward int)RewardCommission{
 	return RewardCommission{
 		TxHash: txHash,
 		Height:height,

@@ -7,14 +7,14 @@ import (
 // BalanceEntry represent a row of csv
 // This is raw tx data for a address
 type BalanceEntry struct {
-	Height  string
+	Height  int
 	TxHash  string
 	In      string
 	Out     string
 	MsgType string
 }
 
-func NewBalanceEntry(height string, txHash string, in string, out string, msgType string) BalanceEntry {
+func NewBalanceEntry(height int, txHash string, in string, out string, msgType string) BalanceEntry {
 	return BalanceEntry{
 		Height:  height,
 		TxHash:  txHash,
@@ -29,7 +29,7 @@ type BalanceEntries []BalanceEntry
 func (v BalanceEntries) GetCSV() string {
 	outputcsv := "height,txHash,receive_amount,sent_amount, msgType\n"
 	for _, b := range v {
-		outputcsv += fmt.Sprintf("%s,%s,%s,%s,%s\n",
+		outputcsv += fmt.Sprintf("%d,%s,%s,%s,%s\n",
 			b.Height, b.TxHash, b.In, b.Out, b.MsgType)
 	}
 	return outputcsv

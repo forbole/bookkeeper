@@ -41,15 +41,20 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 
 				var logs []cosmostypes.RawLog
 				err = json.Unmarshal([]byte(rawlog), &logs)
+				height,err:=strconv.Atoi(tx.Height)
+				if err!=nil{
+					return nil,err
+				}
 				if err != nil {
 					balanceEntries = append(balanceEntries,
-						types.NewBalanceEntry(tx.Height, tx.Hash, "0", "0", "Error reading Log for that tx"))
+						types.NewBalanceEntry(height, tx.Hash, "0", "0", "Error reading Log for that tx"))
 					continue
 					/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
 					err,tx.TxResult.Log,tx.Hash) */
 				}
 				fmt.Println(tx.Hash)
-				balanceEntry,err:=readlogs(logs,address,tx.Hash,tx.Height)
+
+				balanceEntry,err:=readlogs(logs,address,tx.Hash,height)
 				if err!=nil{
 					return nil,err
 				}
@@ -65,7 +70,7 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 	return accountbalanceEntries, nil
 }
 
-func readlogs(logs []cosmostypes.RawLog,address,hash,height string)([]types.BalanceEntry,error){
+func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]types.BalanceEntry,error){
 	var balanceEntries []types.BalanceEntry
 
 	for _, log := range logs {
