@@ -1,7 +1,6 @@
 package cosmos
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -10,11 +9,11 @@ import (
 
 func GetRewardCommission(addressBalanceEntry types.AddressBalanceEntry,denom string)(*types.AddressRewardCommission,error){
 	var rewardCommission types.RewardCommissions
-	for _,balanceEntry:=range addressBalanceEntry.BalanceEntry{
+	for _,balanceEntry:=range addressBalanceEntry.Rows{
 		instring:=strings.ReplaceAll(balanceEntry.In,denom,"")
-		fmt.Println(instring)
+		//fmt.Println(instring)
 		in,err:=strconv.Atoi(instring)
-		fmt.Println(balanceEntry.MsgType)
+		//fmt.Println(balanceEntry.MsgType)
 		if err!=nil{
 			return nil,err
 		}
@@ -36,6 +35,5 @@ func GetRewardCommission(addressBalanceEntry types.AddressBalanceEntry,denom str
 		}
 	}
 	addressRewardCommission:=types.NewAddressRewardCommission(addressBalanceEntry.Address,rewardCommission)
-	fmt.Println(addressRewardCommission)
 	return &addressRewardCommission,nil
 }

@@ -12,6 +12,9 @@ import (
 // SendEmail send an an email by Gmail. It attach an zip which compress the provided file
 func SendEmail(emailDetails types.EmailDetails, path []string) error {
 	// compose the message
+	if len(emailDetails.To)==0{
+		return nil
+	}
 	m := email.NewMessage(emailDetails.Subject, emailDetails.Details)
 	m.From = mail.Address{Name: emailDetails.From.Name, Address: emailDetails.From.Address}
 	m.To = emailDetails.To
