@@ -27,7 +27,7 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 // GetHeightFormDate get height for the cloest time stamp within 10 seconds, log2 complexity
 func GetHeightFormDate(t time.Time,lcd string)(int,error){
 	query := fmt.Sprintf(`%s/blocks/latest`,lcd)
-		fmt.Println(query)
+	fmt.Println(query)
 	resp, err := http.Get(query)
 	if err!=nil{
 		return 0,err
@@ -62,8 +62,8 @@ func GetHeightFormDate(t time.Time,lcd string)(int,error){
 	}
 	fmt.Println(t)
 
-	for !(  (t.After(newT) && t.Sub(newT)<(time.Second*10))  ||
-	(t.Before(newT) && newT.Sub(t)<(time.Second*10))  ){
+	for !(  (t.After(newT) && t.Sub(newT)<(time.Hour*23))  ||
+	(t.Before(newT) && newT.Sub(t)<(time.Hour*23))  ){
 		middle=(left+right)/2
 		
 		T,err:=getTimeByHeight(middle,lcd)
@@ -76,13 +76,13 @@ func GetHeightFormDate(t time.Time,lcd string)(int,error){
 					return 0,err
 				}
 				
-				// Check if requested t is out of chain scoope
+				// Check if requested t is out of chain scope
 				lowestTime,err:=getTimeByHeight(lowestHeight,lcd)
 				if err!=nil{
 					return 0,err
 				}
 				if t.Before(*lowestTime){
-					return 0,fmt.Errorf("Request time is out of scoope: eariest time: %s, request time: %s",
+					return 0,fmt.Errorf("Request time is out of scope: eariest time: %s, request time: %s",
 					*lowestTime,t)
 				}
 
@@ -106,6 +106,7 @@ func GetHeightFormDate(t time.Time,lcd string)(int,error){
 
 func getTimeByHeight(height int,lcd string)(*time.Time,error){
 	query := fmt.Sprintf(`%s/blocks/%d`,lcd,height)
+	fmt.Println(query)
 	resp, err := http.Get(query)
 	if err!=nil{
 		return nil,err

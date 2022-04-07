@@ -14,7 +14,10 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/forbole/bookkeeper/input"
-	"github.com/forbole/bookkeeper/module/cosmos/utils"
+	"github.com/forbole/bookkeeper/module/cosmos"
+	"github.com/forbole/bookkeeper/email"
+
+
 
 	"github.com/forbole/bookkeeper/types"
 
@@ -51,31 +54,16 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	/* accountEntries, err := cosmos.GetTxs(data.Chains[0].Details[0])
+	accountEntries, err := cosmos.GetMonthyReport(data.Chains[0].Details[0],
+		time.Date(2022,time.January,1,1,0,0,0,time.UTC))
 	if err != nil {
 		return err
 	}
 
-	rewardCommissions:=make([]*types.AddressRewardCommission,len(accountEntries))
-	for i,a:=range accountEntries{
-		rewardCommission,err:=cosmos.GetRewardCommission(a,"uatom")
-		if err!=nil{
-			return err
-		}
-		rewardCommissions[i]=rewardCommission
-	} */
 
-	t:=time.Date(2022,time.January,1,0,0,0,0,time.UTC)
-	height,err:=utils.GetHeightForDate(t,data.Chains[0].Details[0].LcdEndpoint)
-	if err!=nil{
-		return err
-	}
-	fmt.Println(height)
-
-/* 
 	var filenames []string
-	for _, account := range rewardCommissions {
-		outputcsv := account.Rows.GetCSV()
+	for _, account := range accountEntries {
+		outputcsv := account.Rows.GetCSV(6)
 		fmt.Println(outputcsv)
 		filename := fmt.Sprintf("%s.csv", account.Address)
 		filenames = append(filenames, filename)
@@ -88,7 +76,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {
 		return err
-	} */
+	}
 
 	/* grpcConn, err := grpc.Dial(data.Chains[0].Details[0].GrpcEndpoint, grpc.WithInsecure())
 	if err != nil {

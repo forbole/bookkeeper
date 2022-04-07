@@ -39,7 +39,7 @@ func (v RewardCommissions) GetCSV()string{
 	commissionSum:=0
 	rewardSum:=0
 	for _, b := range v {
-		outputcsv += fmt.Sprintf("%s,%s,%d,%d\n",
+		outputcsv += fmt.Sprintf("%d,%s,%d,%d\n",
 			b.Height, b.TxHash, b.Commission, b.Reward)
 			commissionSum+=b.Commission
 			rewardSum+=b.Reward

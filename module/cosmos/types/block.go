@@ -42,7 +42,7 @@ type Block struct {
 			Evidence []interface{} `json:"evidence"`
 		} `json:"evidence"`
 		LastCommit struct {
-			Height  int `json:"height"`
+			Height  string `json:"height"`
 			Round   int    `json:"round"`
 			BlockID struct {
 				Hash  string `json:"hash"`

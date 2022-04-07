@@ -2,19 +2,24 @@ package types
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
 // MonthyReportRow represent a row of monthy report
 type MonthyReportRow struct{
-	Date time.Time
+	FromDate time.Time
+	ToDate time.Time
+
 	Commission int
 	Reward int
 }
 
-func NewMonthyReportRow(date time.Time,commission int,reward int)MonthyReportRow{
+func NewMonthyReportRow(fromDate time.Time,toDate time.Time,commission int,reward int)MonthyReportRow{
 	return MonthyReportRow{
-		Date: date,
+		FromDate: fromDate,
+		ToDate: toDate,
+
 		Commission: commission,
 		Reward: reward,
 	}
@@ -35,17 +40,21 @@ func NewAddressMonthyReport(address string,rewardCommissions MonthyReportRows)Ad
 	}
 }
 
-func (v MonthyReportRows) GetCSV()string{
-	outputcsv := "height,txHash,Commission,Delegator_Reward\n"
+// GetCSV generate the monthy report and turn the result into exponent form
+func (v MonthyReportRows) GetCSV(exp int)string{
+	outputcsv := "From_date,to_date,Commission,Delegator_Reward\n"
 	commissionSum:=0
 	rewardSum:=0
+	exponent := math.Pow(10, -6)
+
 	for _, b := range v {
-		outputcsv += fmt.Sprintf("%s,%d,%d\n",
-			b.Date, b.Reward, b.Commission)
+		outputcsv += fmt.Sprintf("%s,%s,%f,%f\n",
+			b.FromDate,b.ToDate, float64(b.Commission)*exponent, float64(b.Reward)*exponent)
 			commissionSum+=b.Commission
 			rewardSum+=b.Reward
 	}
-	outputcsv+=fmt.Sprintf("\n Sum, %d,%d\n",commissionSum,rewardSum)
+
+	outputcsv+=fmt.Sprintf("\n Sum, ,%f,%f\n",float64(commissionSum)*exponent,float64(rewardSum)*exponent)
 	
 	return outputcsv
 }
