@@ -48,7 +48,6 @@ func GetHeightFormDate(t time.Time,lcd string)(int,error){
 
 	header:=blockRes.Block.Header
 
-
 	latestHeight,err:=strconv.Atoi(header.Height)
 	if err!=nil{
 		return 0,err
@@ -137,5 +136,6 @@ func getTimeByHeight(height int,lcd string)(*time.Time,error){
 	if err != nil {
 		return nil, fmt.Errorf("Fail to marshal:%s", err)
 	}
+
 	return &(blockRes.Block.Header.Time),nil
 }

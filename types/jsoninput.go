@@ -37,8 +37,6 @@ type EmailDetails struct {
 type Data struct {
 	Chains       []BigChainType `json:"chains"`
 	EmailDetails EmailDetails   `json:"email_details"`
+	Prometheus   string         `json:"prometheus"`
 }
 
-func (v IndividualChain) DecodeAount() {
-
-}
