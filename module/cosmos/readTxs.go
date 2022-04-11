@@ -31,6 +31,9 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 		if err != nil {
 			return nil, err
 		}
+		if res==nil{
+			return nil,nil
+		}
 		for _, txs := range res {
 			for _, tx := range txs.Result.Txs {
 
@@ -181,6 +184,9 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		err = json.Unmarshal(bz, &txSearchRes)
 		if err != nil {
 			return nil, fmt.Errorf("Fail to marshal:%s", err)
+		}
+		if txSearchRes.Result.TotalCount=="0"{
+			return nil,nil
 		}
 		lastHeight, err = strconv.Atoi(
 			txSearchRes.Result.Txs[len(txSearchRes.Result.Txs)-1].Height,

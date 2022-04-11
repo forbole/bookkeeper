@@ -54,11 +54,22 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	accountEntries, err := cosmos.GetMonthyReport(data.Chains[0].Details[0],
-		time.Date(2022,time.January,1,1,0,0,0,time.UTC))
-	if err != nil {
-		return err
+	var accountEntries []types.AddressMonthyReport
+	for _,chain:=range data.Chains{
+		if chain.ChainType=="cosmos"{
+			for _,d:=range chain.Details{
+				accountEntrie, err := cosmos.GetMonthyReport(d,
+					time.Date(2022,time.January,1,1,0,0,0,time.UTC))
+				if err != nil {
+					return err
+				}
+				accountEntries = append(accountEntries, accountEntrie...)
+			}
+			
+		}
+		
 	}
+	
 
 
 	var filenames []string

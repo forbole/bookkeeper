@@ -8,6 +8,7 @@ type BigChainType struct {
 type IndividualChain struct {
 	ChainName          string            `json:"chain_name"`
 	Denom              string            `json:"denom"`
+	Exponent           int               `json:"exponent"`
 	Validators         []ValidatorDetail `json:"validators"`
 	FundHoldingAccount []string          `json:"fund_holding_account"`
 	GrpcEndpoint       string            `json:"grpc_endpoint"`
