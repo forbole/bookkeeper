@@ -1,5 +1,25 @@
 package types
 
+type ValidatorStat struct {
+	Status string `json:"status"`
+	Data   struct {
+		ResultType string `json:"resultType"`
+		Result     []struct {
+			Metric struct {
+				Name        string `json:"__name__"`
+				ChainID     string `json:"chain_id"`
+				Denom       string `json:"denom"`
+				Environment string `json:"environment"`
+				Host        string `json:"host"`
+				Instance    string `json:"instance"`
+				Job         string `json:"job"`
+			} `json:"metric"`
+			Value []interface{} `json:"value"`
+		} `json:"result"`
+	} `json:"data"`
+}
+
+
 type ValidatorDelegationCount struct {
 	Status string `json:"status"`
 	Data   struct {
