@@ -23,6 +23,7 @@ func NewValidatorStatus(time time.Time,chainId string, validatorDelegatorCount f
 						stakeAmount float64,validatorVotingPower float64)ValidatorStatus{
 							return ValidatorStatus{
 								Time: time,
+								ChainId:chainId,
 								ValidatorDelegationCount: validatorDelegatorCount,
 								ValidatorCommissionRate:validatorCommissionRate,
 								TotalVotingPower:totalVotingPower,

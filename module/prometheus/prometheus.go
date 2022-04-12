@@ -6,14 +6,13 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	promtypes "github.com/forbole/bookkeeper/module/prometheus/types"
 	"github.com/forbole/bookkeeper/types"
 )
 
-func GetValidatorDetailsFromPrometheus(endpoint string)([]types.ValidatorStatus,error){
+func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTable,error){
 	validatorDelegationCount,err := getValidatorDelegationCount(endpoint)
 	if err!=nil{
 		return nil,err
@@ -42,6 +41,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string)([]types.ValidatorStatus,
 	var validatorStatus []types.ValidatorStatus
 	for _,r:=range validatorDelegationCount.Data.Result{
 		chain:=r.Metric.ChainID
+		//fmt.Println(chain)
 		delegationCount:=r.Value[0].(float64)
 
 		commissionRate:=float64(0)
@@ -50,30 +50,42 @@ func GetValidatorDetailsFromPrometheus(endpoint string)([]types.ValidatorStatus,
 		vpRanking:=float64(0)
 		vp:=float64(0)
 
-		timestampUnix:=fmt.Sprint(r.Value[0])
-		timestamp:=strings.Split(timestampUnix,".")
-		timestampint,err:=strconv.ParseInt(timestamp[0],10,64)
+		timestampUnix,ok:=r.Value[0].(float64)
+		if !ok{
+			return nil,fmt.Errorf("Timestamp is not float64")
+		}
 		if err!=nil{
 			return nil,err
 		}
-		timeStampReal:=time.Unix(timestampint,0)
+
+		fmt.Println(int64(timestampUnix))
+		timeStampReal:=time.Unix(int64(timestampUnix),0)
 
 		// search for the same chain-id and same validator
 		for _,result:=range validatorCommissionRate.Data.Result{
 			if result.Metric.ChainID==chain {
-				value,ok:=result.Value[1].(float64)
+				val,ok:=result.Value[1].(string)
 				if !ok{
-					return nil,fmt.Errorf("validatorCommissionRate is not float64")
+					return nil,fmt.Errorf("validatorCommissionRate is not string")
 				}
+				value,err:=strconv.ParseFloat(val,64)
+				if err!=nil{
+					return nil,err
+				}
+
 				commissionRate=value
 			}
 		}
 
 		for _,result:=range stakeAmount.Data.Result{
 			if result.Metric.ChainID==chain {
-				value,ok:=result.Value[1].(float64)
+				val,ok:=result.Value[1].(string)
 				if !ok{
-					return nil,fmt.Errorf("stakeAmount is not float64")
+					return nil,fmt.Errorf("validatorCommissionRate is not string")
+				}
+				value,err:=strconv.ParseFloat(val,64)
+				if err!=nil{
+					return nil,err
 				}
 				selfStake=value
 			}
@@ -81,18 +93,26 @@ func GetValidatorDetailsFromPrometheus(endpoint string)([]types.ValidatorStatus,
 
 		for _,result:=range totalVotingPower.Data.Result{
 			if result.Metric.ChainID==chain {
-				value,ok:=result.Value[1].(float64)
+				val,ok:=result.Value[1].(string)
 				if !ok{
-					return nil,fmt.Errorf("totalVotingPower is not float64")
+					return nil,fmt.Errorf("validatorCommissionRate is not string")
+				}
+				value,err:=strconv.ParseFloat(val,64)
+				if err!=nil{
+					return nil,err
 				}
 				totalvp=value
 			}
 		}
 		for _,result:=range validatorVotingPowerRanking.Data.Result{
 			if result.Metric.ChainID==chain {
-				value,ok:=result.Value[1].(float64)
+				val,ok:=result.Value[1].(string)
 				if !ok{
-					return nil,fmt.Errorf("validatorVotingPowerRanking is not float64")
+					return nil,fmt.Errorf("validatorCommissionRate is not float64")
+				}
+				value,err:=strconv.ParseFloat(val,64)
+				if err!=nil{
+					return nil,err
 				}
 				vpRanking=value
 			}
@@ -100,36 +120,28 @@ func GetValidatorDetailsFromPrometheus(endpoint string)([]types.ValidatorStatus,
 
 		for _,result:=range validatorVotingPower.Data.Result{
 			if result.Metric.ChainID==chain {
-				value,ok:=result.Value[1].(float64)
+				val,ok:=result.Value[1].(string)
 				if !ok{
-					return nil,fmt.Errorf("validatorVotingPower is not float64")
+					return nil,fmt.Errorf("validatorCommissionRate is not string")
+				}
+				value,err:=strconv.ParseFloat(val,64)
+				if err!=nil{
+					return nil,err
 				}
 				vp=value
 			}
 		}
 
-		validatorStatus=append(validatorStatus,types.NewValidatorStatus(timeStampReal,
-			chain,delegationCount,commissionRate,totalvp,vpRanking,selfStake,vp) )
+		status:=types.NewValidatorStatus(timeStampReal,
+			r.Metric.ChainID,delegationCount,commissionRate,totalvp,vpRanking,selfStake,vp)
+		fmt.Println(chain)
+
+		validatorStatus=append(validatorStatus,status )
 		
 	}
 
 
 return validatorStatus,nil
-}
-
-func GetValue(v promtypes.ValidatorStat,chain string)(float64,error){
-	value:=float64(0)
-	for _,result:=range v.Data.Result{
-		if result.Metric.ChainID==chain {
-			rate:=fmt.Sprint(result.Value[1])
-			val,err:=strconv.ParseFloat(rate,64)
-			if err!=nil{
-				return 0,err
-			}
-			value=val
-		}
-	}
-	return value,nil
 }
 
 func getValidatorDelegationCount(endpoint string)(*promtypes.ValidatorDelegationCount,error){
