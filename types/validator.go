@@ -36,7 +36,7 @@ func NewValidatorStatus(time time.Time,chainId string, validatorDelegatorCount f
 type ValidatorStatusTable []ValidatorStatus
 
 func (v ValidatorStatusTable) GetCSV()string{
-	outputcsv:="time,chain_id,ValidatorDelegationCount,ValidatorCommissionRate,TotalVotingPower,ValidatorVotingPowerRanking,StakeAmount,ValidatorVotingPower\n"
+	outputcsv:="time,chain_id,NumOfDelegators,ValidatorCommissionRate,TotalVotingPower,ValidatorVotingPowerRanking,StakeAmount,ValidatorVotingPower\n"
 	for _, b := range v {
 		outputcsv += fmt.Sprintf("%s,%s,%f,%f,%f,%f,%f,%f\n",
 			b.Time,b.ChainId,b.ValidatorDelegationCount,b.ValidatorCommissionRate,b.TotalVotingPower,b.ValidatorVotingPowerRanking,b.StakeAmount,b.TotalVotingPower,

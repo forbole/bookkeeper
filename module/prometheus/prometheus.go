@@ -42,7 +42,15 @@ func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTab
 	for _,r:=range validatorDelegationCount.Data.Result{
 		chain:=r.Metric.ChainID
 		//fmt.Println(chain)
-		delegationCount:=r.Value[0].(float64)
+		val,ok:=r.Value[1].(string)
+			if !ok{
+				return nil,fmt.Errorf("validatorCommissionRate is not string")
+			}
+		value,err:=strconv.ParseFloat(val,64)
+			if err!=nil{
+				return nil,err
+			}
+		delegationCount:=value
 
 		commissionRate:=float64(0)
 		selfStake:=float64(0)
@@ -268,7 +276,7 @@ func getValidatorVotingPower(endpoint string)(*promtypes.ValidatorVotingPower,er
 	var txSearchRes promtypes.ValidatorVotingPower
 	err = json.Unmarshal(bz, &txSearchRes)
 	if err != nil {
-	return nil, fmt.Errorf("Fail to marshal:%s", err)
+		return nil, fmt.Errorf("Fail to marshal:%s", err)
 	}
 
 	return &txSearchRes,nil
