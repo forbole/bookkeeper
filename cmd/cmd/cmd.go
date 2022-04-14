@@ -51,27 +51,6 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	/*
-	accountEntries, err := cosmos.GetMonthyReport(data.Chains[0].Details[0],
-		time.Date(2022,time.January,1,1,0,0,0,time.UTC))
-	if err != nil {
-		return err
-	}
-	*/
-
-	/*
-	var filenames []string
-	for _, account := range accountEntries {
-		outputcsv := account.Rows.GetCSV(6)
-		fmt.Println(outputcsv)
-		filename := fmt.Sprintf("%s.csv", account.Address)
-		filenames = append(filenames, filename)
-		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
-		if err != nil {
-			return err
-		}
-	}
-	*/
 	var filenames []string
 	validatorStatus,err:=prometheus.GetValidatorDetailsFromPrometheus(data.Prometheus)
 	if err!=nil{
