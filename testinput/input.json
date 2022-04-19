@@ -1,0 +1,33 @@
+{
+  "chains":[
+    {"chain_type":"cosmos",
+      "details": [
+        {
+          "chain_name":"cosmos",
+          "denom":"uatom",
+          "grpc_endpoint":"adasdadsd",
+          "rpc_endpoint":"https://rpc.cosmos.network",
+          "lcd_endpoint":"https://api.cosmos.network",
+          "validators":[
+            {
+              "validator_address":"123",
+              "self_delegation_address":"abc"
+            }],
+          "fund_holding_account":["cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj"]
+        }
+      ]
+    }
+  ],
+  "email_details":{
+    "from":{
+      "name":"appletest079089@gmail.com",
+      "host":"smtp.gmail.com",
+      "password":"apple!!079089",
+      "address":"appletest079089@gmail.com"
+    },
+    "to":[],
+    "subject":"Monthy report from bookkeeper",
+    "details":"It can get data from prometheus now :P"
+  },
+  "prometheus":"http://45.118.133.142:9090"
+}

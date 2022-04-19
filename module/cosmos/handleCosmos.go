@@ -36,8 +36,8 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 			}
 			filenames = append(filenames, filename)
 		}
-	}
 
+	}
 	return filenames,nil
 }
 
@@ -79,7 +79,6 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]str
 				return nil,err
 			}
 
-			
 				outputcsv:= e.Rows.GetCSV()
 				if err!=nil{
 					return nil,err

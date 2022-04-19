@@ -148,7 +148,6 @@ func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTab
 		
 	}
 
-
 return validatorStatus,nil
 }
 

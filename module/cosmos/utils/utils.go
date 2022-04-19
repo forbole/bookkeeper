@@ -24,8 +24,8 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 	)
 }
 
-// GetHeightFormDate get height for the cloest time stamp within 10 seconds, log2 complexity
-func GetHeightFormDate(t time.Time,lcd string)(int,error){
+// GetHeightByDate get height for the cloest time stamp within 10 seconds, log2 complexity
+func GetHeightByDate(t time.Time,lcd string)(int,error){
 	query := fmt.Sprintf(`%s/blocks/latest`,lcd)
 	fmt.Println(query)
 	resp, err := http.Get(query)

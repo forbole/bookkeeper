@@ -48,7 +48,7 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 	outputcsv := "From_date,to_date,Commission,Delegator_Reward\n"
 	commissionSum:=0
 	rewardSum:=0
-	exponent := math.Pow(10, -6)
+	exponent := math.Pow(10, float64(-1*exp))
 
 	for _, b := range v {
 		outputcsv += fmt.Sprintf("%s,%s,%f,%f\n",
@@ -81,7 +81,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 	outputcsv := "From_date,to_date,Commission,Delegator_Reward, ,Commission_Converted ,Delegator_Reward_Converted\n"
 	commissionSum:=0
 	rewardSum:=0
-	exponent := math.Pow(10, -6)
+	exponent := math.Pow(10, float64(-1*exp))
 
 	for _, b := range v {
 		c:=float64(b.Commission)*exponent

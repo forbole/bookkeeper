@@ -26,7 +26,7 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 		fmt.Println(rewardCommission.Rows.GetCSV())
 		i:=0
 		for t.After(from){
-			targetHeight,err:=utils.GetHeightFormDate(t,details.LcdEndpoint)
+			targetHeight,err:=utils.GetHeightByDate(t,details.LcdEndpoint)
 			if err!=nil{
 				return nil,err
 			}
