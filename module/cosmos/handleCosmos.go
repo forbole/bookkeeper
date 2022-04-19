@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/forbole/bookkeeper/types"
+	tables "github.com/forbole/bookkeeper/module/cosmos/tables"
+
 )
 
 // HandleCosmos process all the chain in the struct.
@@ -14,7 +16,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 	var filenames []string
 
 	for _,data :=range individualChains{
-		entries, err := GetMonthyReport(data,
+		entries, err := tables.GetMonthyReport(data,
 			time.Date(2022,time.January,1,1,0,0,0,time.UTC))
 		if err != nil {
 			return nil,err
@@ -42,7 +44,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
-		entries,err:=GetTxs(detail)
+		entries,err:=tables.GetTxs(detail)
 		if err!=nil{
 			return nil,err
 		}
@@ -66,13 +68,13 @@ func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
 func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
-		txs,err:=GetTxs(detail)
+		txs,err:=tables.GetTxs(detail)
 		if err!=nil{
 			return nil,err
 		}
 
 		for _,tx:=range txs{
-			e,err:=GetRewardCommission(tx,detail.Denom)
+			e,err:=tables.GetRewardCommission(tx,detail.Denom)
 			if err!=nil{
 				return nil,err
 			}
@@ -88,7 +90,7 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]str
 				if err != nil {
 					return nil,err
 				}
-				
+
 				filenames = append(filenames, filename)
 			}
 
