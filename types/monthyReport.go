@@ -70,12 +70,13 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 	
 	CG := coingecko.NewClient(httpClient)
 
-	singlePrice,err:=CG.SimpleSinglePrice(coinId,vsCurrency)
+	singlePrice,err:=CG.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
 	if err!=nil{
 		return "",err
 	}
-
-	coinprice:=float64(singlePrice.MarketPrice)
+	fmt.Println((*singlePrice)[0].CurrentPrice)
+	coinprice:=float64((*singlePrice)[0].CurrentPrice)
+	fmt.Println(coinprice)
 
 	outputcsv := "From_date,to_date,Commission,Delegator_Reward, ,Commission_Converted ,Delegator_Reward_Converted\n"
 	commissionSum:=0
@@ -90,9 +91,12 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 			commissionSum+=b.Commission
 			rewardSum+=b.Reward
 	}
+
+	realCommissionSum:=float64(commissionSum)*exponent
+	realRewardSum:=float64(rewardSum)*exponent
 	
 	outputcsv+=fmt.Sprintf("\n Sum, ,%f,%f, ,%f,%f\n",
-	float64(commissionSum)*exponent,float64(rewardSum)*exponent,float64(commissionSum)*coinprice ,float64(rewardSum)*coinprice)
+	realCommissionSum,realRewardSum,realCommissionSum*coinprice ,realRewardSum*coinprice)
 	
 	return outputcsv,nil
 }

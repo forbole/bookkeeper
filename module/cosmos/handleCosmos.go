@@ -22,7 +22,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 
 		// Writ .csv to "." 
 		for _ ,e:=range entries{
-			outputcsv,err := e.Rows.GetCSVConvertedPrice(6,data.ChainName,"USD")
+			outputcsv,err := e.Rows.GetCSVConvertedPrice(6,data.ChainName,"usd")
 			if err!=nil{
 				return nil,err
 			}
@@ -36,5 +36,63 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 		}
 	}
 
+	return filenames,nil
+}
+
+func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
+	var filenames []string
+	for _,detail:=range individualChains{
+		entries,err:=GetTxs(detail)
+		if err!=nil{
+			return nil,err
+		}
+		for _ ,e:=range entries{
+			outputcsv:= e.Rows.GetCSV()
+			if err!=nil{
+				return nil,err
+			}
+			fmt.Println(outputcsv)
+			filename := fmt.Sprintf("%s_txs.csv", e.Address)
+			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+			if err != nil {
+				return nil,err
+			}
+			filenames = append(filenames, filename)
+		}
+	}
+	return filenames,nil
+}
+
+func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]string,error){
+	var filenames []string
+	for _,detail:=range individualChains{
+		txs,err:=GetTxs(detail)
+		if err!=nil{
+			return nil,err
+		}
+
+		for _,tx:=range txs{
+			e,err:=GetRewardCommission(tx,detail.Denom)
+			if err!=nil{
+				return nil,err
+			}
+
+			
+				outputcsv:= e.Rows.GetCSV()
+				if err!=nil{
+					return nil,err
+				}
+				fmt.Println(outputcsv)
+				filename := fmt.Sprintf("%s_DelegatorCommission.csv", e.Address)
+				err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+				if err != nil {
+					return nil,err
+				}
+				
+				filenames = append(filenames, filename)
+			}
+
+		}
+		
 	return filenames,nil
 }

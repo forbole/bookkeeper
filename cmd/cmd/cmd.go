@@ -14,7 +14,7 @@ import (
 
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/input"
-	"github.com/forbole/bookkeeper/module/prometheus"
+	"github.com/forbole/bookkeeper/module/cosmos"
 
 	"github.com/forbole/bookkeeper/types"
 
@@ -52,20 +52,27 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
 	var filenames []string
-	validatorStatus,err:=prometheus.GetValidatorDetailsFromPrometheus(data.Prometheus)
-	if err!=nil{
-		return err
-	}
 
-	outputcsv := validatorStatus.GetCSV()
-		fmt.Println(outputcsv)
-		filename := fmt.Sprintf("%s.csv", "Validator status")
-		filenames = append(filenames, filename)
-		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
-		if err != nil {
-			return err
+	for _,chain:=range data.Chains{
+		switch chain.ChainType{
+		case "cosmos":
+			files,err := cosmos.HandleCosmosMonthyReport(chain.Details)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, files...)
+			
+			Txfiles,err := cosmos.HandleTxsTable(chain.Details)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, Txfiles...)
+
+			break
+		default:
+			break
 		}
-
+	}
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {
