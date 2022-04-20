@@ -3,8 +3,12 @@ package types
 import (
 	"fmt"
 	"math"
+	"net/http"
+	"time"
 
 	"github.com/forbole/bookkeeper/module/flow/utils"
+	coingecko "github.com/superoo7/go-gecko/v3"
+
 )
 
 type NodeInfo struct {
@@ -22,11 +26,23 @@ type NodeInfo struct {
 	} `json:"data"`
 }
 
-func (n NodeInfo) GetCSV(exp int,denom string,flowclient utils.FlowClient)(string,error){
-	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking\n"
-	commissionSum:=0
-	rewardSum:=0
+func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient)(string,error){
+	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking, ,TokensCommitted_converted,TokensRequestedToUnstake_converted,TokensRewarded_converted,TokensStaked_converted,TokensUnstaked_converted,TokensUnstaking_converted\n"
 	exponent := math.Pow(10, float64(-1*exp))
+
+	httpClient := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	
+	CG := coingecko.NewClient(httpClient)
+
+	singlePrice,err:=CG.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
+	if err!=nil{
+		return "",err
+	}
+	fmt.Println((*singlePrice)[0].CurrentPrice)
+	coinprice:=float64((*singlePrice)[0].CurrentPrice)
+	fmt.Println(coinprice)
 
 
 	for _, b := range n.Data.NodeInfosFromTable {
@@ -34,15 +50,22 @@ func (n NodeInfo) GetCSV(exp int,denom string,flowclient utils.FlowClient)(strin
 		if err!=nil{
 			return "",err
 		}
-		
-		outputcsv += fmt.Sprintf("%s,%f,%f,%f,%f,%f,%f\n",
-			date, 
-			float64(b.TokensCommitted)*exponent, float64(b.TokensRequestedToUnstake)*exponent,
-			float64(b.TokensRewarded)*exponent,float64(b.TokensStaked)*exponent,
-			float64(b.TokensUnstaked)*exponent,float64(b.TokensUnstaking)*exponent)
-	}
 
-	outputcsv+=fmt.Sprintf("\n Sum, ,%f,%f\n",float64(commissionSum)*exponent,float64(rewardSum)*exponent)
-	
+		commited:=float64(b.TokensCommitted)*exponent
+		requestToUnstake:= float64(b.TokensRequestedToUnstake)*exponent
+		rewarded:=float64(b.TokensRewarded)*exponent
+		staked:=float64(b.TokensStaked)*exponent
+		unstaked:=float64(b.TokensUnstaked)*exponent
+		unstaking:=float64(b.TokensUnstaking)*exponent
+		outputcsv += fmt.Sprintf("%s,%f,%f,%f,%f,%f,%f, ,%f,%f,%f,%f,%f,%f\n",
+			date, 
+			commited,requestToUnstake,
+			rewarded,staked,
+			unstaked,unstaking,
+			commited*coinprice,requestToUnstake*coinprice,
+			rewarded*coinprice,staked*coinprice,
+			unstaked*coinprice,unstaking*coinprice,)
+
+	}	
 	return outputcsv,nil
 }

@@ -11,9 +11,12 @@ import (
 	flowtypes "github.com/forbole/bookkeeper/module/flow/types"
 )
 
-func GetBalanceForEachMonth()(error){
+func HandleNodeInfos(){
+	GetBalanceForEachMonth()
+}
+
+func GetBalanceForEachMonth(nodeId string)(error){
 	limit:=10
-	nodeId:="21b21ad1ddb5e3002cc6a3faa55e23d70db014ee229c213f7a43769789125536"
 	queryStr:=fmt.Sprintf(`{
 		node_infos_from_table(limit: %d, where: {id: {_eq: "%s"}}) {
 			id
