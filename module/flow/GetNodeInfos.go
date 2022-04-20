@@ -1,55 +1,43 @@
 package flow
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"time"
 
-	flowtypes "github.com/forbole/bookkeeper/module/flow/types"
+	"github.com/forbole/bookkeeper/module/flow/utils"
+	"github.com/forbole/bookkeeper/module/flow/tables"
+
+	"github.com/forbole/bookkeeper/types"
 )
 
-func HandleNodeInfos(){
-	GetBalanceForEachMonth()
-}
+func HandleNodeInfos(flow types.Flow)([]string,error){
+	if len(flow.NodeIds)==0{
+		return nil,nil
+	}
+	var filenames []string
+	flowClient,err:=utils.NewFlowClient(flow.FlowEndpoint)
+	if err!=nil{
+		return nil,err
+	}
 
-func GetBalanceForEachMonth(nodeId string)(error){
-	limit:=10
-	queryStr:=fmt.Sprintf(`{
-		node_infos_from_table(limit: %d, where: {id: {_eq: "%s"}}) {
-			id
-			tokens_committed
-			tokens_requested_to_unstake
-			tokens_rewarded
-			tokens_staked
-			tokens_unstaked
-			tokens_unstaking
-			height
+	for _,id:=range flow.NodeIds{
+		nodeInfo,err:=tables.GetNodeInfo(id,flow.FlowJuno)
+		if err!=nil{
+			return nil,err
 		}
-		}`,limit,nodeId)
-	jsonData := map[string]string{
-		"query" : queryStr,
-	}
-	jsonValue, _ := json.Marshal(jsonData)
-	request, err := http.NewRequest("POST", "https://gql.flow.forbole.com/v1/graphql", bytes.NewBuffer(jsonValue))
-	client := &http.Client{Timeout: time.Second * 10}
-	response, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer response.Body.Close()
 
-	if response.StatusCode!=200{
-		return fmt.Errorf("Error when getting response:%s",response.Status)
+		outputcsv,err := nodeInfo.GetCSV(flow.Exponent,"flow","USD",*flowClient)
+		if err!=nil{
+			return nil,err
+		}
+		fmt.Println(outputcsv)
+		filename := fmt.Sprintf("%s_nodeInfo.csv", id)
+		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+		if err != nil {
+			return nil,err
+		}
+		filenames = append(filenames, filename)
 	}
-	bz, _ := ioutil.ReadAll(response.Body)
-	var txSearchRes flowtypes.NodeInfo
-	err = json.Unmarshal(bz, &txSearchRes)
-	if err != nil {
-		return fmt.Errorf("Fail to marshal:%s", err)
-	}
-	return nil
+	return filenames,nil
+	
 }
-

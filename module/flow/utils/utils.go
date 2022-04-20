@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/onflow/flow-go-sdk"
 	"github.com/onflow/flow-go-sdk/client"
 	"google.golang.org/grpc"
 )
