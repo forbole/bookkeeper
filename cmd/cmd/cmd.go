@@ -2,7 +2,6 @@ package parse
 
 import (
 	"fmt"
-	"time"
 
 	//"time"
 
@@ -13,11 +12,9 @@ import (
 	//"github.com/forbole/bookkeeper/balancesheet"
 	//"github.com/cosmos/cosmos-sdk/client"
 
+	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/input"
 	"github.com/forbole/bookkeeper/module/cosmos"
-	"github.com/forbole/bookkeeper/email"
-
-
 
 	"github.com/forbole/bookkeeper/types"
 
@@ -54,33 +51,26 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	var accountEntries []types.AddressMonthyReport
-	for _,chain:=range data.Chains{
-		if chain.ChainType=="cosmos"{
-			for _,d:=range chain.Details{
-				accountEntrie, err := cosmos.GetMonthyReport(d,
-					time.Date(2022,time.January,1,1,0,0,0,time.UTC))
-				if err != nil {
-					return err
-				}
-				accountEntries = append(accountEntries, accountEntrie...)
-			}
-			
-		}
-		
-	}
-	
-
-
 	var filenames []string
-	for _, account := range accountEntries {
-		outputcsv := account.Rows.GetCSV(6)
-		fmt.Println(outputcsv)
-		filename := fmt.Sprintf("%s.csv", account.Address)
-		filenames = append(filenames, filename)
-		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
-		if err != nil {
-			return err
+
+	for _,chain:=range data.Chains{
+		switch chain.ChainType{
+		case "cosmos":
+			files,err := cosmos.HandleCosmosMonthyReport(chain.Details)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, files...)
+			
+			Txfiles,err := cosmos.HandleTxsTable(chain.Details)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, Txfiles...)
+
+			break
+		default:
+			break
 		}
 	}
 

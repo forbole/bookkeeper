@@ -173,7 +173,7 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 			return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
 		}
 		if resp.StatusCode != 200 {
-			return nil, fmt.Errorf("Fail to get tx from rpc:Status code:%d", resp.StatusCode)
+			return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
 		}
 
 		defer resp.Body.Close()

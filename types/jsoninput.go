@@ -38,8 +38,14 @@ type EmailDetails struct {
 type Data struct {
 	Chains       []BigChainType `json:"chains"`
 	EmailDetails EmailDetails   `json:"email_details"`
+	Prometheus   string         `json:"prometheus"`
+	Flow Flow `json:"flow"`
 }
 
-func (v IndividualChain) DecodeAount() {
-
+type Flow struct{
+	FlowJuno string `json:"flowjuno"`
+	FlowEndpoint string `json:"flow_endpoint"`
+	NodeIds []string `json:"nodeIds"`
+	Denom   string    `json:"denom"`
+	Exponent int `json:"int"`
 }
