@@ -26,7 +26,7 @@ func HandleNodeInfos(flow types.Flow)([]string,error){
 			return nil,err
 		}
 
-		outputcsv,err := nodeInfo.GetCSV(flow.Exponent,"flow","USD",*flowClient)
+		outputcsv,err := nodeInfo.GetCSV(flow.Exponent,"flow","USD",*flowClient,flow.LastSpork)
 		if err!=nil{
 			return nil,err
 		}

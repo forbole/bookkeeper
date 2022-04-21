@@ -8,7 +8,6 @@ import (
 
 	"github.com/forbole/bookkeeper/module/flow/utils"
 	coingecko "github.com/superoo7/go-gecko/v3"
-
 )
 
 type NodeInfo struct {
@@ -26,7 +25,7 @@ type NodeInfo struct {
 	} `json:"data"`
 }
 
-func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient)(string,error){
+func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient,lastspork int)(string,error){
 	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking, ,TokensCommitted_converted,TokensRequestedToUnstake_converted,TokensRewarded_converted,TokensStaked_converted,TokensUnstaked_converted,TokensUnstaking_converted\n"
 	exponent := math.Pow(10, float64(-1*exp))
 
@@ -46,7 +45,8 @@ func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient util
 
 
 	for _, b := range n.Data.NodeInfosFromTable {
-		date,err:=flowclient.GetDateByHeight(uint64(b.Height))
+		fmt.Println(flowclient)
+		date,err:=(flowclient).GetDateByHeight(uint64(b.Height),lastspork)
 		if err!=nil{
 			return "",err
 		}
@@ -69,3 +69,4 @@ func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient util
 	}	
 	return outputcsv,nil
 }
+
