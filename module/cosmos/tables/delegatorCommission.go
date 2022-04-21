@@ -2,7 +2,7 @@ package cosmos
 
 import (
 	"fmt"
-	"strconv"
+	"math/big"
 	"strings"
 
 	"github.com/forbole/bookkeeper/types"
@@ -12,11 +12,11 @@ func GetRewardCommission(addressBalanceEntry types.AddressBalanceEntry,denom str
 	var rewardCommission types.RewardCommissions
 	for _,balanceEntry:=range addressBalanceEntry.Rows{
 		instring:=strings.ReplaceAll(balanceEntry.In,denom,"")
-		fmt.Println(instring)
-		in,err:=strconv.Atoi(instring)
-		fmt.Println(in)
-		if err!=nil{
-			return nil,err
+		//fmt.Println(instring)
+		in := big.NewInt(0)
+		_, ok := in.SetString(instring, 10); 
+		if !ok {
+			return nil,fmt.Errorf("Cannot parse the int:%s",instring)
 		}
 
 		if balanceEntry.MsgType==
@@ -24,14 +24,14 @@ func GetRewardCommission(addressBalanceEntry types.AddressBalanceEntry,denom str
 		balanceEntry.MsgType==
 		"withdraw_delegator_reward"{
 			c:=types.NewRewardCommission(balanceEntry.TxHash,balanceEntry.Height,
-				denom,0,in)
+				denom, big.NewInt(0),in)
 			rewardCommission=append(rewardCommission,c)
 		}else if balanceEntry.MsgType==
 		"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission" ||
 		balanceEntry.MsgType==
 		"withdraw_validator_commission"{
 			c:=types.NewRewardCommission(balanceEntry.TxHash,balanceEntry.Height,
-				denom,in,0)
+				denom,in, big.NewInt(0))
 			rewardCommission=append(rewardCommission,c)
 		}
 	}

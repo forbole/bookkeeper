@@ -2,6 +2,7 @@ package cosmos
 
 import (
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
@@ -15,6 +16,9 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 	balanceEntries,err:=GetTxs(details)
 	if err!=nil{
 		return nil,err
+	}
+	if balanceEntries==nil{
+		return nil,nil
 	}
 	t:=*(lastMonth(time.Now()))
 	for _,b:=range balanceEntries{
@@ -30,12 +34,12 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 			if err!=nil{
 				return nil,err
 			}
-			commission:=0
-			reward:=0
+			commission:=big.NewInt(0)
+			reward:=big.NewInt(0)
 			rows:=rewardCommission.Rows
-			for rows[i].Height>targetHeight && i<len(rows)-1{
-					commission+=rows[i].Commission
-					reward+=rows[i].Reward
+			for len(rows)>i && rows[i].Height>targetHeight{
+					commission.Add(commission,rows[i].Commission)
+					reward.Add(reward,rows[i].Reward)
 					i++
 			}
 			fmt.Println(reward)

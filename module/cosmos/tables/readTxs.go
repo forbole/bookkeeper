@@ -31,6 +31,9 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 		if err != nil {
 			return nil, err
 		}
+		if res==nil{
+			return nil,nil
+		}
 		for _, txs := range res {
 			for _, tx := range txs.Result.Txs {
 
