@@ -15,6 +15,7 @@ import (
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/input"
 	"github.com/forbole/bookkeeper/module/cosmos"
+	"github.com/forbole/bookkeeper/module/flow"
 
 	"github.com/forbole/bookkeeper/types"
 
@@ -67,7 +68,13 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		}
 	}
 
-	
+	flowfile,err:=flow.HandleNodeInfos(data.Flow)
+	if err!=nil{
+		return err
+	}
+
+	filenames = append(filenames, flowfile...)
+
 
 	
 

@@ -46,7 +46,7 @@ type Data struct {
 type Flow struct{
 	FlowJuno string `json:"flowjuno"`
 	FlowEndpoint string `json:"flow_endpoint"`
-	NodeIds []string `json:"nodeIds"`
+	NodeIds []string `json:"node_ids"`
 	Denom   string    `json:"denom"`
-	Exponent int `json:"int"`
+	Exponent int `json:"exponent"`
 }
