@@ -12,7 +12,7 @@ import (
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string,error){
+func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrency string)([]string,error){
 	var filenames []string
 
 	for _,data :=range individualChains{
@@ -24,7 +24,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain)([]string
 
 		// Writ .csv to "." 
 		for _ ,e:=range entries{
-			outputcsv,err := e.Rows.GetCSVConvertedPrice(6,data.ChainName,"usd")
+			outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Exponent,data.ChainName,vsCurrency)
 			if err!=nil{
 				return nil,err
 			}

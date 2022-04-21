@@ -40,6 +40,7 @@ type Data struct {
 	EmailDetails EmailDetails   `json:"email_details"`
 	Prometheus   string         `json:"prometheus"`
 	Flow Flow `json:"flow"`
+	VsCurrency string `json:"vs_currency"`
 }
 
 type Flow struct{

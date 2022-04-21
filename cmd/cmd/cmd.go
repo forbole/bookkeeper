@@ -56,7 +56,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	for _,chain:=range data.Chains{
 		switch chain.ChainType{
 		case "cosmos":
-			files,err := cosmos.HandleCosmosMonthyReport(chain.Details)
+			files,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency)
 			if err!=nil{
 				return err
 			}
