@@ -74,6 +74,9 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 	if err!=nil{
 		return "",err
 	}
+	if len(*singlePrice)==0{
+		return "",fmt.Errorf("Error getting coinsmarket")
+	}
 	fmt.Println((*singlePrice)[0].CurrentPrice)
 	coinprice:=float64((*singlePrice)[0].CurrentPrice)
 	fmt.Println(coinprice)

@@ -182,6 +182,9 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		if err != nil {
 			return nil, fmt.Errorf("Fail to marshal:%s", err)
 		}
+		if len(txSearchRes.Result.Txs)==0{
+			return nil,nil
+		}
 		lastHeight, err = strconv.Atoi(
 			txSearchRes.Result.Txs[len(txSearchRes.Result.Txs)-1].Height,
 		)

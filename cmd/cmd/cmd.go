@@ -61,18 +61,15 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files...)
-			
-			Txfiles,err := cosmos.HandleTxsTable(chain.Details)
-			if err!=nil{
-				return err
-			}
-			filenames = append(filenames, Txfiles...)
-
 			break
 		default:
 			break
 		}
 	}
+
+	
+
+	
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {

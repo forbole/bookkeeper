@@ -19,7 +19,7 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 	t:=*(lastMonth(time.Now()))
 	for _,b:=range balanceEntries{
 		var monthyReportRows types.MonthyReportRows
-		rewardCommission,err:=GetRewardCommission(b,"uatom")
+		rewardCommission,err:=GetRewardCommission(b,details.Denom)
 		if err!=nil{
 			return nil,err
 		}
@@ -33,7 +33,7 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 			commission:=0
 			reward:=0
 			rows:=rewardCommission.Rows
-			for rows[i].Height>targetHeight{
+			for rows[i].Height>targetHeight && i<len(rows)-1{
 					commission+=rows[i].Commission
 					reward+=rows[i].Reward
 					i++
