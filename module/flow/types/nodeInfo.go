@@ -26,7 +26,7 @@ type NodeInfo struct {
 }
 
 func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient,lastspork int)(string,error){
-	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking, ,TokensCommitted_converted,TokensRequestedToUnstake_converted,TokensRewarded_converted,TokensStaked_converted,TokensUnstaked_converted,TokensUnstaking_converted\n"
+	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking, ,TokensCommitted_value,TokensRequestedToUnstake_value,TokensRewarded_value,TokensStaked_value,TokensUnstaked_value,TokensUnstaking_value\n"
 	exponent := math.Pow(10, float64(-1*exp))
 
 	httpClient := &http.Client{

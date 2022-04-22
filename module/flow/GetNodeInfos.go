@@ -10,7 +10,7 @@ import (
 	"github.com/forbole/bookkeeper/types"
 )
 
-func HandleNodeInfos(flow types.Flow)([]string,error){
+func HandleNodeInfos(flow types.Flow,vsCurrency string)([]string,error){
 	if len(flow.NodeIds)==0{
 		return nil,nil
 	}
@@ -26,7 +26,7 @@ func HandleNodeInfos(flow types.Flow)([]string,error){
 			return nil,err
 		}
 
-		outputcsv,err := nodeInfo.GetCSV(flow.Exponent,"flow","USD",*flowClient,flow.LastSpork)
+		outputcsv,err := nodeInfo.GetCSV(flow.Exponent,"flow",vsCurrency,*flowClient,flow.LastSpork)
 		if err!=nil{
 			return nil,err
 		}

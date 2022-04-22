@@ -68,15 +68,12 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		}
 	}
 
-	flowfile,err:=flow.HandleNodeInfos(data.Flow)
+	flowfile,err:=flow.HandleNodeInfos(data.Flow,data.VsCurrency)
 	if err!=nil{
 		return err
 	}
 
 	filenames = append(filenames, flowfile...)
-
-
-	
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {
