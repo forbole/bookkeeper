@@ -2,8 +2,8 @@ package types
 
 import (
 	"fmt"
-	"math/big"
 	"math"
+	"math/big"
 	"net/http"
 	"time"
 
@@ -96,7 +96,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 	coinprice:=new(big.Float).SetFloat64(c)
 	fmt.Println(coinprice)
 
-	outputcsv := "From_date,to_date,Commission,Delegator_Reward, ,Commission_Converted ,Delegator_Reward_Converted\n"
+	outputcsv := "From_date,to_date,Commission,Delegator_Reward, ,Commission_value ,Delegator_Reward_value\n"
 
 	exponent:=new(big.Float).SetFloat64((math.Pow(10,float64(-1 * exp))))
 

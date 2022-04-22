@@ -49,4 +49,5 @@ type Flow struct{
 	NodeIds []string `json:"node_ids"`
 	Denom   string    `json:"denom"`
 	Exponent int `json:"exponent"`
+	LastSpork int `json:"last_spork"`
 }
