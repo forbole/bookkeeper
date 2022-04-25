@@ -62,6 +62,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files...)
+			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, files2...)
 			break
 		default:
 			break

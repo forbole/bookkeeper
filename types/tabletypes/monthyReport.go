@@ -20,15 +20,17 @@ type MonthyReportRow struct{
 
 	Commission *big.Int
 	Reward *big.Int
+	Denom string
 }
 
-func NewMonthyReportRow(fromDate time.Time,toDate time.Time,commission *big.Int,reward *big.Int)MonthyReportRow{
+func NewMonthyReportRow(fromDate time.Time,toDate time.Time,commission *big.Int,reward *big.Int,denom string)MonthyReportRow{
 	return MonthyReportRow{
 		FromDate: fromDate,
 		ToDate: toDate,
 
 		Commission: commission,
 		Reward: reward,
+		Denom: denom,
 	}
 }
 
@@ -49,7 +51,7 @@ func NewAddressMonthyReport(address string,rewardCommissions MonthyReportRows)Ad
 
 // GetCSV generate the monthy report and turn the result into exponent form
 func (v MonthyReportRows) GetCSV(exp int)string{
-	outputcsv := "From_date,to_date,Commission,Delegator_Reward\n"
+	outputcsv := "From_date,to_date,Commission,Delegator_Reward,denom\n"
 	rewardSum:=big.NewInt(0)
 	commissionSum:=big.NewInt(0)
 
@@ -61,8 +63,8 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 		c:=new(big.Float).SetInt(b.Commission)
 		r:=new(big.Float).SetInt(b.Reward)
 
-		outputcsv += fmt.Sprintf("%s,%s,%v,%v\n",
-			b.FromDate,b.ToDate, c.Mul(c,exponent),r.Mul(r,exponent))
+		outputcsv += fmt.Sprintf("%s,%s,%v,%v,%s\n",
+			b.FromDate,b.ToDate, c.Mul(c,exponent),r.Mul(r,exponent),b.Denom)
 
 			commissionSum.Add(commissionSum,b.Commission)
 			rewardSum.Add(rewardSum,b.Reward)

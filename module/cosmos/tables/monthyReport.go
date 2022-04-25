@@ -6,9 +6,8 @@ import (
 	"time"
 
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
-	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 	types "github.com/forbole/bookkeeper/types"
-
+	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 )
 
 // GetMonthyReport get monthy report from now to desired date(in the past)
@@ -36,17 +35,31 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]tabletypes.
 			if err!=nil{
 				return nil,err
 			}
-			commission:=big.NewInt(0)
-			reward:=big.NewInt(0)
 			rows:=rewardCommission.Rows
-			for len(rows)>i && rows[i].Height>targetHeight{
-					commission.Add(commission,rows[i].Commission)
-					reward.Add(reward,rows[i].Reward)
-					i++
+			recordForMonth :=make(map[string]*RewardCommission)
+			for ;len(rows)>i && rows[i].Height>targetHeight;i++{
+				// recordForMonth have denom as key and sum up reward and commission for the month 
+				denomEntry,ok:=recordForMonth[rows[i].Denom]
+				if !ok{
+					e:=&RewardCommission{
+						Commission:big.NewInt(0),
+						Reward:big.NewInt(0),
+					 }
+					 denomEntry=e
+				}
+
+				commission:=big.NewInt(0).Add(denomEntry.Commission,rows[i].Commission)
+				reward:=big.NewInt(0).Add(denomEntry.Reward,rows[i].Reward)
+				denomEntry.Commission=new(big.Int).Set(commission)
+				denomEntry.Reward=new(big.Int).Set(reward) 
+				recordForMonth[rows[i].Denom]=denomEntry
+				fmt.Println(denomEntry.Commission)
 			}
-			fmt.Println(reward)
-			fmt.Println(commission)
-			monthyReportRows=append(monthyReportRows,tabletypes.NewMonthyReportRow(t,*(nextMonth(t)),commission,reward))
+
+			for key, element := range recordForMonth {
+				fmt.Println("Key:", key, "=>", "Element:", element)
+				monthyReportRows=append(monthyReportRows,tabletypes.NewMonthyReportRow(t,*(nextMonth(t)),element.Commission,element.Reward,key))
+			}
 			t=*(lastMonth(t))
 	
 		}
@@ -155,3 +168,7 @@ func lastMonth(t time.Time)*time.Time{
 	return &date
 }
 
+type RewardCommission struct {
+	Commission *big.Int
+	Reward *big.Int
+}
