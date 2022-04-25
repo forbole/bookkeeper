@@ -9,10 +9,10 @@ import (
 	"time"
 
 	promtypes "github.com/forbole/bookkeeper/module/prometheus/types"
-	"github.com/forbole/bookkeeper/types"
+	"github.com/forbole/bookkeeper/types/tabletypes"
 )
 
-func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTable,error){
+func GetValidatorDetailsFromPrometheus(endpoint string)(tabletypes.ValidatorStatusTable,error){
 	validatorDelegationCount,err := getValidatorDelegationCount(endpoint)
 	if err!=nil{
 		return nil,err
@@ -38,7 +38,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTab
 		return nil,err
 	}
 
-	var validatorStatus []types.ValidatorStatus
+	var validatorStatus []tabletypes.ValidatorStatus
 	for _,r:=range validatorDelegationCount.Data.Result{
 		chain:=r.Metric.ChainID
 		//fmt.Println(chain)
@@ -140,7 +140,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string)(types.ValidatorStatusTab
 			}
 		}
 
-		status:=types.NewValidatorStatus(timeStampReal,
+		status:=tabletypes.NewValidatorStatus(timeStampReal,
 			r.Metric.ChainID,delegationCount,commissionRate,totalvp,vpRanking,selfStake,vp)
 		fmt.Println(chain)
 

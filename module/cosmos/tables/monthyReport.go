@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
-	"github.com/forbole/bookkeeper/types"
+	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
+	types "github.com/forbole/bookkeeper/types"
+
 )
 
 // GetMonthyReport get monthy report from now to desired date(in the past)
-func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.AddressMonthyReport,error){
-	var monthyReports []types.AddressMonthyReport
+func GetMonthyReport(details types.IndividualChain,from time.Time)([]tabletypes.AddressMonthyReport,error){
+	var monthyReports []tabletypes.AddressMonthyReport
 
 	balanceEntries,err:=GetTxs(details)
 	if err!=nil{
@@ -22,8 +24,8 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 	}
 	t:=*(lastMonth(time.Now()))
 	for _,b:=range balanceEntries{
-		var monthyReportRows types.MonthyReportRows
-		rewardCommission,err:=GetRewardCommission(b,details.Denom)
+		var monthyReportRows tabletypes.MonthyReportRows
+		rewardCommission,err:=GetRewardCommission(b)
 		if err!=nil{
 			return nil,err
 		}
@@ -44,11 +46,11 @@ func GetMonthyReport(details types.IndividualChain,from time.Time)([]types.Addre
 			}
 			fmt.Println(reward)
 			fmt.Println(commission)
-			monthyReportRows=append(monthyReportRows,types.NewMonthyReportRow(t,*(nextMonth(t)),commission,reward))
+			monthyReportRows=append(monthyReportRows,tabletypes.NewMonthyReportRow(t,*(nextMonth(t)),commission,reward))
 			t=*(lastMonth(t))
 	
 		}
-		monthyReports=append(monthyReports,types.NewAddressMonthyReport(b.Address,monthyReportRows))
+		monthyReports=append(monthyReports,tabletypes.NewAddressMonthyReport(b.Address,monthyReportRows))
 	}
 	return monthyReports,nil
 }

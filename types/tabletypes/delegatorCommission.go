@@ -1,4 +1,4 @@
-package types
+package tabletypes
 
 import (
 	"fmt"
@@ -38,12 +38,12 @@ func NewAddressRewardCommission(address string,rewardCommissions RewardCommissio
 }
 
 func (v RewardCommissions) GetCSV()string{
-	outputcsv := "height,txHash,Commission,Delegator_Reward\n"
+	outputcsv := "height,txHash,Commission,Delegator_Reward,denom\n"
 	commissionSum:=big.NewInt(0)
 	rewardSum:=big.NewInt(0)
 	for _, b := range v {
-		outputcsv += fmt.Sprintf("%d,%s,%v,%v\n",
-			b.Height, b.TxHash, b.Commission, b.Reward)
+		outputcsv += fmt.Sprintf("%d,%s,%v,%v,%s\n",
+			b.Height, b.TxHash, b.Commission, b.Reward,b.Denom)
 			commissionSum.Add(commissionSum,b.Commission)
 			rewardSum.Add(rewardSum,b.Reward)
 	}

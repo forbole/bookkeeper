@@ -13,7 +13,7 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/forbole/bookkeeper/email"
-	"github.com/forbole/bookkeeper/input"
+	"github.com/forbole/bookkeeper/utils"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
 
@@ -44,7 +44,7 @@ func ParseCmd() *cobra.Command {
 func Execute(cmd *cobra.Command, arg []string) error {
 	jsonPath, _ := cmd.Flags().GetString(flagInputJsonPath)
 
-	data, err := input.ImportJsonInput(jsonPath)
+	data, err := utils.ImportJsonInput(jsonPath)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	for _,chain:=range data.Chains{
 		switch chain.ChainType{
 		case "cosmos":
-			files,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency)
+			files,err := cosmos.HandleRewardCommissionTable(chain.Details)
 			if err!=nil{
 				return err
 			}

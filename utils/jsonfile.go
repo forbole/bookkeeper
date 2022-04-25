@@ -1,11 +1,11 @@
-package input
+package utils
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
 
-	"github.com/forbole/bookkeeper/types"
+	types "github.com/forbole/bookkeeper/types"
 )
 
 func ImportJsonInput(path string) (*types.Data, error) {

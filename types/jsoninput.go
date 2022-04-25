@@ -5,10 +5,15 @@ type BigChainType struct {
 	Details   []IndividualChain `json:"details"`
 }
 
+type Denom struct{
+	Denom string  `json:"denom"`
+	Exponent           int `json:"exponent"`
+	CoinId string `json:"coin_id"`
+}
+
 type IndividualChain struct {
 	ChainName          string            `json:"chain_name"`
-	Denom              string            `json:"denom"`
-	Exponent           int               `json:"exponent"`
+	Denom              []Denom            `json:"denom"`
 	Validators         []ValidatorDetail `json:"validators"`
 	FundHoldingAccount []string          `json:"fund_holding_account"`
 	GrpcEndpoint       string            `json:"grpc_endpoint"`

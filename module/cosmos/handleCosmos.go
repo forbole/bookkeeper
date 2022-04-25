@@ -5,8 +5,9 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/forbole/bookkeeper/types"
 	tables "github.com/forbole/bookkeeper/module/cosmos/tables"
+	types "github.com/forbole/bookkeeper/types"
+
 
 )
 
@@ -24,7 +25,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 
 		// Writ .csv to "." 
 		for _ ,e:=range entries{
-			outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Exponent,data.ChainName,vsCurrency)
+			outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Denom,vsCurrency)
 			if err!=nil{
 				return nil,err
 			}
@@ -74,7 +75,7 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]str
 		}
 
 		for _,tx:=range txs{
-			e,err:=tables.GetRewardCommission(tx,detail.Denom)
+			e,err:=tables.GetRewardCommission(tx)
 			if err!=nil{
 				return nil,err
 			}

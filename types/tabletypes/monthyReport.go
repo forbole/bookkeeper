@@ -1,13 +1,16 @@
-package types
+package tabletypes
 
 import (
 	"fmt"
 	"math"
 	"math/big"
-	"net/http"
+	//"net/http"
 	"time"
 
-	coingecko "github.com/superoo7/go-gecko/v3"
+	//coingecko "github.com/superoo7/go-gecko/v3"
+	//"github.com/forbole/bookkeeper/utils"
+	"github.com/forbole/bookkeeper/types"
+
 )
 
 // MonthyReportRow represent a row of monthy report
@@ -74,14 +77,16 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 }
 
 // GetCSV generate the monthy report and turn the result into exponent form
-func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrency string)(string,error){
+func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
+	/*
+	rewardSum:=big.NewInt(0)
+	commissionSum:=big.NewInt(0)
+	 denomMap:=utils.ConvertDenomToMap(denom)
+
+	// get coin price
 	httpClient := &http.Client{
 		Timeout: time.Second * 10,
 	}
-
-	rewardSum:=big.NewInt(0)
-	commissionSum:=big.NewInt(0)
-	
 	CG := coingecko.NewClient(httpClient)
 
 	singlePrice,err:=CG.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
@@ -122,6 +127,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(exp int, coinId string, vsCurrenc
 	outputcsv+=fmt.Sprintf("\n Sum, ,%f,%f, ,%f,%f\n",
 	realCommissionSum,realRewardSum,
 	new(big.Float).Mul(realCommissionSum,coinprice) ,new(big.Float).Mul(realRewardSum,coinprice))
-	
+	 */
+	 outputcsv:="Not implemented"
 	return outputcsv,nil
 }

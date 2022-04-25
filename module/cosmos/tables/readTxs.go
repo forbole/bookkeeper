@@ -13,7 +13,10 @@ import (
 	//"strings"
 
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
-	"github.com/forbole/bookkeeper/types"
+	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
+	types "github.com/forbole/bookkeeper/types"
+
+
 )
 
 const (
@@ -22,11 +25,11 @@ const (
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) {
-	var accountbalanceEntries []types.AddressBalanceEntry
+func GetTxs(details types.IndividualChain) ([]tabletypes.AddressBalanceEntry, error) {
+	var accountbalanceEntries []tabletypes.AddressBalanceEntry
 
 	for _, address := range details.FundHoldingAccount {
-		var balanceEntries []types.BalanceEntry
+		var balanceEntries []tabletypes.BalanceEntry
 		res, err := readTxs(details.RpcEndpoint, address, height)
 		if err != nil {
 			return nil, err
@@ -50,7 +53,7 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 				}
 				if err != nil {
 					balanceEntries = append(balanceEntries,
-						types.NewBalanceEntry(height, tx.Hash, "0", "0", "Error reading Log for that tx"))
+						tabletypes.NewBalanceEntry(height, tx.Hash, "0", "0", "Error reading Log for that tx"))
 					continue
 					/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
 					err,tx.TxResult.Log,tx.Hash) */
@@ -67,14 +70,14 @@ func GetTxs(details types.IndividualChain) ([]types.AddressBalanceEntry, error) 
 				}
 			}
 			accountbalanceEntries = append(accountbalanceEntries,
-				types.NewAccountBalanceSheet(address, balanceEntries))
+				tabletypes.NewAccountBalanceSheet(address, balanceEntries))
 		}
 	
 	return accountbalanceEntries, nil
 }
 
-func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]types.BalanceEntry,error){
-	var balanceEntries []types.BalanceEntry
+func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tabletypes.BalanceEntry,error){
+	var balanceEntries []tabletypes.BalanceEntry
 
 	for _, log := range logs {
 		// There will be one transaction
@@ -142,7 +145,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]types.
 			}
 		}
 		balanceEntries = append(balanceEntries,
-			types.NewBalanceEntry(height, hash, in, out, msgType))
+			tabletypes.NewBalanceEntry(height, hash, in, out, msgType))
 	}
 
 	
