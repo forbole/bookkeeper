@@ -13,7 +13,7 @@ import (
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrency string)([]string,error){
+func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrency string,outputFolder string)([]string,error){
 	var filenames []string
 
 	for _,data :=range individualChains{
@@ -31,7 +31,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 				return nil,err
 			}
 			fmt.Println(outputcsv)
-			filename := fmt.Sprintf("%s.csv", e.Address)
+			filename := fmt.Sprintf("%s/%s_monthy_report.csv", outputFolder,e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
 			if err != nil {
 				return nil,err
@@ -43,7 +43,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 	return filenames,nil
 }
 
-func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
+func HandleTxsTable(individualChains []types.IndividualChain,outputFolder string)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
 		entries,err:=tables.GetTxs(detail)
@@ -56,7 +56,7 @@ func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
 				return nil,err
 			}
 			fmt.Println(outputcsv)
-			filename := fmt.Sprintf("%s_txs.csv", e.Address)
+			filename := fmt.Sprintf("%s/%s_txs.csv", outputFolder,e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
 			if err != nil {
 				return nil,err
@@ -67,7 +67,7 @@ func HandleTxsTable(individualChains []types.IndividualChain)([]string,error){
 	return filenames,nil
 }
 
-func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]string,error){
+func HandleRewardCommissionTable(individualChains []types.IndividualChain,outputFolder string)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
 		txs,err:=tables.GetTxs(detail)
@@ -86,7 +86,7 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain)([]str
 					return nil,err
 				}
 				fmt.Println(outputcsv)
-				filename := fmt.Sprintf("%s_DelegatorCommission.csv", e.Address)
+				filename := fmt.Sprintf("%s/%s_reward_commission.csv", outputFolder,e.Address)
 				err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
 				if err != nil {
 					return nil,err

@@ -28,6 +28,7 @@ import (
 
 const (
 	flagInputJsonPath = "input_json_path"
+	flagOutputFolder = "output_folder"
 )
 
 // ParseCmd returns the command that should be run when we want to start parsing a chain state.
@@ -38,11 +39,13 @@ func ParseCmd() *cobra.Command {
 		RunE:  Execute,
 	}
 	cmd.Flags().String(flagInputJsonPath, "./input.json", "The path that the input file should read from")
+	cmd.Flags().String(flagOutputFolder, "./output", "The path output .csv file sit at")
 	return &cmd
 }
 
 func Execute(cmd *cobra.Command, arg []string) error {
 	jsonPath, _ := cmd.Flags().GetString(flagInputJsonPath)
+	outputFile, _ := cmd.Flags().GetString(flagOutputFolder)
 
 	data, err := utils.ImportJsonInput(jsonPath)
 	if err != nil {
@@ -57,12 +60,12 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	for _,chain:=range data.Chains{
 		switch chain.ChainType{
 		case "cosmos":
-			files,err := cosmos.HandleRewardCommissionTable(chain.Details)
+			files,err := cosmos.HandleRewardCommissionTable(chain.Details,outputFile)
 			if err!=nil{
 				return err
 			}
 			filenames = append(filenames, files...)
-			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency)
+			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency,outputFile)
 			if err!=nil{
 				return err
 			}
