@@ -20,6 +20,7 @@ require (
 	github.com/go-test/deep v1.0.5 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/onflow/atree v0.1.0-beta1.0.20211027184039-559ee654ece9 // indirect
 	github.com/onflow/cadence v0.20.1 // indirect

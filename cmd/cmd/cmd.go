@@ -17,6 +17,9 @@ import (
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
 
+	"github.com/joho/godotenv"
+
+
 	"github.com/forbole/bookkeeper/types"
 
 	//"google.golang.org/grpc"
@@ -46,6 +49,12 @@ func ParseCmd() *cobra.Command {
 func Execute(cmd *cobra.Command, arg []string) error {
 	jsonPath, _ := cmd.Flags().GetString(flagInputJsonPath)
 	outputFile, _ := cmd.Flags().GetString(flagOutputFolder)
+
+	err := godotenv.Load()
+ 	 if err != nil {
+    	return err
+  	}
+
 
 	data, err := utils.ImportJsonInput(jsonPath)
 	if err != nil {
