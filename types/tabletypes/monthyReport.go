@@ -96,6 +96,11 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 	commissionInMonth:=new(big.Float).SetFloat64(0)
 	for i,row:=range v{
 			// since they are same day, add it together
+			if _, ok := denomMap[row.Denom]; !ok {
+				// skip if that is not exist
+				fmt.Println(fmt.Sprintf("Coin is not supported:%s",row.Denom))
+				continue
+			}
 			c:=new(big.Float).SetInt(row.Commission)
 			commission:=new(big.Float).Mul(c,denomMap[row.Denom].Exponent)
 			commissionConverted:=new(big.Float).Mul(commission,denomMap[row.Denom].Price)
@@ -107,17 +112,23 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 			rewardConverted:=new(big.Float).Mul(reward,denomMap[row.Denom].Price)
 			newRewardInMonth:=new(big.Float).Add(rewardConverted,rewardInMonth)
 			rewardInMonth=newRewardInMonth
+			fmt.Println(rewardInMonth)
+			fmt.Println(commissionInMonth)
+
 		
 		if i+1==len(v) || v[i+1].FromDate!=currentFromDate{
 			// If next entry changed date, write
 			outputcsv += fmt.Sprintf("%s,%s,%f,%f,\n",
 			row.FromDate,row.ToDate,rewardInMonth,commissionInMonth)
-			
 			newRewardSum:=new(big.Float).Add(rewardSum,rewardInMonth)
 			newCommissionSum:=new(big.Float).Add(commissionInMonth,commissionSum)
 
 			rewardSum=newRewardSum
 			commissionSum=newCommissionSum
+			if i+1==len(v){
+				break
+			}
+
 
 			// Date changed, reset
 			rewardInMonth=new(big.Float).SetFloat64(0)

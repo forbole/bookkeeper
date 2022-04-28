@@ -9,7 +9,7 @@ type Denom struct{
 	Denom string  `json:"denom"`
 	Exponent           int `json:"exponent"`
 	CoinId string `json:"coin_id"`
-	Stablecoin bool `json:"stablecoin"`
+	Cointype string `json:"cointype"`
 }
 
 type IndividualChain struct {
