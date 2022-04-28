@@ -82,41 +82,51 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 // GetCSV generate the monthy report and turn the result into exponent form
 func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
 	
-	rewardSum:=big.NewInt(0)
-	commissionSum:=big.NewInt(0)
-	denomMap,err:=utils.ConvertDenomToMap(denom)
+	rewardSum:=big.NewFloat(0)
+	commissionSum:=big.NewFloat(0)
+	denomMap,err:=utils.ConvertDenomToMap(denom,vsCurrency)
 	if err!=nil{
 		return "",err
 	}
-	
-	/*
-	outputcsv := "From_date,to_date,Commission,Delegator_Reward, ,Commission_value ,Delegator_Reward_value\n"
 
-	exponent:=new(big.Float).SetFloat64((math.Pow(10,float64(-1 * exp))))
+	outputcsv := "From_date,to_date,Commission_value ,Delegator_Reward_value\n"
 
-	for _, b := range v {
-		c:=new(big.Float).SetInt(b.Commission)
-		r:=new(big.Float).SetInt(b.Reward)
-		cexp:=new(big.Float).Mul(c,exponent)
-		rexp:=new(big.Float).Mul(r,exponent)
-		cexpCoinPrice:=new(big.Float).Mul(cexp,coinprice)
-		rexpCoinPrice:=new(big.Float).Mul(rexp,coinprice)
-		outputcsv += fmt.Sprintf("%s,%s,%f,%f, ,%f,%f\n",
-			b.FromDate,b.ToDate, cexp,rexp,cexpCoinPrice,rexpCoinPrice)
-			commissionSum.Add(commissionSum,b.Commission)
-			rewardSum.Add(rewardSum,b.Reward)
+	currentFromDate:=v[0].FromDate
+	rewardInMonth:=new(big.Float).SetFloat64(0)
+	commissionInMonth:=new(big.Float).SetFloat64(0)
+	for i,row:=range v{
+			// since they are same day, add it together
+			c:=new(big.Float).SetInt(row.Commission)
+			commission:=new(big.Float).Mul(c,denomMap[row.Denom].Exponent)
+			commissionConverted:=new(big.Float).Mul(commission,denomMap[row.Denom].Price)
+			newCommission:=new(big.Float).Add(commissionConverted,commissionInMonth)
+			commissionInMonth=newCommission
+
+			r:=new(big.Float).SetInt(row.Reward)
+			reward:=new(big.Float).Mul(r,denomMap[row.Denom].Exponent)
+			rewardConverted:=new(big.Float).Mul(reward,denomMap[row.Denom].Price)
+			newRewardInMonth:=new(big.Float).Add(rewardConverted,rewardInMonth)
+			rewardInMonth=newRewardInMonth
+		
+		if i+1==len(v) || v[i+1].FromDate!=currentFromDate{
+			// If next entry changed date, write
+			outputcsv += fmt.Sprintf("%s,%s,%f,%f,\n",
+			row.FromDate,row.ToDate,rewardInMonth,commissionInMonth)
+			
+			newRewardSum:=new(big.Float).Add(rewardSum,rewardInMonth)
+			newCommissionSum:=new(big.Float).Add(commissionInMonth,commissionSum)
+
+			rewardSum=newRewardSum
+			commissionSum=newCommissionSum
+
+			// Date changed, reset
+			rewardInMonth=new(big.Float).SetFloat64(0)
+			commissionInMonth=new(big.Float).SetFloat64(0)
+			currentFromDate=v[i+1].FromDate
+		}
 	}
 
-	cs:=new(big.Float).SetInt(commissionSum)
-	rs:=new(big.Float).SetInt(rewardSum)
-
-	realCommissionSum:=new(big.Float).Mul(cs,exponent)
-	realRewardSum:=new(big.Float).Mul(rs,exponent)
+	outputcsv+=fmt.Sprintf("sum,,%f,%f",rewardSum,commissionSum)
 	
-	outputcsv+=fmt.Sprintf("\n Sum, ,%f,%f, ,%f,%f\n",
-	realCommissionSum,realRewardSum,
-	new(big.Float).Mul(realCommissionSum,coinprice) ,new(big.Float).Mul(realRewardSum,coinprice))
-	 */
-	outputcsv:="Not implemented"
 	return outputcsv,nil
 }

@@ -2,11 +2,10 @@ package types
 
 import (
 	"math/big"
-
-	"github.com/forbole/bookkeeper/types"
 )
 
 type DenomPrice struct{
-	types.Denom
+	Exponent   *big.Float
+	CoinId string
 	Price *big.Float
 }

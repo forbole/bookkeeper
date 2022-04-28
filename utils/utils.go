@@ -1,11 +1,13 @@
 package utils
 
 import (
-	utilstypes "github.com/forbole/bookkeeper/utils/types"
+	"math"
+	"math/big"
+
 	"github.com/forbole/bookkeeper/types"
+	utilstypes "github.com/forbole/bookkeeper/utils/types"
 
 	"github.com/forbole/bookkeeper/coinApi"
-
 )
 
 // ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes
@@ -14,13 +16,16 @@ func ConvertDenomToMap(denom []types.Denom,vsCurrency string)(map[string]*utilst
 	coinPrice:=make(map[string]*utilstypes.DenomPrice)
 
 	for _,d:=range denom{
+		exponent:=new(big.Float).SetFloat64((math.Pow(10,float64(-1 * d.Exponent))))
+
 		if d.Stablecoin{
 			price,err:=coinApi.GetPriceFromAV(d.CoinId,vsCurrency)
 			if err!=nil{
 				return nil,err
 			}
 			coinPrice[d.Denom]=&utilstypes.DenomPrice{
-				Denom: d,
+				Exponent: exponent,
+				CoinId: d.CoinId,
 				Price: price,
 			}
 		}else{
@@ -29,7 +34,8 @@ func ConvertDenomToMap(denom []types.Denom,vsCurrency string)(map[string]*utilst
 				return nil,err
 			}
 			coinPrice[d.Denom]=&utilstypes.DenomPrice{
-				Denom: d,
+				Exponent: exponent,
+				CoinId: d.CoinId,
 				Price: price,
 			}
 		}

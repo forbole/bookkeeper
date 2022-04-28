@@ -25,8 +25,8 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 
 		// Writ .csv to "." 
 		for _ ,e:=range entries{
-			//outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Denom,vsCurrency)
-			outputcsv := e.Rows.GetCSV(0)
+			outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Denom,vsCurrency)
+			//outputcsv := e.Rows.GetCSV(0)
 			if err!=nil{
 				return nil,err
 			}
