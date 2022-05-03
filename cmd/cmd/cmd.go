@@ -74,7 +74,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files...)
-			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency,outputFile)
+			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency,outputFile,data.Period)
 			if err!=nil{
 				return err
 			}

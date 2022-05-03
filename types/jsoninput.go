@@ -47,6 +47,13 @@ type Data struct {
 	Prometheus   string         `json:"prometheus"`
 	Flow Flow `json:"flow"`
 	VsCurrency string `json:"vs_currency"`
+	Period Period `json:"period"`
+}
+
+// Period get the unix time period from and until date
+type Period struct{
+	From int64 `json:"from"`
+	To int64 `json:"to"`
 }
 
 type Flow struct{

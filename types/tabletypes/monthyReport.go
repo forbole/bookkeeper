@@ -177,7 +177,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 			commissionSum=newCommissionSum
 
 			outputcsv += fmt.Sprintf("%s,%s,%f,%f,%s,,%f,%f\n",
-			row.FromDate,row.ToDate,commission,reward,row.Denom,commissionConverted,rewardConverted)
+			row.FromDate,row.ToDate,commission,reward,denomMap[row.Denom].CoinId,commissionConverted,rewardConverted)
 			
 	}
 

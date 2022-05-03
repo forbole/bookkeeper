@@ -3,7 +3,6 @@ package cosmos
 import (
 	"fmt"
 	"io/ioutil"
-	"time"
 
 	tables "github.com/forbole/bookkeeper/module/cosmos/tables"
 	types "github.com/forbole/bookkeeper/types"
@@ -13,12 +12,12 @@ import (
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrency string,outputFolder string)([]string,error){
+func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrency string,outputFolder string,period types.Period)([]string,error){
 	var filenames []string
 
 	for _,data :=range individualChains{
 		entries, err := tables.GetMonthyReport(data,
-			time.Date(2022,time.January,1,1,0,0,0,time.UTC))
+			period)
 		if err != nil {
 			return nil,err
 		}
