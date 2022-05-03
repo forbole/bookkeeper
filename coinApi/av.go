@@ -58,7 +58,7 @@ func GetPriceFromAV(coinId,vsCurrency string)(*big.Float,error){
 
 			rate,ok:=new(big.Float).SetString(exchangeRate.RealtimeCurrencyExchangeRate.FiveExchangeRate)
 			if !ok{
-				return nil,fmt.Errorf("Fail to set string:%s",exchangeRate.RealtimeCurrencyExchangeRate.FiveExchangeRate)
+				return nil,fmt.Errorf("Fail to set string:%s",string(bz))
 			}
 			return rate,nil
 }

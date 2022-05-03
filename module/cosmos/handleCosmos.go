@@ -26,17 +26,39 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 		// Writ .csv to "." 
 		for _ ,e:=range entries{
 			outputcsv,err := e.Rows.GetCSVConvertedPrice(data.Denom,vsCurrency)
-			//outputcsv := e.Rows.GetCSV(0)
+			if err!=nil{
+				return nil,err
+			}
+			outputcsv2 := e.Rows.GetCSV(0)
+			outputcsv3,err := e.Rows.GetMonthyCSVConvertedPrice(data.Denom,vsCurrency)
+			if err!=nil{
+				return nil,err
+			}
+
 			if err!=nil{
 				return nil,err
 			}
 			fmt.Println(outputcsv)
-			filename := fmt.Sprintf("%s/%s_monthy_report.csv", outputFolder,e.Address)
+			filename := fmt.Sprintf("%s/%s_monthy_report_value.csv", outputFolder,e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
 			if err != nil {
 				return nil,err
 			}
 			filenames = append(filenames, filename)
+
+			filename2 := fmt.Sprintf("%s/%s_monthy_report.csv", outputFolder,e.Address)
+			err = ioutil.WriteFile(filename2, []byte(outputcsv2), 0777)
+			if err != nil {
+				return nil,err
+			}
+			filenames = append(filenames, filename2)
+
+			filename3 := fmt.Sprintf("%s/%s_monthy_report_convert_price_only.csv", outputFolder,e.Address)
+			err = ioutil.WriteFile(filename3, []byte(outputcsv3), 0777)
+			if err != nil {
+				return nil,err
+			}
+			filenames = append(filenames, filename3)
 		}
 
 	}

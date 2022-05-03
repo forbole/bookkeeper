@@ -47,7 +47,7 @@ func (v RewardCommissions) GetCSV()string{
 			commissionSum.Add(commissionSum,b.Commission)
 			rewardSum.Add(rewardSum,b.Reward)
 	}
-	outputcsv+=fmt.Sprintf("\n Sum, ,%v,%v\n",commissionSum,rewardSum)
+	//outputcsv+=fmt.Sprintf("\n Sum, ,%v,%v\n",commissionSum,rewardSum)
 	
 	return outputcsv
 }

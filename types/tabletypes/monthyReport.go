@@ -71,16 +71,16 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 			rewardSum.Add(rewardSum,b.Reward)
 	}
 
-	cs:=new(big.Float).SetInt(commissionSum)
-	rs:=new(big.Float).SetInt(rewardSum)
+	//cs:=new(big.Float).SetInt(commissionSum)
+	//rs:=new(big.Float).SetInt(rewardSum)
 
-	outputcsv+=fmt.Sprintf("\n Sum, ,%v,%v\n",cs.Mul(cs,exponent),rs.Mul(rs,exponent))
+	//outputcsv+=fmt.Sprintf("\n Sum, ,%v,%v\n",cs.Mul(cs,exponent),rs.Mul(rs,exponent))
 	
 	return outputcsv
 }
 
 // GetCSV generate the monthy report and turn the result into exponent form
-func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
+func (v MonthyReportRows) GetMonthyCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
 	
 	rewardSum:=big.NewFloat(0)
 	commissionSum:=big.NewFloat(0)
@@ -119,7 +119,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 		if i+1==len(v) || v[i+1].FromDate!=currentFromDate{
 			// If next entry changed date, write
 			outputcsv += fmt.Sprintf("%s,%s,%f,%f,\n",
-			row.FromDate,row.ToDate,rewardInMonth,commissionInMonth)
+			row.FromDate,row.ToDate,commissionInMonth,rewardInMonth)
 			newRewardSum:=new(big.Float).Add(rewardSum,rewardInMonth)
 			newCommissionSum:=new(big.Float).Add(commissionInMonth,commissionSum)
 
@@ -137,7 +137,51 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 		}
 	}
 
-	outputcsv+=fmt.Sprintf("sum,,%f,%f",rewardSum,commissionSum)
+	outputcsv+=fmt.Sprintf("sum,,%f,%f",commissionSum,rewardSum)
+	
+	return outputcsv,nil
+}
+
+// GetCSV generate the monthy report and turn the result into exponent form
+func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
+	
+	rewardSum:=big.NewFloat(0)
+	commissionSum:=big.NewFloat(0)
+	denomMap,err:=utils.ConvertDenomToMap(denom,vsCurrency)
+	if err!=nil{
+		return "",err
+	}
+
+	outputcsv := "From_date,to_date,Commission,Delegator_Reward,Currency, ,Commission_value ,Delegator_Reward_value\n"
+
+	for _,row:=range v{
+			// since they are same day, add it together
+			if _, ok := denomMap[row.Denom]; !ok {
+				// skip if that is not exist
+				fmt.Println(fmt.Sprintf("Coin is not supported:%s",row.Denom))
+				continue
+			}
+
+			c:=new(big.Float).SetInt(row.Commission)
+			commission:=new(big.Float).Mul(c,denomMap[row.Denom].Exponent)
+			commissionConverted:=new(big.Float).Mul(commission,denomMap[row.Denom].Price)
+
+			r:=new(big.Float).SetInt(row.Reward)
+			reward:=new(big.Float).Mul(r,denomMap[row.Denom].Exponent)
+			rewardConverted:=new(big.Float).Mul(reward,denomMap[row.Denom].Price)
+
+			newRewardSum:=new(big.Float).Add(rewardSum,rewardConverted)
+			newCommissionSum:=new(big.Float).Add(commissionConverted,commissionSum)
+
+			rewardSum=newRewardSum
+			commissionSum=newCommissionSum
+
+			outputcsv += fmt.Sprintf("%s,%s,%f,%f,%s,,%f,%f\n",
+			row.FromDate,row.ToDate,commission,reward,row.Denom,commissionConverted,rewardConverted)
+			
+	}
+
+	outputcsv+=fmt.Sprintf("sum,,,,,%f,%f",commissionSum,rewardSum)
 	
 	return outputcsv,nil
 }
