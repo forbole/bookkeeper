@@ -8,29 +8,28 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	//"regexp"
 	//"strings"
 
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
-	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
+	"github.com/forbole/bookkeeper/module/cosmos/utils"
 	types "github.com/forbole/bookkeeper/types"
-
-
-)
-
-const (
-	//height at 2021-01-01 12:01:14
-	height = 4635000
+	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain) ([]tabletypes.AddressBalanceEntry, error) {
+func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalanceEntry, error) {
 	var accountbalanceEntries []tabletypes.AddressBalanceEntry
+	targetHeight,err:=utils.GetHeightByDate(time.Unix(from,0),details.LcdEndpoint)
+	if err!=nil{
+		return nil,err
+	}
 
 	for _, address := range details.FundHoldingAccount {
 		var balanceEntries []tabletypes.BalanceEntry
-		res, err := readTxs(details.RpcEndpoint, address, height)
+		res, err := readTxs(details.RpcEndpoint, address, targetHeight)
 		if err != nil {
 			return nil, err
 		}

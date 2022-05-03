@@ -19,12 +19,12 @@ type MonthyReportRow struct{
 	FromDate time.Time
 	ToDate time.Time
 
-	Commission *big.Int
-	Reward *big.Int
+	Commission *big.Float
+	Reward *big.Float
 	Denom string
 }
 
-func NewMonthyReportRow(fromDate time.Time,toDate time.Time,commission *big.Int,reward *big.Int,denom string)MonthyReportRow{
+func NewMonthyReportRow(fromDate time.Time,toDate time.Time,commission *big.Float,reward *big.Float,denom string)MonthyReportRow{
 	return MonthyReportRow{
 		FromDate: fromDate,
 		ToDate: toDate,
@@ -53,16 +53,16 @@ func NewAddressMonthyReport(address string,rewardCommissions MonthyReportRows)Ad
 // GetCSV generate the monthy report and turn the result into exponent form
 func (v MonthyReportRows) GetCSV(exp int)string{
 	outputcsv := "From_date,to_date,Commission,Delegator_Reward,denom\n"
-	rewardSum:=big.NewInt(0)
-	commissionSum:=big.NewInt(0)
+	rewardSum:=big.NewFloat(0)
+	commissionSum:=big.NewFloat(0)
 
 	exponent:=new(big.Float).SetFloat64((math.Pow(10,float64(-1 * exp))))
 	//exponent := math.Pow(10, float64(-1 * exp))
 
 	for _, b := range v {
 		// Change to big float with exp
-		c:=new(big.Float).SetInt(b.Commission)
-		r:=new(big.Float).SetInt(b.Reward)
+		c:=b.Commission
+		r:=b.Reward
 
 		outputcsv += fmt.Sprintf("%s,%s,%v,%v,%s\n",
 			b.FromDate,b.ToDate, c.Mul(c,exponent),r.Mul(r,exponent),b.Denom)
@@ -101,13 +101,13 @@ func (v MonthyReportRows) GetMonthyCSVConvertedPrice(denom []types.Denom, vsCurr
 				fmt.Println(fmt.Sprintf("Coin is not supported:%s",row.Denom))
 				continue
 			}
-			c:=new(big.Float).SetInt(row.Commission)
+			c:=row.Commission
 			commission:=new(big.Float).Mul(c,denomMap[row.Denom].Exponent)
 			commissionConverted:=new(big.Float).Mul(commission,denomMap[row.Denom].Price)
 			newCommission:=new(big.Float).Add(commissionConverted,commissionInMonth)
 			commissionInMonth=newCommission
 
-			r:=new(big.Float).SetInt(row.Reward)
+			r:=row.Reward
 			reward:=new(big.Float).Mul(r,denomMap[row.Denom].Exponent)
 			rewardConverted:=new(big.Float).Mul(reward,denomMap[row.Denom].Price)
 			newRewardInMonth:=new(big.Float).Add(rewardConverted,rewardInMonth)
@@ -162,11 +162,11 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 				continue
 			}
 
-			c:=new(big.Float).SetInt(row.Commission)
+			c:=row.Commission
 			commission:=new(big.Float).Mul(c,denomMap[row.Denom].Exponent)
 			commissionConverted:=new(big.Float).Mul(commission,denomMap[row.Denom].Price)
 
-			r:=new(big.Float).SetInt(row.Reward)
+			r:=row.Reward
 			reward:=new(big.Float).Mul(r,denomMap[row.Denom].Exponent)
 			rewardConverted:=new(big.Float).Mul(reward,denomMap[row.Denom].Price)
 
@@ -181,7 +181,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 			
 	}
 
-	outputcsv+=fmt.Sprintf("sum,,,,,%f,%f",commissionSum,rewardSum)
+	outputcsv+=fmt.Sprintf("sum,,,,,,%f,%f",commissionSum,rewardSum)
 	
 	return outputcsv,nil
 }

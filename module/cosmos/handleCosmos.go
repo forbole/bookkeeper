@@ -64,10 +64,10 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain,vsCurrenc
 	return filenames,nil
 }
 
-func HandleTxsTable(individualChains []types.IndividualChain,outputFolder string)([]string,error){
+func HandleTxsTable(individualChains []types.IndividualChain,outputFolder string,period types.Period)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
-		entries,err:=tables.GetTxs(detail)
+		entries,err:=tables.GetTxs(detail,period.From)
 		if err!=nil{
 			return nil,err
 		}
@@ -88,10 +88,10 @@ func HandleTxsTable(individualChains []types.IndividualChain,outputFolder string
 	return filenames,nil
 }
 
-func HandleRewardCommissionTable(individualChains []types.IndividualChain,outputFolder string)([]string,error){
+func HandleRewardCommissionTable(individualChains []types.IndividualChain,outputFolder string,period types.Period)([]string,error){
 	var filenames []string
 	for _,detail:=range individualChains{
-		txs,err:=tables.GetTxs(detail)
+		txs,err:=tables.GetTxs(detail,period.From)
 		if err!=nil{
 			return nil,err
 		}

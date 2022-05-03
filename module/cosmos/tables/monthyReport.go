@@ -1,10 +1,14 @@
 package cosmos
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"math/big"
+	"net/http"
 	"time"
 
+	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
 	types "github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
@@ -18,7 +22,7 @@ func GetMonthyReport(details types.IndividualChain,period types.Period)([]tablet
 
 	to:=time.Unix(period.To,0)
 
-	balanceEntries,err:=GetTxs(details)
+	balanceEntries,err:=GetTxs(details,period.From)
 	if err!=nil{
 		return nil,err
 	}
@@ -27,12 +31,19 @@ func GetMonthyReport(details types.IndividualChain,period types.Period)([]tablet
 	}
 	t:=to
 	for _,b:=range balanceEntries{
-		var monthyReportRows tabletypes.MonthyReportRows
+		
+		monthyReportRows,err:=getUnclaimedRewardCommission(details.LcdEndpoint,b.Address)
+		if err!=nil{
+			return nil,err
+		}
+
 		rewardCommission,err:=GetRewardCommission(b)
 		if err!=nil{
 			return nil,err
 		}
+
 		fmt.Println(rewardCommission.Rows.GetCSV())
+
 		i:=0
 		for t.After(from){
 			targetHeight,err:=utils.GetHeightByDate(t,details.LcdEndpoint)
@@ -46,16 +57,19 @@ func GetMonthyReport(details types.IndividualChain,period types.Period)([]tablet
 				denomEntry,ok:=recordForMonth[rows[i].Denom]
 				if !ok{
 					e:=&RewardCommission{
-						Commission:big.NewInt(0),
-						Reward:big.NewInt(0),
+						Commission:big.NewFloat(0),
+						Reward:big.NewFloat(0),
 					 }
 					 denomEntry=e
 				}
 
-				commission:=big.NewInt(0).Add(denomEntry.Commission,rows[i].Commission)
-				reward:=big.NewInt(0).Add(denomEntry.Reward,rows[i].Reward)
-				denomEntry.Commission=new(big.Int).Set(commission)
-				denomEntry.Reward=new(big.Int).Set(reward) 
+				c:=new(big.Float).SetInt(rows[i].Commission)
+				r:=new(big.Float).SetInt(rows[i].Reward)
+
+				commission:=new(big.Float).Add(denomEntry.Commission,c)
+				reward:=new(big.Float).Add(denomEntry.Reward,r)
+				denomEntry.Commission=new(big.Float).Set(commission)
+				denomEntry.Reward=new(big.Float).Set(reward) 
 				recordForMonth[rows[i].Denom]=denomEntry
 				fmt.Println(denomEntry.Commission)
 			}
@@ -180,6 +194,88 @@ func lastMonth(t time.Time)*time.Time{
 }
 
 type RewardCommission struct {
-	Commission *big.Int
-	Reward *big.Int
+	Commission *big.Float
+	Reward *big.Float
+}
+
+func getUnclaimedRewardCommission(lcd string,address string)([]tabletypes.MonthyReportRow,error){
+	var monthyReportRows []tabletypes.MonthyReportRow
+	now:=time.Now()
+	commission,err:=getUnclaimCommission(lcd,address)
+	if err!=nil{
+		return nil,err
+	}
+
+	reward,err:=getUnclaimReward(lcd,address)
+	if err!=nil{
+		return nil,err
+	}
+
+	for _,c:=range commission{
+		unclaimedCommission,ok:=new(big.Float).SetString(c.Amount)
+		if !ok{
+			return nil,fmt.Errorf("Cannot read unclaimecd Commission:%s",c.Amount)
+		}
+		// find the corrisponding reward
+		unclaimedReward:=new(big.Float).SetInt64(0)
+		for _,r:=range reward{
+			if r.Denom==c.Denom{
+				newReward,ok:=new(big.Float).SetString(r.Amount)
+				if !ok{
+					return nil,fmt.Errorf("Cannot read unclaimecd Reward:%s",r.Amount)
+				}
+				unclaimedReward=newReward
+			}	
+		}
+		monthyReportRows=append(monthyReportRows,tabletypes.NewMonthyReportRow(now,now,unclaimedCommission,unclaimedReward,c.Denom))
+	}
+	return monthyReportRows,nil
+}
+
+func getUnclaimCommission(lcd string,address string)([]cosmostypes.DenomAmount,error){
+	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/commission`,
+			lcd, address)
+		fmt.Println(query)
+		resp, err := http.Get(query)
+		if err != nil {
+			return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
+		}
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
+		}
+
+		defer resp.Body.Close()
+
+		bz, err := io.ReadAll(resp.Body)
+
+		var txSearchRes cosmostypes.Commission 
+		err = json.Unmarshal(bz, &txSearchRes)
+		if err != nil {
+			return nil, fmt.Errorf("Fail to marshal:%s", err)
+		}
+		return txSearchRes.Commission.Commission,nil
+}
+
+func getUnclaimReward(lcd string,address string)([]cosmostypes.DenomAmount,error){
+	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/outstanding_rewards`,
+			lcd, address)
+		fmt.Println(query)
+		resp, err := http.Get(query)
+		if err != nil {
+			return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
+		}
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
+		}
+
+		defer resp.Body.Close()
+
+		bz, err := io.ReadAll(resp.Body)
+
+		var txSearchRes cosmostypes.Rewards 
+		err = json.Unmarshal(bz, &txSearchRes)
+		if err != nil {
+			return nil, fmt.Errorf("Fail to marshal:%s", err)
+		}
+		return txSearchRes.Rewards.Rewards,nil
 }
