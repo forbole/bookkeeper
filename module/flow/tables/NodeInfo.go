@@ -15,7 +15,7 @@ import (
 func GetNodeInfo(nodeId string,flowjuno string)(*flowtypes.NodeInfo,error){
 	limit:=10
 	queryStr:=fmt.Sprintf(`{
-		node_infos_from_table(limit: %d, where: {id: {_eq: "%s"}}) {
+		node_infos_from_table(limit: %d, where: {id: {_eq: "%s"}}, order_by: {height: desc}) {
 			id
 			tokens_committed
 			tokens_requested_to_unstake
@@ -25,7 +25,7 @@ func GetNodeInfo(nodeId string,flowjuno string)(*flowtypes.NodeInfo,error){
 			tokens_unstaking
 			height
 		}
-		}`,limit,nodeId)
+	}`,limit,nodeId)
 	jsonData := map[string]string{
 		"query" : queryStr,
 	}
