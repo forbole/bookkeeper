@@ -66,7 +66,7 @@ func GetHeightByDate(t time.Time,lcd string)(int,error){
 	(t.Before(newT) && newT.Sub(t)<(time.Hour*23))  ){
 		middle=(left+right)/2
 		
-		T,err:=getTimeByHeight(middle,lcd)
+		T,err:=GetTimeByHeight(middle,lcd)
 
 		if err!=nil&&strings.Contains(err.Error(),"is not available, lowest height is "){
 				lastIndex:=strings.LastIndex(err.Error()," ")
@@ -77,7 +77,7 @@ func GetHeightByDate(t time.Time,lcd string)(int,error){
 				}
 				
 				// Check if requested t is out of chain scope
-				lowestTime,err:=getTimeByHeight(lowestHeight,lcd)
+				lowestTime,err:=GetTimeByHeight(lowestHeight,lcd)
 				if err!=nil{
 					return 0,err
 				}
@@ -105,7 +105,7 @@ func GetHeightByDate(t time.Time,lcd string)(int,error){
 	return middle,nil
 }
 
-func getTimeByHeight(height int,lcd string)(*time.Time,error){
+func GetTimeByHeight(height int,lcd string)(*time.Time,error){
 	query := fmt.Sprintf(`%s/blocks/%d`,lcd,height)
 	fmt.Println(query)
 	resp, err := http.Get(query)

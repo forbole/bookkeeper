@@ -1,4 +1,4 @@
-package cosmos
+package tables
 
 import (
 	"fmt"
