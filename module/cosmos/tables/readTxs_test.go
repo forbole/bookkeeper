@@ -8,7 +8,7 @@ import (
 )
 
 // This is an example test that will always succeed
-func (suite *CosmosTableTestSuite) ReadTx_Test() {
+func (suite *CosmosTableTestSuite) Test_ReadTxs() {
 	chainStrings:=`{
 		"chain_name":"cosmos",
 		"denom":[{"denom":"uatom",

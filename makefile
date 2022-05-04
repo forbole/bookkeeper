@@ -35,3 +35,12 @@ install: go.sum
 	@echo "installing bookkeeper binary..."
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bookkeeper
 .PHONY: install
+
+###############################################################################
+###                                 Test                                 ###
+###############################################################################
+
+test-unit: 
+	@echo "Executing unit tests..."
+	@go test -mod=readonly -v -coverprofile coverage.txt ./...
+.PHONY: test-unit

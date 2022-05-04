@@ -22,14 +22,14 @@ import (
 	suite.Run(t, new(CosmosUtilsTestSuite))
   }
 
-func (suite *CosmosUtilsTestSuite)GetHeightByDateTest(){
+func (suite *CosmosUtilsTestSuite)Test_GetHeightByDate(){
     targetTime:=time.Unix(1619564400,0)
     lcd:="https://api.cosmos.network"
     _,err:=utils.GetHeightByDate(targetTime,lcd)
     suite.Assert().NoError(err)
 }
 
-func (suite *CosmosUtilsTestSuite)GetDateByHeightTest(){
+func (suite *CosmosUtilsTestSuite)Test_GetDateByHeight(){
   height:=10361414
   lcd:="https://api.cosmos.network"
   t,err:=utils.GetTimeByHeight(height,lcd)

@@ -57,7 +57,7 @@ func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalan
 					/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
 					err,tx.TxResult.Log,tx.Hash) */
 				}
-				fmt.Println(tx.Hash)
+				//fmt.Println(tx.Hash)
 
 				balanceEntry,err:=readlogs(logs,address,tx.Hash,height)
 				if err!=nil{
@@ -80,7 +80,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tablet
 
 	for _, log := range logs {
 		// There will be one transaction
-		fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
+		//fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
 		in := "0"
 		out := "0"
 		msgType := ""
@@ -129,9 +129,9 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tablet
 					}
 				}
 				if in != "0" {
-					fmt.Println(fmt.Sprintf("Received amount:%s\nReceiver:%s", in, receiver))
+					//fmt.Println(fmt.Sprintf("Received amount:%s\nReceiver:%s", in, receiver))
 				} else if out != "0" {
-					fmt.Println(fmt.Sprintf("Spent amount:%s\nSpender:%s", out, receiver))
+					//fmt.Println(fmt.Sprintf("Spent amount:%s\nSpender:%s", out, receiver))
 				}
 			}
 			if event.Type == "message" {
@@ -140,7 +140,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tablet
 					return nil, err
 				}
 				msgType=strings.ReplaceAll(string(bzaction),"\"","")
-				fmt.Println(fmt.Sprintf("action:%s", msgType))
+				//fmt.Println(fmt.Sprintf("action:%s", msgType))
 			}
 		}
 		balanceEntries = append(balanceEntries,

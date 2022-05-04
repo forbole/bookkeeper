@@ -15,7 +15,7 @@ func GetRewardCommission(addressBalanceEntry tabletypes.AddressBalanceEntry)(*ta
 	for _,balanceEntry:=range addressBalanceEntry.Rows{
 		denomArray:=strings.Split(balanceEntry.In,",")
 		for _,denomString:=range denomArray{
-			fmt.Println(denomString)
+			//fmt.Println(denomString)
 			in,denom,err:=splitValueDenom(denomString)
 			if err!=nil{
 				return nil,err
