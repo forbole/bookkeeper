@@ -20,7 +20,6 @@ import (
   // We need this function to kick off the test suite, otherwise
   // "go test" won't know about our tests
   func TestCosmosTableTestSuite(t *testing.T) {
-    
 	  suite.Run(t, new(CosmosTableTestSuite))
   }
 

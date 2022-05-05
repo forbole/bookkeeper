@@ -165,8 +165,8 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 	var res []*cosmostypes.TxSearchRespond
 	limit := 30
 	lastHeight := math.MaxInt
-	totalCount := math.MaxInt
-	for page := 1; (lastHeight > targetHeight) && ((limit*page)<totalCount); page++ {
+	pageCount := math.MaxInt
+	for page := 1; (lastHeight > targetHeight) && (pageCount>=page); page++ {
 		query := fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 			api, address, page, limit)
 		fmt.Println(query)
@@ -196,9 +196,12 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		if err != nil {
 			return nil, err
 		}
-		totalCount,err=strconv.Atoi(txSearchRes.Result.TotalCount)
-		if err!=nil{
-			return nil,err
+		if pageCount == math.MaxInt{
+			totalCount,err:=strconv.Atoi(txSearchRes.Result.TotalCount)
+			if err!=nil{
+				return nil,err
+			}
+			pageCount=totalCount/limit +1
 		}
 		res = append(res, &txSearchRes)
 	}

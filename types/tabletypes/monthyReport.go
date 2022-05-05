@@ -81,7 +81,9 @@ func (v MonthyReportRows) GetCSV(exp int)string{
 
 // GetCSV generate the monthy report and turn the result into exponent form
 func (v MonthyReportRows) GetMonthyCSVConvertedPrice(denom []types.Denom, vsCurrency string)(string,error){	
-	
+	if len(v)==0{
+		return "",nil
+	}
 	rewardSum:=big.NewFloat(0)
 	commissionSum:=big.NewFloat(0)
 	denomMap,err:=utils.ConvertDenomToMap(denom,vsCurrency)

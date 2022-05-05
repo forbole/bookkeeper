@@ -31,26 +31,31 @@ func GetMonthyReport(details types.IndividualChain,period types.Period)([]tablet
 	}
 	t:=to
 	for _,b:=range balanceEntries{
-		
-		monthyReportRows,err:=getUnclaimedRewardCommission(details.LcdEndpoint,b.Address)
+		var monthyReportRows []tabletypes.MonthyReportRow
+		/* monthyReportRows,err:=getUnclaimedRewardCommission(details.LcdEndpoint,b.Address)
 		if err!=nil{
 			return nil,err
 		}
-
+ */
 		rewardCommission,err:=GetRewardCommission(b)
 		if err!=nil{
 			return nil,err
 		}
-
+		rows:=rewardCommission.Rows
 		fmt.Println(rewardCommission.Rows.GetCSV())
 
 		i:=0
-		for t.After(from){
+		for t.After(from)&&len(rows)>i {
 			targetHeight,err:=utils.GetHeightByDate(t,details.LcdEndpoint)
 			if err!=nil{
 				return nil,err
 			}
-			rows:=rewardCommission.Rows
+			
+			if rows[i].Height<targetHeight{
+				monthyReportRows=append(monthyReportRows,tabletypes.NewMonthyReportRow(t,to,new(big.Float).SetFloat64(0),new(big.Float).SetFloat64(0),rows[i].Denom))
+				t=*(lastMonth(t))
+				continue
+			}
 			recordForMonth :=make(map[string]*RewardCommission)
 			for ;len(rows)>i && rows[i].Height>targetHeight;i++{
 				// recordForMonth have denom as key and sum up reward and commission for the month 

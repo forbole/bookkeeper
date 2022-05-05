@@ -69,11 +69,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	for _,chain:=range data.Chains{
 		switch chain.ChainType{
 		case "cosmos":
-			files,err := cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
-			if err!=nil{
-				return err
-			}
-			filenames = append(filenames, files...)
+
 			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency,outputFile,data.Period)
 			if err!=nil{
 				return err

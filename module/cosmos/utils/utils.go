@@ -65,6 +65,11 @@ func GetHeightByDate(t time.Time,lcd string)(int,error){
 	for !(  (t.After(newT) && t.Sub(newT)<(time.Hour*23))  ||
 	(t.Before(newT) && newT.Sub(t)<(time.Hour*23))  ){
 		middle=(left+right)/2
+
+		if middle==1{
+			// 1 is the earliest block time
+			return 1,nil
+		}
 		
 		T,err:=GetTimeByHeight(middle,lcd)
 
