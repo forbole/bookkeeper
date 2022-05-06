@@ -10,22 +10,48 @@ import (
 	coingecko "github.com/superoo7/go-gecko/v3"
 )
 
+type NodeInterface interface{
+	FlattenToNodeInfo()[]NodeInfoFromTable
+}
+
 type NodeInfo struct {
 	Data struct {
-		NodeInfosFromTable []struct {
-			ID                       string `json:"id"`
-			TokensCommitted          int64  `json:"tokens_committed"`
-			TokensRequestedToUnstake int64    `json:"tokens_requested_to_unstake"`
-			TokensRewarded           int64    `json:"tokens_rewarded"`
-			TokensStaked             int64  `json:"tokens_staked"`
-			TokensUnstaked           int64    `json:"tokens_unstaked"`
-			TokensUnstaking          int64    `json:"tokens_unstaking"`
-			Height                   int64    `json:"height"`
-		} `json:"node_infos_from_table"`
+		NodeInfosFromTable []NodeInfoFromTable `json:"node_infos_from_table"`
 	} `json:"data"`
 }
 
-func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient,lastspork int)(string,error){
+type NodeInfoFromTable struct {
+	ID                       string `json:"id"`
+	TokensCommitted          int64  `json:"tokens_committed"`
+	TokensRequestedToUnstake int64    `json:"tokens_requested_to_unstake"`
+	TokensRewarded           int64    `json:"tokens_rewarded"`
+	TokensStaked             int64  `json:"tokens_staked"`
+	TokensUnstaked           int64    `json:"tokens_unstaked"`
+	TokensUnstaking          int64    `json:"tokens_unstaking"`
+	Height                   int64    `json:"height"`
+}
+
+type GetDataFromAddress struct {
+	Data struct {
+		StakerNodeID []struct {
+			StakingTable struct {
+				NodeInfosFromTables []NodeInfoFromTable `json:"node_infos_from_tables"`
+			} `json:"staking_table"`
+		} `json:"staker_node_id"`
+	} `json:"data"`
+}
+
+func (n GetDataFromAddress)FlattenToNodeInfo()[]NodeInfoFromTable{
+	return n.Data.StakerNodeID[0].StakingTable.NodeInfosFromTables
+}
+
+func (n NodeInfo)FlattenToNodeInfo()[]NodeInfoFromTable{
+	return n.Data.NodeInfosFromTable
+}
+
+type NodeInfoFromTables []NodeInfoFromTable
+
+func (n NodeInfoFromTables) GetCSV(exp int,coinId string,vsCurrency string,flowclient utils.FlowClient,lastspork int)(string,error){
 	outputcsv := "Date,TokensCommitted,TokensRequestedToUnstake,TokensRewarded,TokensStaked,TokensUnstaked,TokensUnstaking, ,TokensCommitted_value,TokensRequestedToUnstake_value,TokensRewarded_value,TokensStaked_value,TokensUnstaked_value,TokensUnstaking_value\n"
 	exponent := math.Pow(10, float64(-1*exp))
 
@@ -44,7 +70,7 @@ func (n NodeInfo) GetCSV(exp int,coinId string,vsCurrency string,flowclient util
 	fmt.Println(coinprice)
 
 
-	for _, b := range n.Data.NodeInfosFromTable {
+	for _, b := range n {
 		fmt.Println(flowclient)
 		date,err:=(flowclient).GetDateByHeight(uint64(b.Height),lastspork)
 		if err!=nil{
