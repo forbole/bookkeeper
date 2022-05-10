@@ -50,7 +50,7 @@ func GetNodeInfo(nodeId string,flowjuno string)(flowtypes.NodeInfoFromTables,err
 	return txSearchRes.FlattenToNodeInfo(),nil
 }
 
-  func GetNodeInfoFromAddress(address string,flowjuno string,startHeight int64)(flowtypes.NodeInfoFromTables,error){
+  func GetNodeInfoFromAddress(address string,flowjuno string,startHeight uint64)(flowtypes.NodeInfoFromTables,error){
 	queryStr:=fmt.Sprintf(`{
 		staker_node_id(where: {address: {_eq: %s}}) {
 			staking_table {

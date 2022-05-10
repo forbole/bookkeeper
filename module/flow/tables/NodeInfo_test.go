@@ -29,7 +29,7 @@ import (
     chainStrings:=`{
 		"flowjuno":"https://gql.flow.forbole.com/v1/graphql",
 		"flow_endpoint":"access.mainnet.nodes.onflow.org:9000",
-		"node_ids":["237a7a04ecf88b7c21001589ecc277190a6f7cd6e56a296a203552ade6db0927"],
+		"node_ids":["fb397444147918de"],
 		"denom":"flow",
 		"exponent":8,
 		"last_spork":16
@@ -41,7 +41,7 @@ import (
 }
 
 func (suite *FlowTableTestSuite)Test_GetNodeInfo(){
-	nodeInfo,err:=tables.GetNodeInfo(suite.testInput.NodeIds[0],suite.testInput.FlowJuno)
+	nodeInfo,err:=tables.GetNodeInfo(suite.testInput.Addresses[0],suite.testInput.FlowJuno)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(nodeInfo)
 }
