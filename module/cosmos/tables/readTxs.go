@@ -46,6 +46,9 @@ func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBala
 
 				var logs []cosmostypes.RawLog
 				err = json.Unmarshal([]byte(rawlog), &logs)
+				if err!=nil{
+					return nil,err
+				}
 				height, err := strconv.Atoi(tx.Height)
 				if err != nil {
 					return nil, err
