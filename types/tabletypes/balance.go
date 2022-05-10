@@ -36,13 +36,13 @@ func (v BalanceEntries) GetCSV() string {
 }
 
 type AddressBalanceEntry struct {
-	Address      string
-	Rows BalanceEntries
+	Address string
+	Rows    BalanceEntries
 }
 
 func NewAccountBalanceSheet(address string, balanceEntry []BalanceEntry) AddressBalanceEntry {
 	return AddressBalanceEntry{
-		Address:      address,
-		Rows: balanceEntry,
+		Address: address,
+		Rows:    balanceEntry,
 	}
 }

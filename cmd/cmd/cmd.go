@@ -13,12 +13,11 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/forbole/bookkeeper/email"
-	"github.com/forbole/bookkeeper/utils"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
+	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
-
 
 	"github.com/forbole/bookkeeper/types"
 
@@ -31,7 +30,7 @@ import (
 
 const (
 	flagInputJsonPath = "input_json_path"
-	flagOutputFolder = "output_folder"
+	flagOutputFolder  = "output_folder"
 )
 
 // ParseCmd returns the command that should be run when we want to start parsing a chain state.
@@ -51,10 +50,9 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	outputFile, _ := cmd.Flags().GetString(flagOutputFolder)
 
 	err := godotenv.Load()
- 	 if err != nil {
-    	return err
-  	}
-
+	if err != nil {
+		return err
+	}
 
 	data, err := utils.ImportJsonInput(jsonPath)
 	if err != nil {
@@ -66,12 +64,12 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	var filenames []string
 
-	for _,chain:=range data.Chains{
-		switch chain.ChainType{
+	for _, chain := range data.Chains {
+		switch chain.ChainType {
 		case "cosmos":
 
-			files2,err := cosmos.HandleCosmosMonthyReport(chain.Details,data.VsCurrency,outputFile,data.Period)
-			if err!=nil{
+			files2, err := cosmos.HandleCosmosMonthyReport(chain.Details, data.VsCurrency, outputFile, data.Period)
+			if err != nil {
 				return err
 			}
 			filenames = append(filenames, files2...)
@@ -81,8 +79,8 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		}
 	}
 
-	flowfile,err:=flow.HandleNodeInfos(data.Flow,data.VsCurrency,data.Period)
-	if err!=nil{
+	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)
+	if err != nil {
 		return err
 	}
 

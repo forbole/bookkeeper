@@ -6,7 +6,6 @@ type Commission struct {
 	} `json:"commission"`
 }
 
-	
 type Rewards struct {
 	Rewards struct {
 		Rewards []DenomAmount `json:"rewards"`
@@ -14,6 +13,6 @@ type Rewards struct {
 }
 
 type DenomAmount struct {
-		Denom  string `json:"denom"`
-		Amount string `json:"amount"`
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
 }

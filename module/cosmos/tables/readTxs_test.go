@@ -6,8 +6,8 @@ import (
 
 // This is an example test that will always succeed
 func (suite *CosmosTableTestSuite) Test_ReadTxs() {
-	from:=int64(1619564400)
-	balanceEntries,err:=tables.GetTxs(suite.testInput,from)
+	from := int64(1619564400)
+	balanceEntries, err := tables.GetTxs(suite.testInput, from)
 	suite.Require().NoError(err)
-	suite.Require().True(len(balanceEntries)>0)
+	suite.Require().True(len(balanceEntries) > 0)
 }

@@ -19,7 +19,6 @@ type ValidatorStat struct {
 	} `json:"data"`
 }
 
-
 type ValidatorDelegationCount struct {
 	Status string `json:"status"`
 	Data   struct {
@@ -39,7 +38,6 @@ type ValidatorDelegationCount struct {
 	} `json:"data"`
 }
 
-	
 type StakeAmount struct {
 	Status string `json:"status"`
 	Data   struct {
@@ -100,7 +98,6 @@ type ValidatorVotingPower struct {
 	} `json:"data"`
 }
 
-	
 type TotalVotingPower struct {
 	Status string `json:"status"`
 	Data   struct {

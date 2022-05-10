@@ -20,11 +20,11 @@ import (
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalanceEntry, error) {
+func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBalanceEntry, error) {
 	var accountbalanceEntries []tabletypes.AddressBalanceEntry
-	targetHeight,err:=utils.GetHeightByDate(time.Unix(from,0),details.LcdEndpoint)
-	if err!=nil{
-		return nil,err
+	targetHeight, err := utils.GetHeightByDate(time.Unix(from, 0), details.LcdEndpoint)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, address := range details.FundHoldingAccount {
@@ -33,8 +33,8 @@ func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalan
 		if err != nil {
 			return nil, err
 		}
-		if res==nil{
-			return nil,nil
+		if res == nil {
+			return nil, nil
 		}
 		for _, txs := range res {
 			for _, tx := range txs.Result.Txs {
@@ -46,9 +46,9 @@ func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalan
 
 				var logs []cosmostypes.RawLog
 				err = json.Unmarshal([]byte(rawlog), &logs)
-				height,err:=strconv.Atoi(tx.Height)
-				if err!=nil{
-					return nil,err
+				height, err := strconv.Atoi(tx.Height)
+				if err != nil {
+					return nil, err
 				}
 				if err != nil {
 					balanceEntries = append(balanceEntries,
@@ -59,23 +59,23 @@ func GetTxs(details types.IndividualChain,from int64) ([]tabletypes.AddressBalan
 				}
 				//fmt.Println(tx.Hash)
 
-				balanceEntry,err:=readlogs(logs,address,tx.Hash,height)
-				if err!=nil{
-					return nil,err
+				balanceEntry, err := readlogs(logs, address, tx.Hash, height)
+				if err != nil {
+					return nil, err
 				}
 
 				balanceEntries = append(balanceEntries,
 					balanceEntry...)
-				}
 			}
-			accountbalanceEntries = append(accountbalanceEntries,
-				tabletypes.NewAccountBalanceSheet(address, balanceEntries))
 		}
-	
+		accountbalanceEntries = append(accountbalanceEntries,
+			tabletypes.NewAccountBalanceSheet(address, balanceEntries))
+	}
+
 	return accountbalanceEntries, nil
 }
 
-func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tabletypes.BalanceEntry,error){
+func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]tabletypes.BalanceEntry, error) {
 	var balanceEntries []tabletypes.BalanceEntry
 
 	for _, log := range logs {
@@ -139,7 +139,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tablet
 				if err != nil {
 					return nil, err
 				}
-				msgType=strings.ReplaceAll(string(bzaction),"\"","")
+				msgType = strings.ReplaceAll(string(bzaction), "\"", "")
 				//fmt.Println(fmt.Sprintf("action:%s", msgType))
 			}
 		}
@@ -147,8 +147,7 @@ func readlogs(logs []cosmostypes.RawLog,address,hash string,height int)([]tablet
 			tabletypes.NewBalanceEntry(height, hash, in, out, msgType))
 	}
 
-	
-	return balanceEntries,nil
+	return balanceEntries, nil
 }
 
 // ConvertAttributeToMap turn attribute into a map so that it is easy to find attributes
@@ -166,7 +165,7 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 	limit := 30
 	lastHeight := math.MaxInt
 	pageCount := math.MaxInt
-	for page := 1; (lastHeight > targetHeight) && (pageCount>=page); page++ {
+	for page := 1; (lastHeight > targetHeight) && (pageCount >= page); page++ {
 		query := fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 			api, address, page, limit)
 		fmt.Println(query)
@@ -187,8 +186,8 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		if err != nil {
 			return nil, fmt.Errorf("Fail to marshal:%s", err)
 		}
-		if len(txSearchRes.Result.Txs)==0{
-			return nil,nil
+		if len(txSearchRes.Result.Txs) == 0 {
+			return nil, nil
 		}
 		lastHeight, err = strconv.Atoi(
 			txSearchRes.Result.Txs[len(txSearchRes.Result.Txs)-1].Height,
@@ -196,12 +195,12 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		if err != nil {
 			return nil, err
 		}
-		if pageCount == math.MaxInt{
-			totalCount,err:=strconv.Atoi(txSearchRes.Result.TotalCount)
-			if err!=nil{
-				return nil,err
+		if pageCount == math.MaxInt {
+			totalCount, err := strconv.Atoi(txSearchRes.Result.TotalCount)
+			if err != nil {
+				return nil, err
 			}
-			pageCount=totalCount/limit +1
+			pageCount = totalCount/limit + 1
 		}
 		res = append(res, &txSearchRes)
 	}

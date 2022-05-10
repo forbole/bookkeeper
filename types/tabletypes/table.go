@@ -1,5 +1,5 @@
 package tabletypes
 
-type Table interface{
+type Table interface {
 	GetCSV()
 }

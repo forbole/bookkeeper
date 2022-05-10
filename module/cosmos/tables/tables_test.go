@@ -11,20 +11,19 @@ import (
 // We'll be able to store suite-wide
 // variables and add methods to this
 // test suite struct
-  type CosmosTableTestSuite struct {
-	  suite.Suite
-    testInput types.IndividualChain
-  }
+type CosmosTableTestSuite struct {
+	suite.Suite
+	testInput types.IndividualChain
+}
 
-  
-  // We need this function to kick off the test suite, otherwise
-  // "go test" won't know about our tests
-  func TestCosmosTableTestSuite(t *testing.T) {
-	  suite.Run(t, new(CosmosTableTestSuite))
-  }
+// We need this function to kick off the test suite, otherwise
+// "go test" won't know about our tests
+func TestCosmosTableTestSuite(t *testing.T) {
+	suite.Run(t, new(CosmosTableTestSuite))
+}
 
-  func (suite *CosmosTableTestSuite) SetupTest() {
-    chainStrings:=`{
+func (suite *CosmosTableTestSuite) SetupTest() {
+	chainStrings := `{
       "chain_name":"cosmos",
       "denom":[{"denom":"uatom",
             "exponent":6,
@@ -40,9 +39,9 @@ import (
         "self_delegation_address":"abc"
         }],
       "fund_holding_account":["cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj"]
-    }`  
-    var chain types.IndividualChain
-    json.Unmarshal([]byte(chainStrings),&chain)
+    }`
+	var chain types.IndividualChain
+	json.Unmarshal([]byte(chainStrings), &chain)
 
-    suite.testInput = chain
+	suite.testInput = chain
 }
