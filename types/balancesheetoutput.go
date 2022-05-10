@@ -15,7 +15,9 @@ type Balance struct {
 	Balance    float32   // The balance on that account
 }
 
-func NewBalance(coin string, price float32, date time.Time, balance float32, vSCurrency string, quantity float64) Balance {
+func NewBalance(coin string, price float32,
+	date time.Time, balance float32,
+	vSCurrency string, quantity float64) Balance {
 	return Balance{
 		Coin:       coin,
 		Price:      price,
@@ -57,7 +59,7 @@ type TotalBalances []TotalBalance
 
 func (v TotalBalances) GetCSV() string {
 	coinSchema := ""
-	for i, _ := range v[0].CoinDetails {
+	for i := range v[0].CoinDetails {
 		coinSchema += fmt.Sprintf("Coin %d, Quantity %d, Price %d, Balance%d,", i, i, i, i)
 	}
 	csv := fmt.Sprintf("date,%sVSCurrency,Total Balance\n", coinSchema)
@@ -65,9 +67,12 @@ func (v TotalBalances) GetCSV() string {
 	for _, totalBalance := range v {
 		coinDetailList := ""
 		for _, coinDetail := range totalBalance.CoinDetails {
-			coinDetailList += fmt.Sprintf("%s,%f,%f,%f,", coinDetail.Coin, coinDetail.Quantity, coinDetail.Price, coinDetail.Balance)
+			coinDetailList += fmt.Sprintf("%s,%f,%f,%f,",
+				coinDetail.Coin, coinDetail.Quantity,
+				coinDetail.Price, coinDetail.Balance)
 		}
-		csv += fmt.Sprintf("%s,%s%s,%f\n", totalBalance.Date, coinDetailList, totalBalance.VSCurrency, totalBalance.TotalBalance)
+		csv += fmt.Sprintf("%s,%s%s,%f\n", totalBalance.Date, coinDetailList, totalBalance.VSCurrency,
+			totalBalance.TotalBalance)
 	}
 	return csv
 }

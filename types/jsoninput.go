@@ -5,10 +5,16 @@ type BigChainType struct {
 	Details   []IndividualChain `json:"details"`
 }
 
+type Denom struct {
+	Denom    string `json:"denom"`
+	Exponent int    `json:"exponent"`
+	CoinId   string `json:"coin_id"`
+	Cointype string `json:"cointype"`
+}
+
 type IndividualChain struct {
 	ChainName          string            `json:"chain_name"`
-	Denom              string            `json:"denom"`
-	Exponent           int               `json:"exponent"`
+	Denom              []Denom           `json:"denom"`
 	Validators         []ValidatorDetail `json:"validators"`
 	FundHoldingAccount []string          `json:"fund_holding_account"`
 	GrpcEndpoint       string            `json:"grpc_endpoint"`
@@ -39,15 +45,22 @@ type Data struct {
 	Chains       []BigChainType `json:"chains"`
 	EmailDetails EmailDetails   `json:"email_details"`
 	Prometheus   string         `json:"prometheus"`
-	Flow Flow `json:"flow"`
-	VsCurrency string `json:"vs_currency"`
+	Flow         Flow           `json:"flow"`
+	VsCurrency   string         `json:"vs_currency"`
+	Period       Period         `json:"period"`
 }
 
-type Flow struct{
-	FlowJuno string `json:"flowjuno"`
-	FlowEndpoint string `json:"flow_endpoint"`
-	NodeIds []string `json:"node_ids"`
-	Denom   string    `json:"denom"`
-	Exponent int `json:"exponent"`
-	LastSpork int `json:"last_spork"`
+// Period get the unix time period from and until date
+type Period struct {
+	From int64 `json:"from"`
+	To   int64 `json:"to"`
+}
+
+type Flow struct {
+	FlowJuno     string   `json:"flowjuno"`
+	FlowEndpoint string   `json:"flow_endpoint"`
+	Addresses    []string `json:"addresses"`
+	Denom        string   `json:"denom"`
+	Exponent     int      `json:"exponent"`
+	LastSpork    int      `json:"last_spork"`
 }
