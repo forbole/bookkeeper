@@ -285,6 +285,9 @@ func getUnclaimReward(lcd string, address string) ([]cosmostypes.DenomAmount, er
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes cosmostypes.Rewards
 	err = json.Unmarshal(bz, &txSearchRes)

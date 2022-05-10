@@ -166,6 +166,9 @@ func getValidatorDelegationCount(endpoint string) (*promtypes.ValidatorDelegatio
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.ValidatorDelegationCount
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -192,6 +195,9 @@ func getStakeAmount(endpoint string) (*promtypes.StakeAmount, error) {
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.StakeAmount
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -218,6 +224,9 @@ func getTotalVotingPower(endpoint string) (*promtypes.TotalVotingPower, error) {
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.TotalVotingPower
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -244,6 +253,9 @@ func getValidatorVotingPowerRanking(endpoint string) (*promtypes.ValidatorVoting
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.ValidatorVotingPowerRanking
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -271,6 +283,9 @@ func getValidatorVotingPower(endpoint string) (*promtypes.ValidatorVotingPower, 
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.ValidatorVotingPower
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -297,6 +312,9 @@ func getValidatorCommissionRate(endpoint string) (*promtypes.ValidatorCommission
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes promtypes.ValidatorCommissionRate
 	err = json.Unmarshal(bz, &txSearchRes)

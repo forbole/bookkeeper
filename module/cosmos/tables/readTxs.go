@@ -175,6 +175,9 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		defer resp.Body.Close()
 
 		bz, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 
 		var txSearchRes cosmostypes.TxSearchRespond
 		err = json.Unmarshal(bz, &txSearchRes)
