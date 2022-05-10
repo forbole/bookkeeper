@@ -44,3 +44,11 @@ test-unit:
 	@echo "Executing unit tests..."
 	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 .PHONY: test-unit
+
+
+lint:
+	golangci-lint run --out-format=tab
+
+lint-fix:
+	golangci-lint run --fix --out-format=tab --issues-exit-code=0
+.PHONY: lint lint-fix

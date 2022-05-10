@@ -10,7 +10,8 @@ import (
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurrency string, outputFolder string, period types.Period) ([]string, error) {
+func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurrency string, outputFolder string,
+	period types.Period) ([]string, error) {
 	var filenames []string
 
 	for _, data := range individualChains {
@@ -37,21 +38,21 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurren
 			}
 			fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_%s_monthy_report_value.csv", outputFolder, data.ChainName, e.Address)
-			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
 				return nil, err
 			}
 			filenames = append(filenames, filename)
 
 			filename2 := fmt.Sprintf("%s/%s_%s_monthy_report.csv", outputFolder, data.ChainName, e.Address)
-			err = ioutil.WriteFile(filename2, []byte(outputcsv2), 0777)
+			err = ioutil.WriteFile(filename2, []byte(outputcsv2), 0600)
 			if err != nil {
 				return nil, err
 			}
 			filenames = append(filenames, filename2)
 
 			filename3 := fmt.Sprintf("%s/%s_%s_monthy_report_convert_price_only.csv", outputFolder, data.ChainName, e.Address)
-			err = ioutil.WriteFile(filename3, []byte(outputcsv3), 0777)
+			err = ioutil.WriteFile(filename3, []byte(outputcsv3), 0600)
 			if err != nil {
 				return nil, err
 			}
@@ -62,7 +63,8 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurren
 	return filenames, nil
 }
 
-func HandleTxsTable(individualChains []types.IndividualChain, outputFolder string, period types.Period) ([]string, error) {
+func HandleTxsTable(individualChains []types.IndividualChain, outputFolder string,
+	period types.Period) ([]string, error) {
 	var filenames []string
 	for _, detail := range individualChains {
 		entries, err := tables.GetTxs(detail, period.From)
@@ -76,7 +78,7 @@ func HandleTxsTable(individualChains []types.IndividualChain, outputFolder strin
 			}
 			fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_txs.csv", outputFolder, e.Address)
-			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
 				return nil, err
 			}
@@ -86,7 +88,8 @@ func HandleTxsTable(individualChains []types.IndividualChain, outputFolder strin
 	return filenames, nil
 }
 
-func HandleRewardCommissionTable(individualChains []types.IndividualChain, outputFolder string, period types.Period) ([]string, error) {
+func HandleRewardCommissionTable(individualChains []types.IndividualChain,
+	outputFolder string, period types.Period) ([]string, error) {
 	var filenames []string
 	for _, detail := range individualChains {
 		txs, err := tables.GetTxs(detail, period.From)
@@ -106,7 +109,7 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain, outpu
 			}
 			fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_reward_commission.csv", outputFolder, e.Address)
-			err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
 				return nil, err
 			}

@@ -34,17 +34,20 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 		return 0, err
 	}
 	if resp.StatusCode != 200 {
-		return 0, fmt.Errorf("Fail to get tx from rpc:Status code:%d", resp.StatusCode)
+		return 0, fmt.Errorf("fail to get tx from rpc:Status code:%d", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
 
 	var blockRes cosmostypes.Block
 	err = json.Unmarshal(bz, &blockRes)
 	if err != nil {
-		return 0, fmt.Errorf("Fail to marshal:%s", err)
+		return 0, fmt.Errorf("fail to marshal:%s", err)
 	}
 
 	header := blockRes.Block.Header
@@ -137,6 +140,9 @@ func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
 	}
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var blockRes cosmostypes.Block
 	err = json.Unmarshal(bz, &blockRes)

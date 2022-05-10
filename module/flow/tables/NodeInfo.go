@@ -28,8 +28,16 @@ func GetNodeInfo(nodeId string, flowjuno string) (flowtypes.NodeInfoFromTables, 
 	jsonData := map[string]string{
 		"query": queryStr,
 	}
-	jsonValue, _ := json.Marshal(jsonData)
+	jsonValue, err := json.Marshal(jsonData)
+	if err != nil {
+		return nil, err
+	}
+
 	request, err := http.NewRequest("POST", flowjuno, bytes.NewBuffer(jsonValue))
+	if err != nil {
+		return nil, err
+	}
+
 	client := &http.Client{Timeout: time.Second * 10}
 	response, err := client.Do(request)
 	if err != nil {

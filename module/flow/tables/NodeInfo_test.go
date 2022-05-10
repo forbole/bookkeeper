@@ -34,7 +34,10 @@ func (suite *FlowTableTestSuite) SetupTest() {
 		"last_spork":16
 	  }`
 	var chain types.Flow
-	json.Unmarshal([]byte(chainStrings), &chain)
+	err := json.Unmarshal([]byte(chainStrings), &chain)
+	if err != nil {
+		panic(err)
+	}
 
 	suite.testInput = chain
 }

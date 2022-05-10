@@ -41,7 +41,10 @@ func (suite *CosmosTableTestSuite) SetupTest() {
       "fund_holding_account":["cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj"]
     }`
 	var chain types.IndividualChain
-	json.Unmarshal([]byte(chainStrings), &chain)
+	err := json.Unmarshal([]byte(chainStrings), &chain)
+	if err != nil {
+		panic(err)
+	}
 
 	suite.testInput = chain
 }

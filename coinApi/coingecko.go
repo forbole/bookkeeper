@@ -15,9 +15,9 @@ func GetPriceFromCoingecko(coinId, vsCurrency string) (*big.Float, error) {
 		Timeout: time.Second * 10,
 	}
 
-	CG := coingecko.NewClient(httpClient)
+	cg := coingecko.NewClient(httpClient)
 
-	singlePrice, err := CG.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
+	singlePrice, err := cg.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
 	if err != nil {
 		return nil, err
 	}

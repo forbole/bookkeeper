@@ -39,7 +39,7 @@ func HandleNodeInfos(flow types.Flow, vsCurrency string, period types.Period) ([
 		}
 		fmt.Println(outputcsv)
 		filename := fmt.Sprintf("%s_nodeInfo.csv", id)
-		err = ioutil.WriteFile(filename, []byte(outputcsv), 0777)
+		err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 		if err != nil {
 			return nil, err
 		}

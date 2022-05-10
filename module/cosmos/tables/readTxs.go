@@ -128,11 +128,6 @@ func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]ta
 						out = amount
 					}
 				}
-				if in != "0" {
-					//fmt.Println(fmt.Sprintf("Received amount:%s\nReceiver:%s", in, receiver))
-				} else if out != "0" {
-					//fmt.Println(fmt.Sprintf("Spent amount:%s\nSpender:%s", out, receiver))
-				}
 			}
 			if event.Type == "message" {
 				bzaction, err := attribute["action"].MarshalJSON()

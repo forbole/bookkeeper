@@ -45,14 +45,14 @@ func (flowClient FlowClient) GetDateByHeight(height uint64, lastSpork int) (*tim
 		}
 		flowClient.client = newClient
 		newDate, err := flowClient.GetDateByHeightMainnet(height)
-		lastSpork -= 1
+		lastSpork--
 		if err == nil {
 			fmt.Println(date)
 			date = newDate
 			break
 		}
 		if lastSpork == 0 {
-			return nil, fmt.Errorf("Cannot find the block height")
+			return nil, fmt.Errorf("cannot find the block height")
 		}
 	}
 	return date, nil

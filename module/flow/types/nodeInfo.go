@@ -59,14 +59,14 @@ func (n NodeInfoFromTables) GetCSV(exp int, coinId string, vsCurrency string, fl
 		Timeout: time.Second * 10,
 	}
 
-	CG := coingecko.NewClient(httpClient)
+	cg := coingecko.NewClient(httpClient)
 
-	singlePrice, err := CG.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
+	singlePrice, err := cg.CoinsMarket(vsCurrency, []string{coinId}, "", 0, 0, false, nil)
 	if err != nil {
 		return "", err
 	}
 	fmt.Println((*singlePrice)[0].CurrentPrice)
-	coinprice := float64((*singlePrice)[0].CurrentPrice)
+	coinprice := (*singlePrice)[0].CurrentPrice
 	fmt.Println(coinprice)
 
 	for _, b := range n {
@@ -76,7 +76,7 @@ func (n NodeInfoFromTables) GetCSV(exp int, coinId string, vsCurrency string, fl
 			return "", err
 		}
 
-		commited := float64(b.TokensCommitted) * exponent
+		committed := float64(b.TokensCommitted) * exponent
 		requestToUnstake := float64(b.TokensRequestedToUnstake) * exponent
 		rewarded := float64(b.TokensRewarded) * exponent
 		staked := float64(b.TokensStaked) * exponent
@@ -84,10 +84,10 @@ func (n NodeInfoFromTables) GetCSV(exp int, coinId string, vsCurrency string, fl
 		unstaking := float64(b.TokensUnstaking) * exponent
 		outputcsv += fmt.Sprintf("%s,%f,%f,%f,%f,%f,%f, ,%f,%f,%f,%f,%f,%f\n",
 			date,
-			commited, requestToUnstake,
+			committed, requestToUnstake,
 			rewarded, staked,
 			unstaked, unstaking,
-			commited*coinprice, requestToUnstake*coinprice,
+			committed*coinprice, requestToUnstake*coinprice,
 			rewarded*coinprice, staked*coinprice,
 			unstaked*coinprice, unstaking*coinprice)
 

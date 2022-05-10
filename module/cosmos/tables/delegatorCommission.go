@@ -9,7 +9,9 @@ import (
 )
 
 // GetRewardCommission filter the rewardCommission table for balance entry
-func GetRewardCommission(addressBalanceEntry tabletypes.AddressBalanceEntry) (*tabletypes.AddressRewardCommission, error) {
+//
+func GetRewardCommission(addressBalanceEntry tabletypes.AddressBalanceEntry) (
+	*tabletypes.AddressRewardCommission, error) {
 	var rewardCommission tabletypes.RewardCommissions
 
 	for _, balanceEntry := range addressBalanceEntry.Rows {

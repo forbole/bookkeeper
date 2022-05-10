@@ -9,13 +9,13 @@ import (
 )
 
 // It parse single type of coin and return its balance sheet in certain period
-func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (types.Balances, error) {
+func ParseBalanceSheet(c types.Coin, vsCurrency string, cg *coingecko.Client) (types.Balances, error) {
 	var balances types.Balances
 
 	// getting coinprice fact
 	days := time.Since(c.DateQuantities[0].Date).Hours() / 24
 	// DAILTY data will be used for duration above 90 days.
-	coindata, err := CG.CoinsIDMarketChart(c.CoinType, vsCurrency, strconv.FormatFloat(days, 'f', -1, 64))
+	coindata, err := cg.CoinsIDMarketChart(c.CoinType, vsCurrency, strconv.FormatFloat(days, 'f', -1, 64))
 	if err != nil {
 		return nil, err
 	}
@@ -57,10 +57,10 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, CG *coingecko.Client) (t
 // This get multiple coins and return their total value from Jan 2020 to now
 // It assume the coins in coins has same time period
 // It have such a bad complexity :(
-func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko.Client) (types.TotalBalances, error) {
+func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, cg *coingecko.Client) (types.TotalBalances, error) {
 	coinsbalances := make([]types.Balances, len(coins))
 	for i, c := range coins {
-		b, err := ParseBalanceSheet(c, vsCurrency, CG)
+		b, err := ParseBalanceSheet(c, vsCurrency, cg)
 		if err != nil {
 			return nil, err
 		}
@@ -72,7 +72,7 @@ func TotalValueBalanceSheet(coins []types.Coin, vsCurrency string, CG *coingecko
 	for i, b := range coinsbalances[0] {
 		coinTotalValue := float32(0)
 		CoinBalance := make([]types.Balance, len(coins))
-		for j, _ := range coinsbalances {
+		for j := range coinsbalances {
 			coinTotalValue += coinsbalances[j][i].Balance
 			CoinBalance[j] = coinsbalances[j][i]
 		}

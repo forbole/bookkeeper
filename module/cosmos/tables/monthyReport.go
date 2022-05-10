@@ -16,7 +16,8 @@ import (
 
 // GetMonthyReport get monthy report between certain period of time
 func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
-	var monthyReports []tabletypes.AddressMonthyReport
+	//var monthyReports []tabletypes.AddressMonthyReport
+	monthyReports := make([]tabletypes.AddressMonthyReport, len(details.FundHoldingAccount))
 
 	from := time.Unix(period.From, 0)
 
@@ -30,13 +31,13 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 		return nil, nil
 	}
 	t := to
-	for _, b := range balanceEntries {
+	for j, b := range balanceEntries {
 		var monthyReportRows []tabletypes.MonthyReportRow
-		/* monthyReportRows,err:=getUnclaimedRewardCommission(details.LcdEndpoint,b.Address)
-		if err!=nil{
-			return nil,err
+		monthyReportRows, err := getUnclaimedRewardCommission(details.LcdEndpoint, details.Validators[0].ValidatorAddress)
+		if err != nil {
+			return nil, err
 		}
-		*/
+
 		rewardCommission, err := GetRewardCommission(b)
 		if err != nil {
 			return nil, err
@@ -52,7 +53,9 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 			}
 
 			if rows[i].Height < targetHeight {
-				monthyReportRows = append(monthyReportRows, tabletypes.NewMonthyReportRow(t, to, new(big.Float).SetFloat64(0), new(big.Float).SetFloat64(0), rows[i].Denom))
+				monthyReportRows = append(monthyReportRows,
+					tabletypes.NewMonthyReportRow(t, to, new(big.Float).SetFloat64(0),
+						new(big.Float).SetFloat64(0), rows[i].Denom))
 				t = *(lastMonth(t))
 				continue
 			}
@@ -88,12 +91,14 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 				fmt.Println(t)
 				fmt.Println(to)
 
-				monthyReportRows = append(monthyReportRows, tabletypes.NewMonthyReportRow(t, to, element.Commission, element.Reward, key))
+				monthyReportRows = append(monthyReportRows,
+					tabletypes.NewMonthyReportRow(t, to, element.Commission, element.Reward, key))
 			}
 			t = *(lastMonth(t))
 
 		}
-		monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows))
+		//monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows))
+		monthyReports[j] = tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows)
 	}
 	return monthyReports, nil
 }
@@ -221,7 +226,7 @@ func getUnclaimedRewardCommission(lcd string, address string) ([]tabletypes.Mont
 		if !ok {
 			return nil, fmt.Errorf("Cannot read unclaimecd Commission:%s", c.Amount)
 		}
-		// find the corrisponding reward
+		// find the corresponding reward
 		unclaimedReward := new(big.Float).SetInt64(0)
 		for _, r := range reward {
 			if r.Denom == c.Denom {
@@ -232,7 +237,8 @@ func getUnclaimedRewardCommission(lcd string, address string) ([]tabletypes.Mont
 				unclaimedReward = newReward
 			}
 		}
-		monthyReportRows = append(monthyReportRows, tabletypes.NewMonthyReportRow(now, now, unclaimedCommission, unclaimedReward, c.Denom))
+		monthyReportRows = append(monthyReportRows,
+			tabletypes.NewMonthyReportRow(now, now, unclaimedCommission, unclaimedReward, c.Denom))
 	}
 	return monthyReportRows, nil
 }

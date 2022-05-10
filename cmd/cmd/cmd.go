@@ -97,17 +97,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	}
 	defer grpcConn.Close() */
 
-	//staking reward/ cosmos-sdk/MsgWithdrawValidatorCommission/MsgWithdrawDelegationReward
-	//https://api.cosmos.network/txs?message.module=distribution&transfer.recipient=cosmos15mj8w79uf7gyxr7mnejz9k57ykcp4lc3mz3wly&page=1
-	//send
-	//https://api.cosmos.network/txs?message.module=bank&transfer.recipient=cosmos17m58y24rayd72mqqgsr7npetlh74r6umksju7c&page=2&limit=1
-	//https://rpc.desmos.forbole.com/tx_search?query="message.sender='desmos1tknem46cl5mlxkpqmls2nct38rtkvyq7xk9lj2'"
-
 	//coingecko
 	/* httpClient := &http.Client{
 			Timeout: time.Second * 10,
 		}
-		CG := coingecko.NewClient(httpClient)
+		cg := coingecko.NewClient(httpClient)
 
 		// Import coin info
 		// Assume the dateQuantity pair is always by time asc
@@ -131,16 +125,16 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		// May need to query from graphql if we want to get exact balance
 		// Like what X does?
 		// For now just using the price
-		balances, err := balancesheet.ParseBalanceSheet(coin, vsCurrency, CG)
+		balances, err := balancesheet.ParseBalanceSheet(coin, vsCurrency, cg)
 		if err != nil {
 			return err
 		}
 
 		totalBalance,err :=balancesheet.TotalValueBalanceSheet([]types.Coin{
 			coin,eth,
-		},vsCurrency,CG)
+		},vsCurrency,cg)
 
-		ethBalance,err := balancesheet.ParseBalanceSheet(eth, vsCurrency, CG)
+		ethBalance,err := balancesheet.ParseBalanceSheet(eth, vsCurrency, cg)
 		if err!=nil{
 			return err
 		}
@@ -150,14 +144,14 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		// date, coin price, account balance
 		outputcsv := balances.GetCSV()
 		fmt.Println(outputcsv)
-		err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin), []byte(outputcsv), 0777)
+		err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin), []byte(outputcsv), 0600)
 	    if err != nil {
 	        return err
 	    }
 
 		totalCsv:=totalBalance.GetCSV()
 		fmt.Println(totalCsv)
-		err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0777)
+		err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0600)
 		if err!=nil{
 			return err
 		}
@@ -172,5 +166,5 @@ func Execute(cmd *cobra.Command, arg []string) error {
 func OutputCsv(b types.Balances) error {
 	totalCsv := b.GetCSV()
 	fmt.Println(totalCsv)
-	return ioutil.WriteFile(fmt.Sprintf("%s.csv", b[0].Coin), []byte(totalCsv), 0777)
+	return ioutil.WriteFile(fmt.Sprintf("%s.csv", b[0].Coin), []byte(totalCsv), 0600)
 }
