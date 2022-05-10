@@ -59,7 +59,7 @@ type Period struct{
 type Flow struct{
 	FlowJuno string `json:"flowjuno"`
 	FlowEndpoint string `json:"flow_endpoint"`
-	NodeIds []string `json:"node_ids"`
+	Addresses []string `json:"addresses"`
 	Denom   string    `json:"denom"`
 	Exponent int `json:"exponent"`
 	LastSpork int `json:"last_spork"`
