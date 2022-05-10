@@ -15,6 +15,7 @@ import (
 type FlowTableTestSuite struct {
 	suite.Suite
 	testInput types.Flow
+	period    types.Period
 }
 
 // We need this function to kick off the test suite, otherwise
@@ -28,7 +29,7 @@ func (suite *FlowTableTestSuite) SetupTest() {
 	chainStrings := `{
 		"flowjuno":"https://gql.flow.forbole.com/v1/graphql",
 		"flow_endpoint":"access.mainnet.nodes.onflow.org:9000",
-		"node_ids":["fb397444147918de"],
+		"addresses":["fb397444147918de"],
 		"denom":"flow",
 		"exponent":8,
 		"last_spork":16
@@ -40,10 +41,16 @@ func (suite *FlowTableTestSuite) SetupTest() {
 	}
 
 	suite.testInput = chain
+	suite.period = types.Period{
+		From: 1619564400,
+		To:   1651100400,
+	}
 }
 
-func (suite *FlowTableTestSuite) Test_GetNodeInfo() {
-	nodeInfo, err := tables.GetNodeInfo(suite.testInput.Addresses[0], suite.testInput.FlowJuno)
+func (suite *FlowTableTestSuite) Test_GetInfoFromAddress() {
+	startHeight := uint64(21291692)
+	nodeInfo, err := tables.GetNodeInfoFromAddress(suite.testInput.Addresses[0],
+		suite.testInput.FlowJuno, startHeight)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(nodeInfo)
 }

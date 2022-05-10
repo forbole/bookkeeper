@@ -8,6 +8,7 @@ import (
 
 	"github.com/onflow/flow-go-sdk/client"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type FlowClient struct {
@@ -15,7 +16,7 @@ type FlowClient struct {
 }
 
 func NewFlowClient(accessNode string) (*FlowClient, error) {
-	flowClient, err := client.New(accessNode, grpc.WithInsecure())
+	flowClient, err := client.New(accessNode, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +40,7 @@ func (flowClient FlowClient) GetDateByHeight(height uint64, lastSpork int) (*tim
 	for err != nil && strings.Contains(err.Error(), "failed to retrieve block ID for height") {
 		endpoint := fmt.Sprintf("access-001.mainnet%d.nodes.onflow.org:9000", lastSpork)
 		fmt.Println(endpoint)
-		newClient, err := client.New(endpoint, grpc.WithInsecure())
+		newClient, err := client.New(endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return nil, err
 		}

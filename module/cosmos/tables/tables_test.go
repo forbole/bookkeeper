@@ -35,10 +35,10 @@ func (suite *CosmosTableTestSuite) SetupTest() {
       "lcd_endpoint":"https://api.cosmos.network",
       "validators":[
         {
-        "validator_address":"123",
+        "validator_address":"cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj",
         "self_delegation_address":"abc"
         }],
-      "fund_holding_account":["cosmosvaloper14kn0kk33szpwus9nh8n87fjel8djx0y070ymmj"]
+      "fund_holding_account":["cosmos1kvp570cd6zvzh8ffrhz7lmytt6v6u2gx393tla"]
     }`
 	var chain types.IndividualChain
 	err := json.Unmarshal([]byte(chainStrings), &chain)

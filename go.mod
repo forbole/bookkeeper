@@ -4,9 +4,11 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.44.0
+	github.com/joho/godotenv v1.4.0
 	github.com/onflow/flow-go-sdk v0.24.0
 	github.com/scorredoira/email v0.0.0-20191107070024-dc7b732c55da
 	github.com/spf13/cobra v1.4.0
+	github.com/stretchr/testify v1.7.0
 	github.com/superoo7/go-gecko v1.0.0
 	google.golang.org/grpc v1.45.0
 )
@@ -20,7 +22,6 @@ require (
 	github.com/go-test/deep v1.0.5 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/onflow/atree v0.1.0-beta1.0.20211027184039-559ee654ece9 // indirect
 	github.com/onflow/cadence v0.20.1 // indirect
@@ -30,7 +31,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/zeebo/blake3 v0.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
