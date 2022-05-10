@@ -41,7 +41,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string) (tabletypes.ValidatorSta
 	var validatorStatus []tabletypes.ValidatorStatus
 	for _, r := range validatorDelegationCount.Data.Result {
 		chain := r.Metric.ChainID
-		//fmt.Println(chain)
+		////fmt.Println(chain)
 		val, ok := r.Value[1].(string)
 		if !ok {
 			return nil, fmt.Errorf("validatorCommissionRate is not string")
@@ -66,7 +66,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string) (tabletypes.ValidatorSta
 			return nil, err
 		}
 
-		fmt.Println(int64(timestampUnix))
+		//fmt.Println(int64(timestampUnix))
 		timeStampReal := time.Unix(int64(timestampUnix), 0)
 
 		// search for the same chain-id and same validator
@@ -142,7 +142,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string) (tabletypes.ValidatorSta
 
 		status := tabletypes.NewValidatorStatus(timeStampReal,
 			r.Metric.ChainID, delegationCount, commissionRate, totalvp, vpRanking, selfStake, vp)
-		fmt.Println(chain)
+		//fmt.Println(chain)
 
 		validatorStatus = append(validatorStatus, status)
 
@@ -154,7 +154,7 @@ func GetValidatorDetailsFromPrometheus(endpoint string) (tabletypes.ValidatorSta
 func getValidatorDelegationCount(endpoint string) (*promtypes.ValidatorDelegationCount, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "validator_delegation_count")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -180,7 +180,7 @@ func getValidatorDelegationCount(endpoint string) (*promtypes.ValidatorDelegatio
 func getStakeAmount(endpoint string) (*promtypes.StakeAmount, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "stake_amount")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -206,7 +206,7 @@ func getStakeAmount(endpoint string) (*promtypes.StakeAmount, error) {
 func getTotalVotingPower(endpoint string) (*promtypes.TotalVotingPower, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "total_voting_power")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -232,7 +232,7 @@ func getTotalVotingPower(endpoint string) (*promtypes.TotalVotingPower, error) {
 func getValidatorVotingPowerRanking(endpoint string) (*promtypes.ValidatorVotingPowerRanking, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "validator_voting_power_ranking")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -259,7 +259,7 @@ func getValidatorVotingPowerRanking(endpoint string) (*promtypes.ValidatorVoting
 func getValidatorVotingPower(endpoint string) (*promtypes.ValidatorVotingPower, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "validator_voting_power")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -285,7 +285,7 @@ func getValidatorVotingPower(endpoint string) (*promtypes.ValidatorVotingPower, 
 func getValidatorCommissionRate(endpoint string) (*promtypes.ValidatorCommissionRate, error) {
 	query := fmt.Sprintf(`%s/prometheus/api/v1/query?query=%s`,
 		endpoint, "validator_commission_rate")
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)

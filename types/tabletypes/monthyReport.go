@@ -99,7 +99,7 @@ func (v MonthyReportRows) GetMonthyCSVConvertedPrice(denom []types.Denom, vsCurr
 		// since they are same day, add it together
 		if _, ok := denomMap[row.Denom]; !ok {
 			// skip if that is not exist
-			fmt.Println(fmt.Sprintf("Coin is not supported:%s", row.Denom))
+			//fmt.Println(fmt.Sprintf("Coin is not supported:%s", row.Denom))
 			continue
 		}
 		c := row.Commission
@@ -113,8 +113,8 @@ func (v MonthyReportRows) GetMonthyCSVConvertedPrice(denom []types.Denom, vsCurr
 		rewardConverted := new(big.Float).Mul(reward, denomMap[row.Denom].Price)
 		newRewardInMonth := new(big.Float).Add(rewardConverted, rewardInMonth)
 		rewardInMonth = newRewardInMonth
-		fmt.Println(rewardInMonth)
-		fmt.Println(commissionInMonth)
+		//fmt.Println(rewardInMonth)
+		//fmt.Println(commissionInMonth)
 
 		if i+1 == len(v) || v[i+1].FromDate != currentFromDate {
 			// If next entry changed date, write
@@ -157,7 +157,7 @@ func (v MonthyReportRows) GetCSVConvertedPrice(denom []types.Denom, vsCurrency s
 		// since they are same day, add it together
 		if _, ok := denomMap[row.Denom]; !ok {
 			// skip if that is not exist
-			fmt.Println(fmt.Sprintf("Coin is not supported:%s", row.Denom))
+			//fmt.Println(fmt.Sprintf("Coin is not supported:%s", row.Denom))
 			continue
 		}
 

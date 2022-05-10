@@ -65,12 +65,12 @@ func (n NodeInfoFromTables) GetCSV(exp int, coinId string, vsCurrency string, fl
 	if err != nil {
 		return "", err
 	}
-	fmt.Println((*singlePrice)[0].CurrentPrice)
+	//fmt.Println((*singlePrice)[0].CurrentPrice)
 	coinprice := (*singlePrice)[0].CurrentPrice
-	fmt.Println(coinprice)
+	//fmt.Println(coinprice)
 
 	for _, b := range n {
-		fmt.Println(flowclient)
+		//fmt.Println(flowclient)
 		date, err := (flowclient).GetDateByHeight(uint64(b.Height), lastspork)
 		if err != nil {
 			return "", err

@@ -58,7 +58,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(*data)
+	//fmt.Println(*data)
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
@@ -73,9 +73,6 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files2...)
-			break
-		default:
-			break
 		}
 	}
 
@@ -143,14 +140,14 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		// schema
 		// date, coin price, account balance
 		outputcsv := balances.GetCSV()
-		fmt.Println(outputcsv)
+		//fmt.Println(outputcsv)
 		err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin), []byte(outputcsv), 0600)
 	    if err != nil {
 	        return err
 	    }
 
 		totalCsv:=totalBalance.GetCSV()
-		fmt.Println(totalCsv)
+		//fmt.Println(totalCsv)
 		err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0600)
 		if err!=nil{
 			return err
@@ -165,6 +162,6 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 func OutputCsv(b types.Balances) error {
 	totalCsv := b.GetCSV()
-	fmt.Println(totalCsv)
+	//fmt.Println(totalCsv)
 	return ioutil.WriteFile(fmt.Sprintf("%s.csv", b[0].Coin), []byte(totalCsv), 0600)
 }

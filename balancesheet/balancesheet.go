@@ -36,7 +36,7 @@ func ParseBalanceSheet(c types.Coin, vsCurrency string, cg *coingecko.Client) (t
 				dateNow,
 				prices[countday][1]*float32(datequantity.Quantity), vsCurrency, datequantity.Quantity))
 
-			countmonth += 1
+			countmonth++
 
 			if countmonth == 13 {
 				countmonth = 1

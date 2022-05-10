@@ -28,7 +28,7 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 // If the height do not exist, will return the Lowest Height
 func GetHeightByDate(t time.Time, lcd string) (int, error) {
 	query := fmt.Sprintf(`%s/blocks/latest`, lcd)
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return 0, err
@@ -63,7 +63,7 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	fmt.Println(t)
+	//fmt.Println(t)
 
 	for !((t.After(newT) && t.Sub(newT) < (time.Hour*23)) ||
 		(t.Before(newT) && newT.Sub(t) < (time.Hour*23))) {
@@ -115,7 +115,7 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 
 func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
 	query := fmt.Sprintf(`%s/blocks/%d`, lcd, height)
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, err

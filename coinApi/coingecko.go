@@ -25,6 +25,6 @@ func GetPriceFromCoingecko(coinId, vsCurrency string) (*big.Float, error) {
 		return nil, fmt.Errorf("Error getting coinsmarket")
 	}
 	coinprice := new(big.Float).SetFloat64((*singlePrice)[0].CurrentPrice)
-	fmt.Println(coinprice)
+	//fmt.Println(coinprice)
 	return coinprice, nil
 }

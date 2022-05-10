@@ -35,11 +35,11 @@ func (flowClient FlowClient) GetDateByHeightMainnet(height uint64) (*time.Time, 
 
 // GetDateByHeight get the time for the specific height
 func (flowClient FlowClient) GetDateByHeight(height uint64, lastSpork int) (*time.Time, error) {
-	fmt.Println(height)
+	//fmt.Println(height)
 	date, err := flowClient.GetDateByHeightMainnet(height)
 	for err != nil && strings.Contains(err.Error(), "failed to retrieve block ID for height") {
 		endpoint := fmt.Sprintf("access-001.mainnet%d.nodes.onflow.org:9000", lastSpork)
-		fmt.Println(endpoint)
+		//fmt.Println(endpoint)
 		newClient, err := client.New(endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return nil, err
@@ -48,7 +48,7 @@ func (flowClient FlowClient) GetDateByHeight(height uint64, lastSpork int) (*tim
 		newDate, err := flowClient.GetDateByHeightMainnet(height)
 		lastSpork--
 		if err == nil {
-			fmt.Println(date)
+			//fmt.Println(date)
 			date = newDate
 			break
 		}
@@ -84,7 +84,7 @@ func (flowClient FlowClient) GetHeightByDate(t time.Time, lastSpork int) (uint64
 	if err != nil {
 		return 0, err
 	}
-	fmt.Println(t)
+	//fmt.Println(t)
 
 	for !((t.After(newT) && t.Sub(newT) < (time.Hour*23)) ||
 		(t.Before(newT) && newT.Sub(t) < (time.Hour*23))) {

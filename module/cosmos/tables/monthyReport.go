@@ -43,7 +43,7 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 			return nil, err
 		}
 		rows := rewardCommission.Rows
-		fmt.Println(rewardCommission.Rows.GetCSV())
+		//fmt.Println(rewardCommission.Rows.GetCSV())
 
 		i := 0
 		for t.After(from) && len(rows) > i {
@@ -79,7 +79,7 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 				denomEntry.Commission = new(big.Float).Set(commission)
 				denomEntry.Reward = new(big.Float).Set(reward)
 				recordForMonth[rows[i].Denom] = denomEntry
-				fmt.Println(denomEntry.Commission)
+				//fmt.Println(denomEntry.Commission)
 			}
 
 			for key, element := range recordForMonth {
@@ -87,9 +87,9 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 				if time.Now().Before(*(nextMonth(t))) {
 					to = time.Now()
 				}
-				fmt.Println("Key:", key, "=>", "Element:", element)
-				fmt.Println(t)
-				fmt.Println(to)
+				//fmt.Println("Key:", key, "=>", "Element:", element)
+				//fmt.Println(t)
+				//fmt.Println(to)
 
 				monthyReportRows = append(monthyReportRows,
 					tabletypes.NewMonthyReportRow(t, to, element.Commission, element.Reward, key))
@@ -246,7 +246,7 @@ func getUnclaimedRewardCommission(lcd string, address string) ([]tabletypes.Mont
 func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
 	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/commission`,
 		lcd, address)
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
@@ -258,6 +258,9 @@ func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount
 	defer resp.Body.Close()
 
 	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var txSearchRes cosmostypes.Commission
 	err = json.Unmarshal(bz, &txSearchRes)
@@ -270,7 +273,7 @@ func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount
 func getUnclaimReward(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
 	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/outstanding_rewards`,
 		lcd, address)
-	fmt.Println(query)
+	//fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)

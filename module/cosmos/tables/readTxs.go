@@ -57,7 +57,7 @@ func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBala
 					/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
 					err,tx.TxResult.Log,tx.Hash) */
 				}
-				//fmt.Println(tx.Hash)
+				////fmt.Println(tx.Hash)
 
 				balanceEntry, err := readlogs(logs, address, tx.Hash, height)
 				if err != nil {
@@ -80,7 +80,7 @@ func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]ta
 
 	for _, log := range logs {
 		// There will be one transaction
-		//fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
+		////fmt.Println(fmt.Sprintf("MsgIndex:%d", log.MsgIndex))
 		in := "0"
 		out := "0"
 		msgType := ""
@@ -89,7 +89,7 @@ func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]ta
 		for _, event := range log.Events {
 			//Catagorise each event and put it in a table
 			attribute := ConvertAttributeToMap(event.Attributes)
-			//fmt.Println(fmt.Sprintf("type:%s",event.Type))
+			////fmt.Println(fmt.Sprintf("type:%s",event.Type))
 			// check if we are the receiver (write on + side)
 			if event.Type == "transfer" {
 				// get the amount for the transafer
@@ -135,7 +135,7 @@ func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]ta
 					return nil, err
 				}
 				msgType = strings.ReplaceAll(string(bzaction), "\"", "")
-				//fmt.Println(fmt.Sprintf("action:%s", msgType))
+				////fmt.Println(fmt.Sprintf("action:%s", msgType))
 			}
 		}
 		balanceEntries = append(balanceEntries,
@@ -163,7 +163,7 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 	for page := 1; (lastHeight > targetHeight) && (pageCount >= page); page++ {
 		query := fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 			api, address, page, limit)
-		fmt.Println(query)
+		//fmt.Println(query)
 		resp, err := http.Get(query)
 		if err != nil {
 			return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)

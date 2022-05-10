@@ -36,7 +36,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurren
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(outputcsv)
+			//fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_%s_monthy_report_value.csv", outputFolder, data.ChainName, e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
@@ -76,7 +76,7 @@ func HandleTxsTable(individualChains []types.IndividualChain, outputFolder strin
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(outputcsv)
+			//fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_txs.csv", outputFolder, e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
@@ -107,7 +107,7 @@ func HandleRewardCommissionTable(individualChains []types.IndividualChain,
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(outputcsv)
+			//fmt.Println(outputcsv)
 			filename := fmt.Sprintf("%s/%s_reward_commission.csv", outputFolder, e.Address)
 			err = ioutil.WriteFile(filename, []byte(outputcsv), 0600)
 			if err != nil {
