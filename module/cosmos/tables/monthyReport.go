@@ -13,51 +13,76 @@ import (
 
 // GetMonthyReport get monthy report between certain period of time
 func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
-	//var monthyReports []tabletypes.AddressMonthyReport
+	var monthyReports []tabletypes.AddressMonthyReport
 	log.Trace().Str("module", "cosmos").Msg("get monthy report")
-
-	monthyReports := make([]tabletypes.AddressMonthyReport, len(details.FundHoldingAccount))
 
 	from := time.Unix(period.From, 0)
 
 	to := time.Unix(period.To, 0)
 
-	balanceEntries, err := GetTxs(details, period.From)
-	if err != nil {
-		return nil, err
-	}
-	if balanceEntries == nil {
-		return nil, nil
-	}
-	t := to
-	for j, b := range balanceEntries {
-		var monthyReportRows []tabletypes.MonthyReportRow
-		monthyReportRows, err := utils.GetUnclaimedRewardCommission(details.LcdEndpoint, details.Validators[0].ValidatorAddress)
-		if err != nil {
-			return nil, err
-		}
-
-		rewardCommission, err := GetRewardCommission(b)
-		if err != nil {
-			return nil, err
-		}
-		rows := rewardCommission.Rows
-		//fmt.Println(rewardCommission.Rows.GetCSV())
-
-		monthyReportRowsFromRewardCommission,err:=GetMonthyReportForAnAddress(rows,t,from,details.LcdEndpoint)
+	for _,validator:=range details.Validators{
+		validatorReport,err:=GetMonthyReportForValidator(validator,from,to,details.LcdEndpoint,details.RpcEndpoint)
 		if err!=nil{
 			return nil,err
 		}
-		
-		monthyReportRows=append(monthyReportRows, monthyReportRowsFromRewardCommission...)
-		//monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows))
-		monthyReports[j] = tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows)
+
+		monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(validator.ValidatorAddress,validatorReport))
+	}
+
+	for _,address:=range details.FundHoldingAccount{
+		report,err:=GetMonthyReportForSingleAddress(address,from,to,details.LcdEndpoint,details.RpcEndpoint)
+		if err!=nil{
+			return nil,err
+		}
+
+		monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(address,report))
 	}
 	return monthyReports, nil
 }
 
+// GetMonthyReportForSingleAddress get monthy report for a single validator and its delegator address
+func GetMonthyReportForSingleAddress(address string,from time.Time,to time.Time,lcd,rpc string)([]tabletypes.MonthyReportRow,error){
+	targetHeight,err:=utils.GetHeightByDate(from,lcd)
+	if err!=nil{
+		return nil,err
+	}
+
+	txs,err:=GetTxsForAnAddress(address,rpc,targetHeight)
+	if err!=nil{
+		return nil,err
+	}
+
+	rewardCommission, err := GetRewardCommission(*txs)
+	if err != nil {
+		return nil, err
+	}
+
+	monthyReportRowsFromRewardCommission,err:=GetMonthyReportFromRewardCommission(rewardCommission.Rows,to,from,lcd)
+	if err!=nil{
+		return nil,err
+	}
+	
+	return monthyReportRowsFromRewardCommission,nil
+}
+
+// GetMonthyReportForValidator get monthy report for a validator including unclaimed reward
+func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail,from time.Time,to time.Time,lcd,rpc string)([]tabletypes.MonthyReportRow,error){
+	unclaimedRewardCommission, err := utils.GetUnclaimedRewardCommission(lcd,validatorDetail.ValidatorAddress)
+		if err != nil {
+			return nil, err
+		}
+
+	report,err:=GetMonthyReportForSingleAddress(validatorDetail.SelfDelegationAddress,from,to,lcd,rpc)
+	if err!=nil{
+		return nil,err
+	}
+
+	validatorMonthyReport := append(unclaimedRewardCommission, report...)
+	return validatorMonthyReport,nil
+}
+
 // It pass the RewardCommission and output a monthy report
-func GetMonthyReportForAnAddress(rows tabletypes.RewardCommissions,to time.Time,from time.Time,lcdEndpoint string)([]tabletypes.MonthyReportRow,error){
+func GetMonthyReportFromRewardCommission(rows tabletypes.RewardCommissions,to time.Time,from time.Time,lcdEndpoint string)([]tabletypes.MonthyReportRow,error){
 	t:=to
 	i := 0
 	var monthyReportRows []tabletypes.MonthyReportRow
@@ -74,6 +99,8 @@ func GetMonthyReportForAnAddress(rows tabletypes.RewardCommissions,to time.Time,
 				t = *(utils.LastMonth(t))
 				continue
 			}
+			// A record for a month include different denom. So this struct should be denom vs 
+			//the reward and commission value in this denom
 			recordForMonth := make(map[string]*RewardCommission)
 			for ; len(rows) > i && rows[i].Height > targetHeight; i++ {
 				// recordForMonth have denom as key and sum up reward and commission for the month

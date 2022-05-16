@@ -72,7 +72,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files2...)
-
+/* 
 			files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
 			if err!=nil{
 				return err
@@ -84,7 +84,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				return err
 			}
 			filenames = append(filenames, files4...)
-
+ */
 		}
 	}
 
