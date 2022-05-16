@@ -13,11 +13,11 @@ import (
 	//"regexp"
 	//"strings"
 
-	"github.com/rs/zerolog/log"
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
 	types "github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
+	"github.com/rs/zerolog/log"
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
@@ -31,18 +31,18 @@ func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBala
 	}
 
 	for _, address := range details.FundHoldingAccount {
-		accountBalanceSheet,err:=GetTxsForAnAddress(address,details.RpcEndpoint,targetHeight)
-		if err!=nil{
-			return nil,err
+		accountBalanceSheet, err := GetTxsForAnAddress(address, details.RpcEndpoint, targetHeight)
+		if err != nil {
+			return nil, err
 		}
-		accountbalanceEntries = append(accountbalanceEntries,*accountBalanceSheet)
+		accountbalanceEntries = append(accountbalanceEntries, *accountBalanceSheet)
 	}
 
 	return accountbalanceEntries, nil
 }
 
 // GetTxsForAnAddress get txs for a single address from from now to the target height
-func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int)(*tabletypes.AddressBalanceEntry,error){
+func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int) (*tabletypes.AddressBalanceEntry, error) {
 	var balanceEntries []tabletypes.BalanceEntry
 	res, err := readTxs(rpcEndpoint, address, targetHeight)
 	if err != nil {
@@ -58,8 +58,8 @@ func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int)(*t
 
 			var logs []cosmostypes.RawLog
 			err = json.Unmarshal([]byte(rawlog), &logs)
-			if err!=nil{
-				return nil,err
+			if err != nil {
+				return nil, err
 			}
 			height, err := strconv.Atoi(tx.Height)
 			if err != nil {
@@ -75,8 +75,8 @@ func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int)(*t
 				balanceEntry...)
 		}
 	}
-	accountBalanceSheet:=tabletypes.NewAccountBalanceSheet(address, balanceEntries)
-	return	&accountBalanceSheet,nil
+	accountBalanceSheet := tabletypes.NewAccountBalanceSheet(address, balanceEntries)
+	return &accountBalanceSheet, nil
 }
 
 func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]tabletypes.BalanceEntry, error) {
@@ -170,7 +170,7 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 		query := fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 			api, address, page, limit)
 
-		log.Trace().Str("module", "cosmos").Str("Query tx:",query).Msg("Query from readTxs")
+		log.Trace().Str("module", "cosmos").Str("Query tx:", query).Msg("Query from readTxs")
 
 		resp, err := http.Get(query)
 		if err != nil {
