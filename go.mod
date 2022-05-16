@@ -6,6 +6,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.44.0
 	github.com/joho/godotenv v1.4.0
 	github.com/onflow/flow-go-sdk v0.24.0
+	github.com/rs/zerolog v1.23.0
 	github.com/scorredoira/email v0.0.0-20191107070024-dc7b732c55da
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.0
