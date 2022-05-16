@@ -1,15 +1,11 @@
 package tables
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"math/big"
-	"net/http"
 	"time"
+
 	"github.com/rs/zerolog/log"
 
-	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
 	types "github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
@@ -36,7 +32,7 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 	t := to
 	for j, b := range balanceEntries {
 		var monthyReportRows []tabletypes.MonthyReportRow
-		monthyReportRows, err := getUnclaimedRewardCommission(details.LcdEndpoint, details.Validators[0].ValidatorAddress)
+		monthyReportRows, err := utils.GetUnclaimedRewardCommission(details.LcdEndpoint, details.Validators[0].ValidatorAddress)
 		if err != nil {
 			return nil, err
 		}
@@ -48,9 +44,25 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 		rows := rewardCommission.Rows
 		//fmt.Println(rewardCommission.Rows.GetCSV())
 
-		i := 0
+		monthyReportRowsFromRewardCommission,err:=GetMonthyReportForAnAddress(rows,t,from,details.LcdEndpoint)
+		if err!=nil{
+			return nil,err
+		}
+		
+		monthyReportRows=append(monthyReportRows, monthyReportRowsFromRewardCommission...)
+		//monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows))
+		monthyReports[j] = tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows)
+	}
+	return monthyReports, nil
+}
+
+// It pass the RewardCommission and output a monthy report
+func GetMonthyReportForAnAddress(rows tabletypes.RewardCommissions,to time.Time,from time.Time,lcdEndpoint string)([]tabletypes.MonthyReportRow,error){
+	t:=to
+	i := 0
+	var monthyReportRows []tabletypes.MonthyReportRow
 		for t.After(from) && len(rows) > i {
-			targetHeight, err := utils.GetHeightByDate(t, details.LcdEndpoint)
+			targetHeight, err := utils.GetHeightByDate(t, lcdEndpoint)
 			if err != nil {
 				return nil, err
 			}
@@ -59,7 +71,7 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 				monthyReportRows = append(monthyReportRows,
 					tabletypes.NewMonthyReportRow(t, to, new(big.Float).SetFloat64(0),
 						new(big.Float).SetFloat64(0), rows[i].Denom))
-				t = *(lastMonth(t))
+				t = *(utils.LastMonth(t))
 				continue
 			}
 			recordForMonth := make(map[string]*RewardCommission)
@@ -86,8 +98,8 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 			}
 
 			for key, element := range recordForMonth {
-				to := *(nextMonth(t))
-				if time.Now().Before(*(nextMonth(t))) {
+				to := *(utils.NextMonth(t))
+				if time.Now().Before(*(utils.NextMonth(t))) {
 					to = time.Now()
 				}
 				//fmt.Println("Key:", key, "=>", "Element:", element)
@@ -97,205 +109,12 @@ func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabl
 				monthyReportRows = append(monthyReportRows,
 					tabletypes.NewMonthyReportRow(t, to, element.Commission, element.Reward, key))
 			}
-			t = *(lastMonth(t))
-
+			t = *(utils.LastMonth(t))
 		}
-		//monthyReports = append(monthyReports, tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows))
-		monthyReports[j] = tabletypes.NewAddressMonthyReport(b.Address, monthyReportRows)
-	}
-	return monthyReports, nil
-}
-
-func nextMonth(t time.Time) *time.Time {
-	date := t
-
-	day := t.Day()
-	if t.Day() > 28 {
-		day = 28
-	}
-
-	switch t.Month() {
-	case time.January:
-		date = time.Date(t.Year(), time.February, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.February:
-		date = time.Date(t.Year(), time.March, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.March:
-		date = time.Date(t.Year(), time.April, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.April:
-		date = time.Date(t.Year(), time.May, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.May:
-		date = time.Date(t.Year(), time.June, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.June:
-		date = time.Date(t.Year(), time.July, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.July:
-		date = time.Date(t.Year(), time.August, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.August:
-		date = time.Date(t.Year(), time.September, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.September:
-		date = time.Date(t.Year(), time.October, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.October:
-		date = time.Date(t.Year(), time.November, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.November:
-		date = time.Date(t.Year(), time.December, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.December:
-		date = time.Date(t.Year()+1, time.January, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	}
-
-	return &date
-}
-
-func lastMonth(t time.Time) *time.Time {
-	date := t
-
-	day := t.Day()
-	if t.Day() > 28 {
-		day = 28
-	}
-
-	switch t.Month() {
-	case time.January:
-		date = time.Date(t.Year()-1, time.December, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.February:
-		date = time.Date(t.Year(), time.January, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.March:
-		date = time.Date(t.Year(), time.February, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.April:
-		date = time.Date(t.Year(), time.March, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.May:
-		date = time.Date(t.Year(), time.April, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.June:
-		date = time.Date(t.Year(), time.May, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.July:
-		date = time.Date(t.Year(), time.June, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.August:
-		date = time.Date(t.Year(), time.July, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.September:
-		date = time.Date(t.Year(), time.August, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.October:
-		date = time.Date(t.Year(), time.September, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.November:
-		date = time.Date(t.Year(), time.October, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	case time.December:
-		date = time.Date(t.Year(), time.November, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-
-	}
-
-	return &date
+		return monthyReportRows,nil
 }
 
 type RewardCommission struct {
 	Commission *big.Float
 	Reward     *big.Float
-}
-
-func getUnclaimedRewardCommission(lcd string, address string) ([]tabletypes.MonthyReportRow, error) {
-	var monthyReportRows []tabletypes.MonthyReportRow
-	now := time.Now()
-	commission, err := getUnclaimCommission(lcd, address)
-	if err != nil {
-		return nil, err
-	}
-
-	reward, err := getUnclaimReward(lcd, address)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, c := range commission {
-		unclaimedCommission, ok := new(big.Float).SetString(c.Amount)
-		if !ok {
-			return nil, fmt.Errorf("Cannot read unclaimecd Commission:%s", c.Amount)
-		}
-		// find the corresponding reward
-		unclaimedReward := new(big.Float).SetInt64(0)
-		for _, r := range reward {
-			if r.Denom == c.Denom {
-				newReward, ok := new(big.Float).SetString(r.Amount)
-				if !ok {
-					return nil, fmt.Errorf("Cannot read unclaimecd Reward:%s", r.Amount)
-				}
-				unclaimedReward = newReward
-			}
-		}
-		monthyReportRows = append(monthyReportRows,
-			tabletypes.NewMonthyReportRow(now, now, unclaimedCommission, unclaimedReward, c.Denom))
-	}
-	return monthyReportRows, nil
-}
-
-func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
-	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/commission`,
-		lcd, address)
-	log.Trace().Str("module", "cosmos").Str("query",query).Msg("get unclaim commission")
-		resp, err := http.Get(query)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
-	}
-
-	defer resp.Body.Close()
-
-	bz, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var txSearchRes cosmostypes.Commission
-	err = json.Unmarshal(bz, &txSearchRes)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to marshal:%s", err)
-	}
-	return txSearchRes.Commission.Commission, nil
-}
-
-func getUnclaimReward(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
-	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/outstanding_rewards`,
-		lcd, address)
-	log.Trace().Str("module", "cosmos").Str("query",query).Msg("get unclaim reward")
-		resp, err := http.Get(query)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
-	}
-
-	defer resp.Body.Close()
-
-	bz, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var txSearchRes cosmostypes.Rewards
-	err = json.Unmarshal(bz, &txSearchRes)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to marshal:%s", err)
-	}
-	return txSearchRes.Rewards.Rewards, nil
 }
