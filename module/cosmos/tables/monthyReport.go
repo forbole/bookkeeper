@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net/http"
 	"time"
+	"github.com/rs/zerolog/log"
 
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
@@ -17,6 +18,8 @@ import (
 // GetMonthyReport get monthy report between certain period of time
 func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
 	//var monthyReports []tabletypes.AddressMonthyReport
+	log.Trace().Str("module", "cosmos").Msg("get monthy report")
+
 	monthyReports := make([]tabletypes.AddressMonthyReport, len(details.FundHoldingAccount))
 
 	from := time.Unix(period.From, 0)
@@ -246,8 +249,8 @@ func getUnclaimedRewardCommission(lcd string, address string) ([]tabletypes.Mont
 func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
 	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/commission`,
 		lcd, address)
-	//fmt.Println(query)
-	resp, err := http.Get(query)
+	log.Trace().Str("module", "cosmos").Str("query",query).Msg("get unclaim commission")
+		resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
 	}
@@ -273,8 +276,8 @@ func getUnclaimCommission(lcd string, address string) ([]cosmostypes.DenomAmount
 func getUnclaimReward(lcd string, address string) ([]cosmostypes.DenomAmount, error) {
 	query := fmt.Sprintf(`%s/cosmos/distribution/v1beta1/validators/%s/outstanding_rewards`,
 		lcd, address)
-	//fmt.Println(query)
-	resp, err := http.Get(query)
+	log.Trace().Str("module", "cosmos").Str("query",query).Msg("get unclaim reward")
+		resp, err := http.Get(query)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
 	}

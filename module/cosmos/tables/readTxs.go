@@ -13,6 +13,7 @@ import (
 	//"regexp"
 	//"strings"
 
+	"github.com/rs/zerolog/log"
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
 	types "github.com/forbole/bookkeeper/types"
@@ -21,6 +22,8 @@ import (
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
 func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBalanceEntry, error) {
+	log.Trace().Str("module", "cosmos").Msg("get txs")
+
 	var accountbalanceEntries []tabletypes.AddressBalanceEntry
 	targetHeight, err := utils.GetHeightByDate(time.Unix(from, 0), details.LcdEndpoint)
 	if err != nil {
@@ -28,57 +31,57 @@ func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBala
 	}
 
 	for _, address := range details.FundHoldingAccount {
-		var balanceEntries []tabletypes.BalanceEntry
-		res, err := readTxs(details.RpcEndpoint, address, targetHeight)
-		if err != nil {
-			return nil, err
+		accountBalanceSheet,err:=GetTxsForAnAddress(address,details.RpcEndpoint,targetHeight)
+		if err!=nil{
+			return nil,err
 		}
-		if res == nil {
-			return nil, nil
-		}
-		for _, txs := range res {
-			for _, tx := range txs.Result.Txs {
-
-				rawlog := strings.ReplaceAll(tx.TxResult.Log, `"{`, `{`)
-				rawlog = strings.ReplaceAll(rawlog, `}"`, `}`)
-				rawlog = strings.ReplaceAll(rawlog, `\n`, `,`)
-				rawlog = strings.ReplaceAll(rawlog, `\`, ``)
-
-				var logs []cosmostypes.RawLog
-				err = json.Unmarshal([]byte(rawlog), &logs)
-				if err!=nil{
-					return nil,err
-				}
-				height, err := strconv.Atoi(tx.Height)
-				if err != nil {
-					return nil, err
-				}
-				if err != nil {
-					balanceEntries = append(balanceEntries,
-						tabletypes.NewBalanceEntry(height, tx.Hash, "0", "0", "Error reading Log for that tx"))
-					continue
-					/* return nil,fmt.Errorf("Error to unmarshal json object:%s\n:string:%s\n:txid:%s\n",
-					err,tx.TxResult.Log,tx.Hash) */
-				}
-				////fmt.Println(tx.Hash)
-
-				balanceEntry, err := readlogs(logs, address, tx.Hash, height)
-				if err != nil {
-					return nil, err
-				}
-
-				balanceEntries = append(balanceEntries,
-					balanceEntry...)
-			}
-		}
-		accountbalanceEntries = append(accountbalanceEntries,
-			tabletypes.NewAccountBalanceSheet(address, balanceEntries))
+		accountbalanceEntries = append(accountbalanceEntries,*accountBalanceSheet)
 	}
 
 	return accountbalanceEntries, nil
 }
 
+// GetTxsForAnAddress get txs for a single address from from now to the target height
+func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int)(*tabletypes.AddressBalanceEntry,error){
+	var balanceEntries []tabletypes.BalanceEntry
+	res, err := readTxs(rpcEndpoint, address, targetHeight)
+	if err != nil {
+		return nil, err
+	}
+	for _, txs := range res {
+		for _, tx := range txs.Result.Txs {
+
+			rawlog := strings.ReplaceAll(tx.TxResult.Log, `"{`, `{`)
+			rawlog = strings.ReplaceAll(rawlog, `}"`, `}`)
+			rawlog = strings.ReplaceAll(rawlog, `\n`, `,`)
+			rawlog = strings.ReplaceAll(rawlog, `\`, ``)
+
+			var logs []cosmostypes.RawLog
+			err = json.Unmarshal([]byte(rawlog), &logs)
+			if err!=nil{
+				return nil,err
+			}
+			height, err := strconv.Atoi(tx.Height)
+			if err != nil {
+				return nil, err
+			}
+
+			balanceEntry, err := readlogs(logs, address, tx.Hash, height)
+			if err != nil {
+				return nil, err
+			}
+
+			balanceEntries = append(balanceEntries,
+				balanceEntry...)
+		}
+	}
+	accountBalanceSheet:=tabletypes.NewAccountBalanceSheet(address, balanceEntries)
+	return	&accountBalanceSheet,nil
+}
+
 func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]tabletypes.BalanceEntry, error) {
+	log.Trace().Str("module", "cosmos").Msg("reading logs")
+
 	var balanceEntries []tabletypes.BalanceEntry
 
 	for _, log := range logs {
@@ -166,7 +169,9 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 	for page := 1; (lastHeight > targetHeight) && (pageCount >= page); page++ {
 		query := fmt.Sprintf(`%s/tx_search?query="message.sender='%s'"&prove=true&page=%d&per_page=%d&order_by="desc"`,
 			api, address, page, limit)
-		//fmt.Println(query)
+
+		log.Trace().Str("module", "cosmos").Str("Query tx:",query).Msg("Query from readTxs")
+
 		resp, err := http.Get(query)
 		if err != nil {
 			return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
