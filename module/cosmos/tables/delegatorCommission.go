@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+
 	"github.com/rs/zerolog/log"
 
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
