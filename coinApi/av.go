@@ -13,8 +13,8 @@ import (
 	cointypes "github.com/forbole/bookkeeper/coinApi/types"
 )
 
-// GetPriceFromAV get currency from AlphaVantage
-func GetPriceFromAV(coinId, vsCurrency string) (*big.Float, error) {
+// GetCurrencyPrice get currency from AlphaVantage
+func GetCurrencyPrice(coinId, vsCurrency string) (*big.Float, error) {
 	query := fmt.Sprintf("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=%s&to_currency=%s&apikey=%s",
 		coinId, vsCurrency, os.Getenv("AV_API_KEY"))
 	//fmt.Println(query)

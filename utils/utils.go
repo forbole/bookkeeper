@@ -19,7 +19,7 @@ func ConvertDenomToMap(denom []types.Denom, vsCurrency string) (map[string]*util
 		exponent := new(big.Float).SetFloat64((math.Pow(10, float64(-1*d.Exponent))))
 
 		if d.Cointype == "stablecoin" {
-			price, err := coinApi.GetPriceFromAV(d.CoinId, vsCurrency)
+			price, err := coinApi.GetCurrencyPrice(d.CoinId, vsCurrency)
 			if err != nil {
 				return nil, err
 			}
@@ -29,7 +29,7 @@ func ConvertDenomToMap(denom []types.Denom, vsCurrency string) (map[string]*util
 				Price:    price,
 			}
 		} else if d.Cointype == "crypto" {
-			price, err := coinApi.GetPriceFromCoingecko(d.CoinId, vsCurrency)
+			price, err := coinApi.GetCryptoPrice(d.CoinId, vsCurrency)
 			if err != nil {
 				return nil, err
 			}
@@ -42,3 +42,4 @@ func ConvertDenomToMap(denom []types.Denom, vsCurrency string) (map[string]*util
 	}
 	return coinPrice, nil
 }
+
