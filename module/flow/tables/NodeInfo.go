@@ -78,8 +78,8 @@ func GetNodeInfoFromAddress(address string, flowjuno string, startHeight uint64)
 	}
 	jsonValue, _ := json.Marshal(jsonData)
 	request, err := http.NewRequest("POST", flowjuno, bytes.NewBuffer(jsonValue))
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	client := &http.Client{Timeout: time.Second * 10}
 	response, err := client.Do(request)

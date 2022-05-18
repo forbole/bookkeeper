@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/rs/zerolog/log"
+
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 )
 
@@ -12,6 +14,8 @@ import (
 //
 func GetRewardCommission(addressBalanceEntry tabletypes.AddressBalanceEntry) (
 	*tabletypes.AddressRewardCommission, error) {
+	log.Trace().Str("module", "cosmos").Msg("get reward commission")
+
 	var rewardCommission tabletypes.RewardCommissions
 
 	for _, balanceEntry := range addressBalanceEntry.Rows {
