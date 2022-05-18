@@ -67,11 +67,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	for _, chain := range data.Chains {
 		switch chain.ChainType {
 		case "cosmos":
-			files2, err := cosmos.HandleCosmosMonthyReport(chain.Details, data.VsCurrency, outputFile, data.Period)
+		 	files2, err := cosmos.HandleCosmosMonthyReport(chain.Details, data.VsCurrency, outputFile, data.Period)
 			if err != nil {
 				return err
 			}
-			filenames = append(filenames, files2...)
+			 filenames = append(filenames, files2...)
 			/*
 				files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
 				if err!=nil{
@@ -79,12 +79,12 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				}
 				filenames = append(filenames, files3...)
 
-				files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
+			files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
 				if err!=nil{
 					return err
 				}
-				filenames = append(filenames, files4...)
-			*/
+				filenames = append(filenames, files4...) */
+			
 		}
 	}
 
