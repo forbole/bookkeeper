@@ -3,6 +3,7 @@ package tables
 import (
 	"math"
 	"math/big"
+	"time"
 
 	"github.com/forbole/bookkeeper/coinApi"
 	"github.com/forbole/bookkeeper/module/cosmos/utils"
@@ -10,10 +11,61 @@ import (
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 )
 
-func GetDateRewardCommissionValue(v tabletypes.RewardCommissions,denoms []types.Denom,vsCurrency string,lcd string)(
-	[]tabletypes.DateRewardCommissionPrice,error){
-	dateRewardCommissionPrice:=make([]tabletypes.DateRewardCommissionPrice,len(v))
-	denomMap:=ConvertDenomToMap(denoms)
+// DateRewardValue table is the table include converted value reward and commission on that day
+func GetDateRewardValueFromDetails(details types.IndividualChain,period types.Period,vsCurrency string)(
+	[]tabletypes.AddressDateRewardPrice,error){
+	addressDateRewardPrice:=make([]tabletypes.AddressDateRewardPrice,len(details.Validators)+len(details.FundHoldingAccount))
+	date:=time.Unix(period.From,0)
+	targetHeight,err:=utils.GetHeightByDate(date,details.LcdEndpoint)
+	if err!=nil{
+		return nil,err
+	}
+	i:=0
+	denomMap:=ConvertDenomToMap(details.Denom)
+	for _,validator:=range details.Validators{
+		dateRewardValue,err:=DateRewardCommissionValueForAnAddress(validator.SelfDelegationAddress,
+			details.LcdEndpoint,details.RpcEndpoint,targetHeight,denomMap,vsCurrency)
+		if err!=nil{
+			return nil,err
+		}
+		addressDateRewardPrice[i]=tabletypes.NewAddressDateRewardPrice(validator.ValidatorAddress,dateRewardValue)
+		i++
+	}
+	for _,address:=range details.FundHoldingAccount{
+		dateRewardValue,err:=DateRewardCommissionValueForAnAddress(address,
+			details.LcdEndpoint,details.RpcEndpoint,targetHeight,denomMap,vsCurrency)
+		if err!=nil{
+			return nil,err
+		}
+		addressDateRewardPrice[i]=tabletypes.NewAddressDateRewardPrice(address,dateRewardValue)
+		i++
+	}
+	return addressDateRewardPrice,nil
+}
+
+func DateRewardCommissionValueForAnAddress(address string,lcd string, rpc string,targetHeight int,denoms denomMap,vsCurrency string)(
+	[]tabletypes.DateRewardPriceRow,error){
+	txs,err:=GetTxsForAnAddress(address,rpc,targetHeight)
+	if err!=nil{
+		return nil,err
+	}
+
+	rewardCommission,err:=GetRewardCommission(*txs)
+	if err!=nil{
+		return nil,err
+	}
+
+	dateRewardValues,err:=GetDateRewardCommissionValue(rewardCommission.Rows,denoms,vsCurrency,lcd)
+	if err!=nil{
+		return nil,err
+	}
+
+	return dateRewardValues,nil
+	
+}
+func GetDateRewardCommissionValue(v tabletypes.RewardCommissions,denomMap denomMap,vsCurrency string,lcd string)(
+	[]tabletypes.DateRewardPriceRow,error){
+	DateRewardPriceRow:=make([]tabletypes.DateRewardPriceRow,len(v))
 	for i,r:=range v{
 		date,err:=utils.GetTimeByHeight(r.Height,lcd)
 		if err!=nil{
@@ -40,10 +92,10 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions,denoms []types.
 		rewardPrice:=new(big.Float).Mul(reward,price)
 
 
-		dateRewardCommissionPrice[i]=tabletypes.NewDateRewardCommissionPrice(*date,r.Reward,r.Commission,r.Denom,rewardPrice,commissionPrice)
+		DateRewardPriceRow[i]=tabletypes.NewDateRewardPriceRow(*date,r.Reward,r.Commission,r.Denom,rewardPrice,commissionPrice)
 
 	}
-	return dateRewardCommissionPrice,nil
+	return DateRewardPriceRow,nil
 }
 
 type denomDetails struct{
@@ -52,7 +104,9 @@ type denomDetails struct{
     Cointype string `json:"cointype"`
 }
 
-func ConvertDenomToMap(denoms []types.Denom)map[string]denomDetails{
+type denomMap map[string]denomDetails
+
+func ConvertDenomToMap(denoms []types.Denom)denomMap{
 	denomDetailsMap:=make(map[string]denomDetails)
 	for _,d:=range denoms{
 		exponent := new(big.Float).SetFloat64((math.Pow(10, float64(-1*d.Exponent))))

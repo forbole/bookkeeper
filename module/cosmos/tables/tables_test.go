@@ -14,6 +14,8 @@ import (
 type CosmosTableTestSuite struct {
 	suite.Suite
 	testInput types.IndividualChain
+  testVsCurrency string
+  testPeriod types.Period
 }
 
 // We need this function to kick off the test suite, otherwise
@@ -47,4 +49,14 @@ func (suite *CosmosTableTestSuite) SetupTest() {
 	}
 
 	suite.testInput = chain
+/* 
+  "period":{"from":1619564400,
+  "to":1651100400}
+ */
+  suite.testPeriod=types.Period{
+    From: 1619564400,
+    To:1651100400,
+  }
+
+  suite.testVsCurrency="USD"
 }
