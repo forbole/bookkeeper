@@ -92,7 +92,7 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions,denomMap denomM
 		rewardPrice:=new(big.Float).Mul(reward,price)
 
 
-		DateRewardPriceRow[i]=tabletypes.NewDateRewardPriceRow(*date,r.Reward,r.Commission,r.Denom,rewardPrice,commissionPrice)
+		DateRewardPriceRow[i]=tabletypes.NewDateRewardPriceRow(*date,reward,commission,denomMap[r.Denom].CoinId,rewardPrice,commissionPrice)
 
 	}
 	return DateRewardPriceRow,nil

@@ -63,6 +63,35 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurren
 	return filenames, nil
 }
 
+
+// HandleCosmos process all the chain in the struct.
+// Make a .csv file at "." and return the relative path
+func HandleRewardPriceTable(individualChains []types.IndividualChain, vsCurrency string, outputFolder string,
+	period types.Period) ([]string, error) {
+	var filenames []string
+
+	for _, data := range individualChains {
+		entries, err := tables.GetDateRewardValueFromDetails(data,period,vsCurrency)
+		if err != nil {
+			return nil, err
+		}
+
+		// Writ .csv to "."
+		for _, e := range entries {
+			outputcsv2 := e.GetCSV()
+
+			filename2 := fmt.Sprintf("%s/%s_%s_reward_price.csv", outputFolder, data.ChainName, e.Address)
+			err = ioutil.WriteFile(filename2, []byte(outputcsv2), 0600)
+			if err != nil {
+				return nil, err
+			}
+			filenames = append(filenames, filename2)
+		}
+
+	}
+	return filenames, nil
+}
+
 func HandleTxsTable(individualChains []types.IndividualChain, outputFolder string,
 	period types.Period) ([]string, error) {
 	var filenames []string
