@@ -1,13 +1,9 @@
 package table
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
 
+	"github.com/forbole/bookkeeper/module/subtrate/client"
 	subtratetypes "github.com/forbole/bookkeeper/module/subtrate/types"
 )
 
@@ -32,13 +28,14 @@ curl -X POST 'https://polkadot.api.subscan.io/api/scan/account/reward_slash' \
 //     "address": "15fTw39Ju2jJiHeGe1fJ5DtgugUauy9tr2HZuiRNFwqnGQ1Q"
 //   }'
 
-func GetRewardCommission(api string, address string)
+func GetRewardCommission(api string, address string){
+
+}
 
 
-func GetRewardSlash(api string, address string)(*subtratetypes.RewardSlash,error){
+func GetRewardSlash(api *client.SubscanClient, address string)(*subtratetypes.RewardSlash,error){
 	fmt.Println(api)
-	query := fmt.Sprintf("https://%s.api.subscan.io/api/scan/account/reward_slash",
-		api)
+	requestUrl :="/api/scan/account/reward_slash"
 	
 		type Payload struct {
 			Row     int    `json:"row"`
@@ -46,46 +43,15 @@ func GetRewardSlash(api string, address string)(*subtratetypes.RewardSlash,error
 			Address string `json:"address"`
 		}
 		
-		data := Payload{
+		payload := Payload{
 			Row:20,
 			Page:1,
 			Address:address,
 		}
-		payloadBytes, err := json.Marshal(data)
-		if err != nil {
-			// handle err
-		}
-		body := bytes.NewReader(payloadBytes)
-	
-	req,err:=http.NewRequest("POST",query,body)
+	var rewardSlash subtratetypes.RewardSlash
+	err:=api.CallApi(requestUrl,payload,&rewardSlash)
 	if err!=nil{
 		return nil,err
-	}
-	req.Header.Add("Content-Type","application/json")
-	req.Header.Add("X-API-Key",os.Getenv("SUBSCAN_API_KEY"))
-
-	//fmt.Println(query)
-	var bz []byte
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
-	}
-
-	bz, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	var rewardSlash subtratetypes.RewardSlash
-	err = json.Unmarshal(bz, &rewardSlash)
-	if err != nil {
-		return nil, fmt.Errorf("Fail to marshal:%s", err)
 	}
 
 	return &rewardSlash,nil

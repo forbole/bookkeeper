@@ -15,7 +15,7 @@ import (
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
-	subtrate "github.com/forbole/bookkeeper/module/subtrate/table"
+	"github.com/forbole/bookkeeper/module/subtrate"
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -89,11 +89,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	for _, chain :=range data.Subtrate{
 		fmt.Println(data)
-		reward,err:=subtrate.GetRewardTable(chain.ChainName,chain.Address[0])
+		err:=subtrate.Handle(chain)
 		if err!=nil{
 			return err
 		}
-		fmt.Println(reward)
+		
 	}
 
 	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)

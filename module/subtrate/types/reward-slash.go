@@ -1,5 +1,4 @@
 package types
-
 type RewardSlash struct {
 	Code        int    `json:"code"`
 	Message     string `json:"message"`
@@ -18,3 +17,8 @@ type RewardSlash struct {
 		} `json:"list"`
 	} `json:"data"`
 }
+
+func (v *RewardSlash) SubscanApi(){
+
+}
+
