@@ -71,29 +71,26 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		return err
 	}
 	filenames = append(filenames, files2...)
-			/*
-				files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
-				if err!=nil{
-					return err
-				}
-				filenames = append(filenames, files3...)
+	/*
+			files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, files3...)
 
-			files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
-				if err!=nil{
-					return err
-				}
-				filenames = append(filenames, files4...) */
-			
-		
-	
+		files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
+			if err!=nil{
+				return err
+			}
+			filenames = append(filenames, files4...) */
 
-	for _, chain :=range data.Subtrate{
+	for _, chain := range data.Subtrate {
 		fmt.Println(data)
-		err:=subtrate.Handle(chain)
-		if err!=nil{
+		err := subtrate.Handle(chain)
+		if err != nil {
 			return err
 		}
-		
+
 	}
 
 	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)

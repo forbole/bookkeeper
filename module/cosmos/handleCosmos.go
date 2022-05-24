@@ -63,7 +63,6 @@ func HandleCosmosMonthyReport(individualChains []types.CosmosDetails, vsCurrency
 	return filenames, nil
 }
 
-
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
 func HandleRewardPriceTable(individualChains []types.CosmosDetails, vsCurrency string, outputFolder string,
@@ -71,7 +70,7 @@ func HandleRewardPriceTable(individualChains []types.CosmosDetails, vsCurrency s
 	var filenames []string
 
 	for _, data := range individualChains {
-		entries, err := tables.GetDateRewardValueFromDetails(data,period,vsCurrency)
+		entries, err := tables.GetDateRewardValueFromDetails(data, period, vsCurrency)
 		if err != nil {
 			return nil, err
 		}

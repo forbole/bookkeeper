@@ -42,4 +42,3 @@ func ConvertDenomToMap(denom []types.Denom, vsCurrency string) (map[string]*util
 	}
 	return coinPrice, nil
 }
-

@@ -30,7 +30,7 @@ func GetTxs(details types.CosmosDetails, from int64) ([]tabletypes.AddressBalanc
 		return nil, err
 	}
 
-	for _,validator:=range details.Validators{
+	for _, validator := range details.Validators {
 		accountBalanceSheet, err := GetTxsForAnAddress(validator.SelfDelegationAddress, details.RpcEndpoint, targetHeight)
 		if err != nil {
 			return nil, err
@@ -65,13 +65,12 @@ func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int) (*
 			rawlog = strings.ReplaceAll(rawlog, `\`, ``)
 			rawlog = strings.ReplaceAll(rawlog, `""`, `"`)
 
-
 			var logs []cosmostypes.RawLog
 			err = json.Unmarshal([]byte(rawlog), &logs)
 			if err != nil {
-				balanceEntries=append(balanceEntries,
-					tabletypes.NewBalanceEntry(0, "cannot read tx","0", "0","cannot read tx"))
-				
+				balanceEntries = append(balanceEntries,
+					tabletypes.NewBalanceEntry(0, "cannot read tx", "0", "0", "cannot read tx"))
+
 			}
 			height, err := strconv.Atoi(tx.Height)
 			if err != nil {
@@ -218,8 +217,8 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 			if err != nil {
 				return nil, err
 			}
-			pageCount = totalCount/limit
-			if totalCount%limit!=0{
+			pageCount = totalCount / limit
+			if totalCount%limit != 0 {
 				pageCount++
 			}
 		}

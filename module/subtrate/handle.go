@@ -8,12 +8,12 @@ import (
 	"github.com/forbole/bookkeeper/types"
 )
 
-func Handle(subtrate types.Subtrate)error{
+func Handle(subtrate types.Subtrate) error {
 	// create client
-	client:=client.NewSubscanClient(subtrate.ChainName)
+	client := client.NewSubscanClient(subtrate.ChainName)
 
-	rewardSlash,err:=subtratetable.GetRewardSlash(client,subtrate.Address[0])
-	if err!=nil{
+	rewardSlash, err := subtratetable.GetRewardSlash(client, subtrate.Address[0])
+	if err != nil {
 		return err
 	}
 	fmt.Println(rewardSlash)

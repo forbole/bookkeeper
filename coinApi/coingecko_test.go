@@ -19,21 +19,19 @@ func TestCoinApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CoinApiTestSuite))
 }
 
-func (suite *CoinApiTestSuite) Test_GetCryptoPriceFromDate(){
-	date:=time.Date(2017,1,30,0,0,0,0,time.UTC)
+func (suite *CoinApiTestSuite) Test_GetCryptoPriceFromDate() {
+	date := time.Date(2017, 1, 30, 0, 0, 0, 0, time.UTC)
 
-	expectedPrice:=new(big.Float).SetFloat64(920.9911458822621)
+	expectedPrice := new(big.Float).SetFloat64(920.9911458822621)
 
-
-	price,err:=coinApi.GetCryptoPriceFromDate(date,"bitcoin","usd")
+	price, err := coinApi.GetCryptoPriceFromDate(date, "bitcoin", "usd")
 	suite.Require().NoError(err)
-	suite.Require().Equal(price,expectedPrice)
+	suite.Require().Equal(price, expectedPrice)
 
 }
 
-func (suite *CoinApiTestSuite) Test_GetCryptoPrice(){
-	price,err:=coinApi.GetCryptoPrice("bitcoin","usd")
+func (suite *CoinApiTestSuite) Test_GetCryptoPrice() {
+	price, err := coinApi.GetCryptoPrice("bitcoin", "usd")
 	suite.Require().NoError(err)
 	suite.Require().NotZero(price)
 }
-

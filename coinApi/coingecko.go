@@ -31,20 +31,19 @@ func GetCryptoPrice(coinId, vsCurrency string) (*big.Float, error) {
 }
 
 // GetPriceFromDate get crypto price by required date
-func GetCryptoPriceFromDate(date time.Time,coinid,vsCurrency string)(*big.Float, error){
+func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Float, error) {
 	httpClient := &http.Client{
 		Timeout: time.Second * 10,
 	}
 
 	cg := coingecko.NewClient(httpClient)
 
-
-	prices,err:=cg.CoinsIDHistory(coinid,date.Format("02-01-2006"),false)
-	if err!=nil{
-		return nil,err
+	prices, err := cg.CoinsIDHistory(coinid, date.Format("02-01-2006"), false)
+	if err != nil {
+		return nil, err
 	}
-	price:=new(big.Float).SetFloat64(prices.MarketData.CurrentPrice[vsCurrency])
+	price := new(big.Float).SetFloat64(prices.MarketData.CurrentPrice[vsCurrency])
 
-	return price,nil
-	
+	return price, nil
+
 }

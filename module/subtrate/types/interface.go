@@ -1,5 +1,5 @@
 package types
 
-type SubscanApi interface{
+type SubscanApi interface {
 	SubscanApi()
 }

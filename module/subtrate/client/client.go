@@ -6,23 +6,24 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/forbole/bookkeeper/module/subtrate/types"
 )
 
-type SubscanClient struct{
-	api string
+type SubscanClient struct {
+	api    string
 	client *http.Client
 }
 
-func NewSubscanClient(api string) *SubscanClient{
-	c:=http.DefaultClient
+func NewSubscanClient(api string) *SubscanClient {
+	c := http.DefaultClient
 	return &SubscanClient{
-		api:api,
-		client:c,
+		api:    api,
+		client: c,
 	}
 }
 
-
-func (client SubscanClient) CallApi(url string,payload interface{},v interface{})error{
+func (client SubscanClient) CallApi(url string, payload interface{}, v types.SubscanApi) error {
 
 	data := payload
 
@@ -32,9 +33,9 @@ func (client SubscanClient) CallApi(url string,payload interface{},v interface{}
 	}
 	body := bytes.NewReader(payloadBytes)
 
-	api:=fmt.Sprintf("https://%s.api.subscan.io/%s",client.api,url)
+	api := fmt.Sprintf("https://%s.api.subscan.io/%s", client.api, url)
 
-	req, err := http.NewRequest("POST", api , body)
+	req, err := http.NewRequest("POST", api, body)
 	if err != nil {
 		// handle err
 	}
@@ -43,20 +44,21 @@ func (client SubscanClient) CallApi(url string,payload interface{},v interface{}
 
 	resp, err := client.client.Do(req)
 	if err != nil {
-		// handle err
+		return err
 	}
 	defer resp.Body.Close()
 
 	var bz []byte
 	bz, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(bz))
 
 	err = json.Unmarshal(bz, &v)
-		if err != nil {
-			return fmt.Errorf("Fail to marshal:%s", err)
-		}
+	if err != nil {
+		return fmt.Errorf("Fail to marshal:%s", err)
+	}
 
 	return nil
 }

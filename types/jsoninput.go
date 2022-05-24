@@ -1,10 +1,9 @@
 package types
 
-
-type Subtrate struct{
-	ChainName string `json:"chain_name"`
+type Subtrate struct {
+	ChainName string   `json:"chain_name"`
 	Address   []string `json:"address"`
-	Denom     []Denom `json:"denom"`
+	Denom     []Denom  `json:"denom"`
 }
 
 type Denom struct {
@@ -44,14 +43,14 @@ type EmailDetails struct {
 }
 
 type Data struct {
-	Chains       []CosmosDetails `json:"chains"`
-	Subtrate     []Subtrate 	 `json:"subtrate"`
+	Chains   []CosmosDetails `json:"chains"`
+	Subtrate []Subtrate      `json:"subtrate"`
 
-	EmailDetails EmailDetails   `json:"email_details"`
-	Prometheus   string         `json:"prometheus"`
-	Flow         Flow           `json:"flow"`
-	VsCurrency   string         `json:"vs_currency"`
-	Period       Period         `json:"period"`
+	EmailDetails EmailDetails `json:"email_details"`
+	Prometheus   string       `json:"prometheus"`
+	Flow         Flow         `json:"flow"`
+	VsCurrency   string       `json:"vs_currency"`
+	Period       Period       `json:"period"`
 }
 
 // Period get the unix time period from and until date

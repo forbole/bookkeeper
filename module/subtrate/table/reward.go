@@ -28,31 +28,30 @@ curl -X POST 'https://polkadot.api.subscan.io/api/scan/account/reward_slash' \
 //     "address": "15fTw39Ju2jJiHeGe1fJ5DtgugUauy9tr2HZuiRNFwqnGQ1Q"
 //   }'
 
-func GetRewardCommission(api string, address string){
+func GetRewardCommission(api string, address string) {
 
 }
 
-
-func GetRewardSlash(api *client.SubscanClient, address string)(*subtratetypes.RewardSlash,error){
+func GetRewardSlash(api *client.SubscanClient, address string) (*subtratetypes.RewardSlash, error) {
 	fmt.Println(api)
-	requestUrl :="/api/scan/account/reward_slash"
-	
-		type Payload struct {
-			Row     int    `json:"row"`
-			Page    int    `json:"page"`
-			Address string `json:"address"`
-		}
-		
-		payload := Payload{
-			Row:20,
-			Page:1,
-			Address:address,
-		}
-	var rewardSlash subtratetypes.RewardSlash
-	err:=api.CallApi(requestUrl,payload,&rewardSlash)
-	if err!=nil{
-		return nil,err
+	requestUrl := "/api/v2/scan/account/reward_slash"
+
+	type Payload struct {
+		Row     int    `json:"row"`
+		Page    int    `json:"page"`
+		Address string `json:"address"`
 	}
 
-	return &rewardSlash,nil
+	payload := Payload{
+		Row:     20,
+		Page:    0,
+		Address: address,
+	}
+	var rewardSlash subtratetypes.RewardSlash
+	err := api.CallApi(requestUrl, payload, &rewardSlash)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rewardSlash, nil
 }
