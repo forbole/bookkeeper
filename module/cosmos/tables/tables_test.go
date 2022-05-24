@@ -13,7 +13,7 @@ import (
 // test suite struct
 type CosmosTableTestSuite struct {
 	suite.Suite
-	testInput types.IndividualChain
+	testInput types.CosmosDetails
   testVsCurrency string
   testPeriod types.Period
 }
@@ -42,7 +42,7 @@ func (suite *CosmosTableTestSuite) SetupTest() {
         }],
       "fund_holding_account":["cosmos1kvp570cd6zvzh8ffrhz7lmytt6v6u2gx393tla"]
     }`
-	var chain types.IndividualChain
+	var chain types.CosmosDetails
 	err := json.Unmarshal([]byte(chainStrings), &chain)
 	if err != nil {
 		panic(err)

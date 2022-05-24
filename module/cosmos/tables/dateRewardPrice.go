@@ -12,7 +12,7 @@ import (
 )
 
 // DateRewardValue table is the table include converted value reward and commission on that day
-func GetDateRewardValueFromDetails(details types.IndividualChain,period types.Period,vsCurrency string)(
+func GetDateRewardValueFromDetails(details types.CosmosDetails,period types.Period,vsCurrency string)(
 	[]tabletypes.AddressDateRewardPrice,error){
 	addressDateRewardPrice:=make([]tabletypes.AddressDateRewardPrice,len(details.Validators)+len(details.FundHoldingAccount))
 	date:=time.Unix(period.From,0)

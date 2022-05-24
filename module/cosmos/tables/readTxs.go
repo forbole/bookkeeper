@@ -21,7 +21,7 @@ import (
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBalanceEntry, error) {
+func GetTxs(details types.CosmosDetails, from int64) ([]tabletypes.AddressBalanceEntry, error) {
 	log.Trace().Str("module", "cosmos").Msg("get txs")
 
 	var accountbalanceEntries []tabletypes.AddressBalanceEntry

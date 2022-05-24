@@ -15,6 +15,8 @@ import (
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
+	subtrate "github.com/forbole/bookkeeper/module/subtrate/table"
+
 	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
@@ -64,14 +66,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	var filenames []string
 
-	for _, chain := range data.Chains {
-		switch chain.ChainType {
-		case "cosmos":
-		 	files2, err := cosmos.HandleRewardPriceTable(chain.Details, data.VsCurrency, outputFile, data.Period)
-			if err != nil {
-				return err
-			}
-			 filenames = append(filenames, files2...)
+	files2, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
+	if err != nil {
+		return err
+	}
+	filenames = append(filenames, files2...)
 			/*
 				files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
 				if err!=nil{
@@ -85,7 +84,16 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				}
 				filenames = append(filenames, files4...) */
 			
+		
+	
+
+	for _, chain :=range data.Subtrate{
+		fmt.Println(data)
+		reward,err:=subtrate.GetRewardTable(chain.ChainName,chain.Address[0])
+		if err!=nil{
+			return err
 		}
+		fmt.Println(reward)
 	}
 
 	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)

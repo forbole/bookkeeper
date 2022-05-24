@@ -10,7 +10,7 @@ import (
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurrency string, outputFolder string,
+func HandleCosmosMonthyReport(individualChains []types.CosmosDetails, vsCurrency string, outputFolder string,
 	period types.Period) ([]string, error) {
 	var filenames []string
 
@@ -66,7 +66,7 @@ func HandleCosmosMonthyReport(individualChains []types.IndividualChain, vsCurren
 
 // HandleCosmos process all the chain in the struct.
 // Make a .csv file at "." and return the relative path
-func HandleRewardPriceTable(individualChains []types.IndividualChain, vsCurrency string, outputFolder string,
+func HandleRewardPriceTable(individualChains []types.CosmosDetails, vsCurrency string, outputFolder string,
 	period types.Period) ([]string, error) {
 	var filenames []string
 
@@ -92,7 +92,7 @@ func HandleRewardPriceTable(individualChains []types.IndividualChain, vsCurrency
 	return filenames, nil
 }
 
-func HandleTxsTable(individualChains []types.IndividualChain, outputFolder string,
+func HandleTxsTable(individualChains []types.CosmosDetails, outputFolder string,
 	period types.Period) ([]string, error) {
 	var filenames []string
 	for _, detail := range individualChains {
@@ -117,7 +117,7 @@ func HandleTxsTable(individualChains []types.IndividualChain, outputFolder strin
 	return filenames, nil
 }
 
-func HandleRewardCommissionTable(individualChains []types.IndividualChain,
+func HandleRewardCommissionTable(individualChains []types.CosmosDetails,
 	outputFolder string, period types.Period) ([]string, error) {
 	var filenames []string
 	for _, detail := range individualChains {
