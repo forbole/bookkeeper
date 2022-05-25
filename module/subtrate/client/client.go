@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/forbole/bookkeeper/module/subtrate/types"
+	"github.com/rs/zerolog/log"
 )
 
 type SubscanClient struct {
@@ -24,12 +27,59 @@ func NewSubscanClient(api string) *SubscanClient {
 }
 
 func (client SubscanClient) CallApi(url string, payload interface{}, v types.SubscanApi) error {
+	log.Trace().Str("module", "subtrate").Msg("Query api")
 
+	req,err:=client.makeRequest(url,payload)
+	if err!=nil{
+		return err
+	}
+
+	bz,err:=client.doRequest(req)
+	
+	for strings.Contains(string(bz),"rate limit")||err!=nil{
+		log.Info().Str("module", "subtrate").Msg("API rate limit exceeded")
+		time.Sleep(time.Minute)
+		req,err:=client.makeRequest(url,payload)
+		if err!=nil{
+			return err
+		}
+
+		bz,err=client.doRequest(req)
+		
+
+	}
+	err = json.Unmarshal(bz, &v)
+	if err != nil {
+		return fmt.Errorf("Fail to marshal:%s,bz:%s", err,string(bz))
+	}
+
+	return nil
+}
+
+func (client SubscanClient) doRequest(req *http.Request) ([]byte,error) {
+	resp, err := client.client.Do(req)
+	if err != nil {
+		return nil,err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode!=200{
+		return nil,fmt.Errorf("Status Code:%d,Status:%s",resp.StatusCode,resp.Status)
+	}
+	var bz []byte
+	bz, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil,err
+	}
+	return bz,nil
+}
+
+func (client SubscanClient) makeRequest(url string,payload interface{}) (*http.Request,error) {
 	data := payload
 
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
-		// handle err
+		return nil,err
 	}
 	body := bytes.NewReader(payloadBytes)
 
@@ -37,28 +87,9 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 
 	req, err := http.NewRequest("POST", api, body)
 	if err != nil {
-		// handle err
+		return nil,err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Api-Key", "YOUR_KEY")
-
-	resp, err := client.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	var bz []byte
-	bz, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(bz))
-
-	err = json.Unmarshal(bz, &v)
-	if err != nil {
-		return fmt.Errorf("Fail to marshal:%s", err)
-	}
-
-	return nil
+	return req,nil
 }

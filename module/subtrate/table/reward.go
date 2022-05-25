@@ -13,9 +13,9 @@ import (
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 )
 
-func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string) (*tabletypes.AddressDateRewardPrice, error) {
+func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string,from int64) (*tabletypes.AddressDateRewardPrice, error) {
 	//var rewardPrice tabletypes.DateRewardPriceTable
-	rewardList, err := GetRewardSlash(api, address)
+	rewardList, err := GetRewardSlash(api, address,from)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 	return &addressRewardPrice, nil
 }
 
-func GetRewardSlash(api *client.SubscanClient, address string) ([]subtratetypes.List, error) {
+func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]subtratetypes.List, error) {
 	requestUrl := "/api/v2/scan/account/reward_slash"
 	var list []subtratetypes.List
 
@@ -74,6 +74,9 @@ func GetRewardSlash(api *client.SubscanClient, address string) ([]subtratetypes.
 			count = rewardSlash.Data.Count
 		}
 		list = append(list, rewardSlash.Data.List...)
+		if int64(rewardSlash.Data.List[row-1].BlockTimestamp)<from{
+			break
+		}
 	}
 
 	return list, nil

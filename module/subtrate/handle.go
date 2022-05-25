@@ -9,11 +9,11 @@ import (
 	"github.com/forbole/bookkeeper/types"
 )
 
-func Handle(subtrate types.Subtrate,vsCurrency string,outputFolder string) (string,error) {
+func Handle(subtrate types.Subtrate,vsCurrency string,outputFolder string,period types.Period) (string,error) {
 	// create client
 	client := client.NewSubscanClient(subtrate.ChainName)
 
-	rewardSlash, err := subtratetable.GetRewardCommission(client, subtrate.Address[0],subtrate.Denom[0],vsCurrency)
+	rewardSlash, err := subtratetable.GetRewardCommission(client, subtrate.Address[0],subtrate.Denom[0],vsCurrency,period.From)
 	if err != nil {
 		return "", err
 	}

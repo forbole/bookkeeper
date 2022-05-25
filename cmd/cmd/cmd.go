@@ -2,6 +2,7 @@ package parse
 
 import (
 	"fmt"
+	"os"
 
 	//"time"
 
@@ -64,6 +65,13 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
+	// make output directory
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		if err:=os.MkdirAll(outputFile,os.ModePerm);err!=nil{
+			return err
+		}
+	}
+
 	var filenames []string
 
 	files2, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
@@ -86,7 +94,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	for _, chain := range data.Subtrate {
 		fmt.Println(data)
-		file3, err := subtrate.Handle(chain,data.VsCurrency,outputFile)
+		file3, err := subtrate.Handle(chain,data.VsCurrency,outputFile,data.Period)
 		if err != nil {
 			return err
 		}
