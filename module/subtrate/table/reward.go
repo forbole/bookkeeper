@@ -11,10 +11,13 @@ import (
 	subtratetypes "github.com/forbole/bookkeeper/module/subtrate/types"
 	"github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
+	"github.com/rs/zerolog/log"
 )
 
 func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string,from int64) (*tabletypes.AddressDateRewardPrice, error) {
 	//var rewardPrice tabletypes.DateRewardPriceTable
+	log.Trace().Str("module", "subtrate").Msg("GetRewardCommission")
+
 	rewardList, err := GetRewardSlash(api, address,from)
 	if err != nil {
 		return nil, err
@@ -33,19 +36,22 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 
 		price, err := coinApi.GetCryptoPriceFromDate(timestamp,denom.CoinId, vsCurrency)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Cannot get crypto price")
 		}
 
 		rewardPrice := new(big.Float).Mul(reward, price)
 
 		timeRewardPrice[i] = tabletypes.NewDateRewardPriceRow(timestamp, reward, new(big.Float).SetInt64(0),
 			denom.CoinId, rewardPrice, new(big.Float).SetInt64(0))
+		
 	}
 	addressRewardPrice:=tabletypes.NewAddressDateRewardPrice(address,timeRewardPrice)
 	return &addressRewardPrice, nil
 }
 
 func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]subtratetypes.List, error) {
+	log.Trace().Str("module", "subtrate").Msg("GetRewardSlash")
+
 	requestUrl := "/api/v2/scan/account/reward_slash"
 	var list []subtratetypes.List
 
@@ -68,7 +74,7 @@ func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]sub
 		var rewardSlash subtratetypes.RewardSlash
 		err := api.CallApi(requestUrl, payload, &rewardSlash)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot get rewardSlash:%s",err)
 		}
 		if count == math.MaxInt {
 			count = rewardSlash.Data.Count
