@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -50,11 +49,12 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 	cg := coingecko.NewClient(httpClient)
 	
 	prices, err := cg.CoinsIDHistory(coinid, date.Format("02-01-2006"), false)
-	if err != nil && strings.Contains(err.Error(),"1015"){
-		log.Info().Str("module", "coinApi").Msg("Error 1015")
+	if err != nil{
+		log.Info().Str("module", "coinApi").Msg(err.Error())
 		time.Sleep(time.Minute)
 		return GetCryptoPriceFromDate(date,coinid,vsCurrency)
 	}
+
 	price := new(big.Float).SetFloat64(prices.MarketData.CurrentPrice[vsCurrency])
 
 	return price, nil

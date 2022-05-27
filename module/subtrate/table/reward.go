@@ -36,7 +36,7 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 
 		price, err := coinApi.GetCryptoPriceFromDate(timestamp,denom.CoinId, vsCurrency)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot get crypto price")
+			return nil, fmt.Errorf("Cannot get crypto price:%s",err)
 		}
 
 		rewardPrice := new(big.Float).Mul(reward, price)
@@ -52,7 +52,7 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]subtratetypes.List, error) {
 	log.Trace().Str("module", "subtrate").Msg("GetRewardSlash")
 
-	requestUrl := "/api/v2/scan/account/reward_slash"
+	requestUrl := "/api/scan/account/reward_slash"
 	var list []subtratetypes.List
 
 	type Payload struct {
@@ -61,11 +61,11 @@ func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]sub
 		Address string `json:"address"`
 	}
 
-	page := 0
+	
 	count := math.MaxInt
-	row := 20
+	row := 50
 
-	for ; (page+1)*row < count; page++ {
+	for page := 0; (page+1)*row < count; page++ {
 		payload := Payload{
 			Row:     row,
 			Page:    page,
@@ -79,8 +79,12 @@ func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]sub
 		if count == math.MaxInt {
 			count = rewardSlash.Data.Count
 		}
-		list = append(list, rewardSlash.Data.List...)
-		if int64(rewardSlash.Data.List[row-1].BlockTimestamp)<from{
+		rewardList:=rewardSlash.Data.List
+		if len(rewardList)==0{
+			break
+		}
+		list = append(list, rewardList...)
+		if int64(rewardList[len(rewardList)-1].BlockTimestamp)<from{
 			break
 		}
 	}

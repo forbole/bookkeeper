@@ -93,12 +93,11 @@ func Execute(cmd *cobra.Command, arg []string) error {
 			filenames = append(filenames, files4...) */
 
 	for _, chain := range data.Subtrate {
-		fmt.Println(data)
 		file3, err := subtrate.Handle(chain,data.VsCurrency,outputFile,data.Period)
 		if err != nil {
 			return err
 		}
-		filenames = append(filenames, file3)
+		filenames = append(filenames, file3...)
 
 	}
 
