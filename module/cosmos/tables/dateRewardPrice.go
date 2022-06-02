@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"time"
@@ -72,6 +73,12 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions, denomMap denom
 			return nil, err
 		}
 
+		// If that is not in the denom list, not getting price
+		if _,ok:=denomMap[r.Denom];!ok{
+			DateRewardPriceRow[i] = tabletypes.NewDateRewardPriceRow(*date, new(big.Float).SetInt(r.Reward), new(big.Float).SetInt(r.Commission), r.Denom, new(big.Float).SetInt64(0), new(big.Float).SetInt64(0))
+			continue
+		}
+
 		var price *big.Float
 		if denomMap[r.Denom].Cointype == "crypto" {
 			price, err = coinApi.GetCryptoPriceFromDate(*date, denomMap[r.Denom].CoinId, vsCurrency)
@@ -84,7 +91,7 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions, denomMap denom
 				return nil, err
 			}
 		}
-
+		fmt.Println(r.Denom)
 		commission := new(big.Float).Mul(new(big.Float).SetInt(r.Commission), denomMap[r.Denom].Exponent)
 		reward := new(big.Float).Mul(new(big.Float).SetInt(r.Reward), denomMap[r.Denom].Exponent)
 
