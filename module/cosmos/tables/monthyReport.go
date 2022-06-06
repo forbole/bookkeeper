@@ -12,7 +12,7 @@ import (
 )
 
 // GetMonthyReport get monthy report between certain period of time
-func GetMonthyReport(details types.IndividualChain, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
+func GetMonthyReport(details types.CosmosDetails, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
 	var monthyReports []tabletypes.AddressMonthyReport
 	log.Trace().Str("module", "cosmos").Msg("get monthy report")
 

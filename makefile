@@ -42,7 +42,7 @@ install: go.sum
 
 test-unit: 
 	@echo "Executing unit tests..."
-	@go test -mod=readonly -v -coverprofile coverage.txt ./...
+	@go test -mod=readonly -v -coverprofile coverage.txt ./... 
 .PHONY: test-unit
 
 

@@ -1,8 +1,9 @@
 package types
 
-type BigChainType struct {
-	ChainType string            `json:"chain_type"`
-	Details   []IndividualChain `json:"details"`
+type Subtrate struct {
+	ChainName string   `json:"chain_name"`
+	Address   []string `json:"address"`
+	Denom     []Denom  `json:"denom"`
 }
 
 type Denom struct {
@@ -12,7 +13,7 @@ type Denom struct {
 	Cointype string `json:"cointype"`
 }
 
-type IndividualChain struct {
+type CosmosDetails struct {
 	ChainName          string            `json:"chain_name"`
 	Denom              []Denom           `json:"denom"`
 	Validators         []ValidatorDetail `json:"validators"`
@@ -42,12 +43,14 @@ type EmailDetails struct {
 }
 
 type Data struct {
-	Chains       []BigChainType `json:"chains"`
-	EmailDetails EmailDetails   `json:"email_details"`
-	Prometheus   string         `json:"prometheus"`
-	Flow         Flow           `json:"flow"`
-	VsCurrency   string         `json:"vs_currency"`
-	Period       Period         `json:"period"`
+	Chains   []CosmosDetails `json:"chains"`
+	Subtrate []Subtrate      `json:"subtrate"`
+
+	EmailDetails EmailDetails `json:"email_details"`
+	Prometheus   string       `json:"prometheus"`
+	Flow         Flow         `json:"flow"`
+	VsCurrency   string       `json:"vs_currency"`
+	Period       Period       `json:"period"`
 }
 
 // Period get the unix time period from and until date
