@@ -71,7 +71,7 @@ func (n NodeInfoFromTables) GetCSV(exp int, coinId string, vsCurrency string, fl
 
 	for _, b := range n {
 		//fmt.Println(flowclient)
-		date, err := (flowclient).GetDateByHeight(uint64(b.Height), lastspork)
+		date, err := (flowclient).GetDateByHeight(uint64(b.Height))
 		if err != nil {
 			return "", err
 		}

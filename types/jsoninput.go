@@ -59,6 +59,17 @@ type Period struct {
 	To   int64 `json:"to"`
 }
 
+//host=%s port=%d dbname=%s user=%s sslmode=%s search_path=%s
+type Database struct{
+	Host string `json:"host"`
+	Port int `json:"port"`
+	DbName string `json:"db_name"`
+	User string `json:"user"`
+	SSLMode string `json:"ssl_mode"`
+	SearchPath string `json:"search_path"`
+	Password string `json:"password"`
+}
+
 type Flow struct {
 	FlowJuno     string   `json:"flowjuno"`
 	FlowEndpoint string   `json:"flow_endpoint"`
@@ -66,4 +77,5 @@ type Flow struct {
 	Denom        string   `json:"denom"`
 	Exponent     int      `json:"exponent"`
 	LastSpork    int      `json:"last_spork"`
+	Db Database `json:"database"`
 }
