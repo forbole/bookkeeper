@@ -4,7 +4,9 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.44.0
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.4.0
+	github.com/lib/pq v1.10.2
 	github.com/onflow/flow-go-sdk v0.24.0
 	github.com/rs/zerolog v1.23.0
 	github.com/scorredoira/email v0.0.0-20191107070024-dc7b732c55da
@@ -23,7 +25,6 @@ require (
 	github.com/go-test/deep v1.0.5 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381 // indirect
 	github.com/onflow/atree v0.1.0-beta1.0.20211027184039-559ee654ece9 // indirect
 	github.com/onflow/cadence v0.20.1 // indirect
