@@ -1,7 +1,11 @@
 package db
 
 import (
+	"context"
 	"fmt"
+
+	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bookkeeper/types"
 	"github.com/jmoiron/sqlx"
@@ -19,6 +23,9 @@ type FlowDb struct{
 }
 
 func Build(dbSpec types.Database)(*FlowDb,error){
+	log.Trace().Str("module", "flow").Msg("build database")
+
+	fmt.Println(dbSpec)
 	connstr:=fmt.Sprintf("host=%s port=%d dbname=%s user=%s sslmode=%s search_path=%s password=%s",
 	dbSpec.Host,dbSpec.Port,dbSpec.DbName,dbSpec.User,dbSpec.SSLMode,dbSpec.SearchPath,dbSpec.Password)
 
@@ -26,16 +33,27 @@ func Build(dbSpec types.Database)(*FlowDb,error){
 	if err != nil {
 		return nil, err
 	}
+
+	if err = postgresDb.Ping(); err != nil {
+        return nil, err
+    }
+
 	return &FlowDb{sql:postgresDb},nil
 }
 
 // GetWithdrawReward get the withdraw reward from the flowjuno db directly...
 func (db *FlowDb)GetWithdrawReward(payer string)([]HeightValue,error){
-	stmt:=`select transaction_id,event.height as height,value from transaction left join event on transaction.transaction_id = event.transaction_id 
+	log.Trace().Str("module", "flow").Msg("get reward from db")
+
+	
+	stmt:=`select transaction.transaction_id as transaction_id,event.height as height,value from transaction left join event on transaction.transaction_id = event.transaction_id 
 	where payer='$1' and type='A.8624b52f9ddcd04a.FlowIDTableStaking.RewardTokensWithdrawn'`
 
+	
 	var heightValue []HeightValue
-	err:=db.sql.Select(&heightValue,stmt,payer)
+	err:=db.sql.SelectContext(context.Background(),&heightValue,stmt,payer)
+
+	//err:=db.sql.Select(&heightValue,stmt,payer)
 	if err!=nil{
 		return nil,err
 	}
@@ -46,7 +64,7 @@ func (db *FlowDb)GetWithdrawReward(payer string)([]HeightValue,error){
 
 
 type HeightValue struct{
-	Height int64
-	Value string
-	TransactionId string
+	Height int64 `db:"height"`
+	Value string `db:"value"`
+	TransactionId string `db:"transaction_id"`
 }

@@ -101,7 +101,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	}
 
-	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)
+	flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
 	if err != nil {
 		return err
 	}

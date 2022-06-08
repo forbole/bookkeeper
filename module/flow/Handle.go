@@ -25,7 +25,9 @@ func HandleRewardTable(flow types.Flow, vsCurrency string, period types.Period)(
 
 	for _,address:=range flow.Addresses{
 		table,err:=tables.GetRewardCommission(address,db,flowClient,vsCurrency)
-
+		if err!=nil{
+			return nil,err
+		}
 		outputcsv := table.GetCSV()
 		if err != nil {
 			return nil, err
