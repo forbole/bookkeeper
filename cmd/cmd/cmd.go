@@ -14,10 +14,7 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/forbole/bookkeeper/email"
-	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
-	"github.com/forbole/bookkeeper/module/subtrate"
-
 	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
@@ -61,45 +58,19 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	if err != nil {
 		return err
 	}
+
+		// make output directory
+		if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+			if err:=os.MkdirAll(outputFile,os.ModePerm);err!=nil{
+				return err
+			}
+		}
+	
 	//fmt.Println(*data)
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	// make output directory
-	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-		if err:=os.MkdirAll(outputFile,os.ModePerm);err!=nil{
-			return err
-		}
-	}
-
 	var filenames []string
-
-	files2, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
-	if err != nil {
-		return err
-	}
-	filenames = append(filenames, files2...)
-	/*
-			files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
-			if err!=nil{
-				return err
-			}
-			filenames = append(filenames, files3...)
-
-		files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
-			if err!=nil{
-				return err
-			}
-			filenames = append(filenames, files4...) */
-
-	for _, chain := range data.Subtrate {
-		file3, err := subtrate.Handle(chain,data.VsCurrency,outputFile,data.Period)
-		if err != nil {
-			return err
-		}
-		filenames = append(filenames, file3...)
-
-	}
 
 	flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
 	if err != nil {
