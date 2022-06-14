@@ -29,14 +29,15 @@ func GetRewardCommission(payer string,db *db.FlowDb,flowClient *flowutils.FlowCl
 		if err!=nil{
 			return nil,err
 		}
+		fmt.Println(price)
 		
 		rewardIndex:=strings.Index(r.Value,"amount: ")
-		rewardStr:=r.Value[rewardIndex:len(r.Value)-2]
-		fmt.Println(rewardStr)
+		rewardStr:=r.Value[rewardIndex+8:len(r.Value)-2]
 		reward,ok:=new(big.Float).SetString(rewardStr)
 		if !ok{
 			return nil,fmt.Errorf("Cannot convert to big.Float from string")
 		}
+
 		rewardPrice := new(big.Float).Mul(reward, price)
 
 //A.8624b52f9ddcd04a.FlowIDTableStaking.RewardTokensWithdrawn(nodeID: "237a7a04ecf88b7c21001589ecc277190a6f7cd6e56a296a203552ade6db0927", amount: 1526.81000000)

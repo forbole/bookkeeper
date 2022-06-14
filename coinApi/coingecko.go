@@ -60,6 +60,7 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 	if err!=nil{
 		return nil,err
 	}
+	fmt.Println(vsCurrency)
 
 	if prices.MarketData==nil{
 		// Set the coin value to 0 if the specific date don't have record
