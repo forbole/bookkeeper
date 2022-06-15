@@ -51,6 +51,7 @@ func GetTxs(details types.CosmosDetails, from int64) ([]tabletypes.AddressBalanc
 
 // GetTxsForAnAddress get txs for a single address from from now to the target height
 func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int) (*tabletypes.AddressBalanceEntry, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetTxsForAnAddress")
 	var balanceEntries []tabletypes.BalanceEntry
 	res, err := readTxs(rpcEndpoint, address, targetHeight)
 	if err != nil {
@@ -173,6 +174,8 @@ func ConvertAttributeToMap(array []cosmostypes.Attributes) map[string]json.RawMe
 
 // readtxs read the height and read to the page that meet the target height
 func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSearchRespond, error) {
+	log.Trace().Str("module", "cosmos").Msg("readTxs")
+
 	var res []*cosmostypes.TxSearchRespond
 	limit := 30
 	lastHeight := math.MaxInt

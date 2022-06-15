@@ -15,6 +15,8 @@ import (
 
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/flow"
+	"github.com/forbole/bookkeeper/module/cosmos"
+
 	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
@@ -70,14 +72,27 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-	var filenames []string
 
-	flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
-	if err != nil {
+
+	var filenames []string
+	
+	files,err:=	cosmos.HandleRewardPriceTable(data.Chains,data.VsCurrency,outputFile,data.Period)
+	if err!=nil{
 		return err
 	}
 
-	filenames = append(filenames, flowfile...)
+	filenames = append(filenames, files...)
+
+	if data.Flow.Db.Port!=0{
+		flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
+		if err != nil {
+			return err
+		}
+		filenames = append(filenames, flowfile...)
+
+	}
+
+
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {

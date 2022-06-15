@@ -13,8 +13,9 @@ import (
 
 // GetMonthyReport get monthy report between certain period of time
 func GetMonthyReport(details types.CosmosDetails, period types.Period) ([]tabletypes.AddressMonthyReport, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetMonthyReport")
+
 	var monthyReports []tabletypes.AddressMonthyReport
-	log.Trace().Str("module", "cosmos").Msg("get monthy report")
 
 	from := time.Unix(period.From, 0)
 
@@ -42,6 +43,8 @@ func GetMonthyReport(details types.CosmosDetails, period types.Period) ([]tablet
 
 // GetMonthyReportForSingleAddress get monthy report for a single validator and its delegator address
 func GetMonthyReportForSingleAddress(address string, from time.Time, to time.Time, lcd, rpc string) ([]tabletypes.MonthyReportRow, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportForSingleAddress")
+
 	targetHeight, err := utils.GetHeightByDate(from, lcd)
 	if err != nil {
 		return nil, err
@@ -67,6 +70,9 @@ func GetMonthyReportForSingleAddress(address string, from time.Time, to time.Tim
 
 // GetMonthyReportForValidator get monthy report for a validator including unclaimed reward
 func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail, from time.Time, to time.Time, lcd, rpc string) ([]tabletypes.MonthyReportRow, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportForValidator")
+
+	
 	unclaimedRewardCommission, err := utils.GetUnclaimedRewardCommission(lcd, validatorDetail.ValidatorAddress)
 	if err != nil {
 		return nil, err
@@ -83,6 +89,9 @@ func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail, from tim
 
 // It pass the RewardCommission and output a monthy report
 func GetMonthyReportFromRewardCommission(rows tabletypes.RewardCommissions, to time.Time, from time.Time, lcdEndpoint string) ([]tabletypes.MonthyReportRow, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportFromRewardCommission")
+
+	
 	t := to
 	i := 0
 	var monthyReportRows []tabletypes.MonthyReportRow
