@@ -12,7 +12,7 @@ import (
 )
 
 type FlowDb struct{
-	sql *sqlx.DB
+	Sql *sqlx.DB
 }
 
 func Build(dbSpec types.Database)(*FlowDb,error){
@@ -35,7 +35,7 @@ func Build(dbSpec types.Database)(*FlowDb,error){
         return nil, err
     }
 
-	return &FlowDb{sql:postgresDb},nil
+	return &FlowDb{Sql:postgresDb},nil
 }
 
 // GetWithdrawReward get the withdraw reward from the flowjuno db directly...
@@ -48,7 +48,7 @@ func (db *FlowDb)GetWithdrawReward(payer string)([]HeightValue,error){
 
 	
 	var heightValue []HeightValue
-	err:=db.sql.SelectContext(context.Background(),&heightValue,stmt,payer)
+	err:=db.Sql.SelectContext(context.Background(),&heightValue,stmt,payer)
 
 	//err:=db.sql.Select(&heightValue,stmt,payer)
 	if err!=nil{
@@ -57,8 +57,6 @@ func (db *FlowDb)GetWithdrawReward(payer string)([]HeightValue,error){
 
 	return heightValue,nil
 }
-
-
 
 type HeightValue struct{
 	Height int64 `db:"height"`

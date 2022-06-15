@@ -70,6 +70,18 @@ type Database struct{
 	Password string `json:"password"`
 }
 
+func NewDatabase(host string, port int, dbName,user,sslMode,searchPath,password string)Database{
+	return Database{
+		Host: host,
+		Port: port,
+		DbName: dbName,
+		User: user,
+		SSLMode: sslMode,
+		SearchPath: searchPath,
+		Password: password,
+	}
+}
+
 type Flow struct {
 	FlowJuno     string   `json:"flowjuno"`
 	FlowEndpoint string   `json:"flow_endpoint"`
