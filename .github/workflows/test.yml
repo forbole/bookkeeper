@@ -22,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+     env:
+      AV_API_KEY: "${{ secrets.AV_API_KEY }}"
+      SUBSCAN_API_KEY: "${{ secrets.SUBSCAN_API_KEY }}"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Go
