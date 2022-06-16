@@ -14,6 +14,8 @@ jobs:
       - uses: rokroskar/workflow-run-cleanup-action@master
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          AV_API_KEY: "${{ secrets.AV_API_KEY }}"
+          SUBSCAN_API_KEY: "${{ secrets.SUBSCAN_API_KEY }}"
     if: "!startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/cosmos-v')"
 
   Unit-tests:
