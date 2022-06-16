@@ -75,13 +75,17 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 
 	var filenames []string
-	
-	files,err:=	cosmos.HandleRewardPriceTable(data.Chains,data.VsCurrency,outputFile,data.Period)
-	if err!=nil{
-		return err
-	}
+	if data.Chains!=nil{
+		files,err:=	cosmos.HandleRewardPriceTable(data.Chains,data.VsCurrency,outputFile,data.Period)
+		if err!=nil{
+			return err
+		}
 
-	filenames = append(filenames, files...)
+		filenames = append(filenames, files...)
+
+	}
+	
+
 
 	if data.Flow.Db.Port!=0{
 		flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
