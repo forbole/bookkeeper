@@ -28,9 +28,10 @@ func Build(dbSpec types.Database)(*FlowDb,error){
 		return nil, fmt.Errorf("Cannot open connection:%s",err)
 	}
 
-	postgresDb.SetConnMaxLifetime(time.Minute * 5)
-	postgresDb.SetConnMaxIdleTime(0)
-	postgresDb.SetMaxIdleConns(0)
+	postgresDb.SetMaxIdleConns(-1)
+	postgresDb.SetMaxOpenConns(-1)
+	postgresDb.SetConnMaxIdleTime(time.Minute)
+	postgresDb.SetConnMaxLifetime(time.Minute)
 
 	if err = postgresDb.Ping(); err != nil {
         return nil, fmt.Errorf("Cannot ping:%s",err)

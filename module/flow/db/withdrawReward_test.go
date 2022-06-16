@@ -75,10 +75,10 @@ func (suite *DbTestSuite) Test_GetWithdrawReward(){
 	height:=int64(1)
 	transactionId:="d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378"
 	eventValue:=fmt.Sprintf("%s(payer: %s, amount:%f)",eventType,payer,amount)
-	
+	jsonPath:=[]byte("{}")
 	_,err:=suite.database.Sql.Exec(`
 	INSERT INTO block(height,id,parent_id,collection_guarantees,timestamp) VALUES 
-	($1,$2,$3,$4,$5)`,height,"","","",timestamp)
+	($1,$2,$3,$4,$5)`,height,"","",jsonPath,timestamp)
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`
@@ -87,7 +87,7 @@ func (suite *DbTestSuite) Test_GetWithdrawReward(){
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
 	height,"d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378","",nil,
 	"852bc4a6e27c326dc1d270677a25340f2b7990fad3da29e2ce9f9c2c5c67d9e2",
-	9999,"","645007cf9b780ffd",nil,"","")
+	9999,"","645007cf9b780ffd",nil,jsonPath,jsonPath)
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`
