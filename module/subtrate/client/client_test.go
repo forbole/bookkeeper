@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/forbole/bookkeeper/module/subtrate/client"
-	"github.com/forbole/bookkeeper/module/subtrate/types"
 	"github.com/stretchr/testify/suite"
 )
 
