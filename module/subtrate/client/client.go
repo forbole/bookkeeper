@@ -94,13 +94,16 @@ func (client SubscanClient) makeRequest(url string, payload interface{}) (*http.
 	}
 	body := bytes.NewReader(payloadBytes)
 
-	api := fmt.Sprintf("https://%s.api.subscan.io/%s", client.api, url)
+	if url[0]=='/'{
+		url=url[1:]
+	}
 
+	api := fmt.Sprintf("https://%s.api.subscan.io/%s", client.api, url)
 	req, err := http.NewRequest("POST", api, body)
 	if err != nil {
 		return nil, fmt.Errorf("cannot make request:%s", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Api-Key", os.Getenv("SUBSCAN_API_KEY"))
+	req.Header.Set("X-API-Key", os.Getenv("SUBSCAN_API_KEY"))
 	return req, nil
 }

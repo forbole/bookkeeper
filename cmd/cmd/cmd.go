@@ -16,6 +16,8 @@ import (
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
+	"github.com/forbole/bookkeeper/module/subtrate"
+
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -89,6 +91,16 @@ func Execute(cmd *cobra.Command, arg []string) error {
 			return err
 		}
 		filenames = append(filenames, flowfile...)
+
+	}
+
+	for _,sub:=range data.Subtrate{
+		subtratefile,err:=subtrate.Handle(sub,data.VsCurrency,outputFile,data.Period)
+		if err!=nil{
+			return err
+		}
+		
+		filenames = append(filenames, subtratefile...)
 
 	}
 

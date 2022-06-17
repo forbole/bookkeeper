@@ -34,22 +34,19 @@ func (suite *SubtrateClientTestSuite) NewSubscanClient() {
 
 func (suite *SubtrateClientTestSuite) Test_GetRewardSlash() {
 	c := client.NewSubscanClient(suite.api)
-	requestUrl := "/api/scan/account/reward_slash"
-
-	type Payload struct {
-		Row     int    `json:"row"`
-		Page    int    `json:"page"`
-		Address string `json:"address"`
-	}
-
-	payload := Payload{
-		Row:     1,
-		Page:    1,
-		Address: "12L5PhJ2CT4MujSXoHTsBRZHQym4e6WYRhpAkgNWSwAnjZTf",
-	}
-
-	var rewardSlash types.RewardSlash
-	err := c.CallApi(requestUrl, payload, &rewardSlash)
+	requestUrl := "/api/now"
+	
+	var timestamp timestamp
+	err := c.CallApi(requestUrl, nil, &timestamp)
 	suite.Require().NoError(err)
-	suite.Require().NotEmpty(rewardSlash)
+	suite.Require().NotEmpty(timestamp)
 }
+
+type timestamp struct{
+	Code int `json:"code"`
+	Message string `json:"message"`
+	GeneratedAt int `json:"generated_at"`
+	Data int `json:"data"`
+}
+
+func (v *timestamp) SubscanApi() {}
