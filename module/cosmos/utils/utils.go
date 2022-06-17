@@ -28,7 +28,7 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 // GetHeightByDate get height for the cloest time stamp within 10 seconds, log2 complexity
 // If the height do not exist, will return the Lowest Height
 func GetHeightByDate(t time.Time, lcd string) (int, error) {
-	log.Trace().Str("module", "cosmos").Msg(fmt.Sprintf("GetHeightByDate:%s",t))
+	log.Trace().Str("module", "cosmos").Msg(fmt.Sprintf("GetHeightByDate:%s", t))
 
 	query := fmt.Sprintf(`%s/blocks/latest`, lcd)
 	//fmt.Println(query)
@@ -92,7 +92,7 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 			if err != nil {
 				return 0, err
 			}
-			fmt.Printf("LowestTime:%s",lowestTime)
+			fmt.Printf("LowestTime:%s", lowestTime)
 			if t.Before(*lowestTime) {
 				//return 0,fmt.Errorf("Request time is out of scope: eariest time: %s, request time: %s",
 				//*lowestTime,t)
@@ -152,8 +152,8 @@ func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
 			}
 			return GetTimeByHeight(lowestHeight+1, lcd)
 		}
-		
-		return nil, fmt.Errorf("Statuscode!=200:%s",e.E)
+
+		return nil, fmt.Errorf("Statuscode!=200:%s", e.E)
 	}
 
 	bz, err := io.ReadAll(resp.Body)

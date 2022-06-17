@@ -71,6 +71,6 @@ func GetCurrencyPrice(coinId, vsCurrency string) (*big.Float, error) {
 	if !ok {
 		return nil, fmt.Errorf("Fail to set string:%s", string(bz))
 	}
-	
+
 	return rate, nil
 }

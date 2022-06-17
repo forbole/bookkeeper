@@ -12,16 +12,16 @@ import (
 )
 
 type FlowClient struct {
-	client *client.Client
+	client    *client.Client
 	lastSpork int
 }
 
-func NewFlowClient(accessNode string,lastSpork int) (*FlowClient, error) {
+func NewFlowClient(accessNode string, lastSpork int) (*FlowClient, error) {
 	flowClient, err := client.New(accessNode, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
-	return &(FlowClient{client: flowClient,lastSpork: lastSpork}), nil
+	return &(FlowClient{client: flowClient, lastSpork: lastSpork}), nil
 }
 
 func (flowClient FlowClient) GetDateByHeightMainnet(height uint64) (*time.Time, error) {
@@ -37,7 +37,7 @@ func (flowClient FlowClient) GetDateByHeightMainnet(height uint64) (*time.Time, 
 // GetDateByHeight get the time for the specific height
 func (flowClient FlowClient) GetDateByHeight(height uint64) (*time.Time, error) {
 	//fmt.Println(height)
-	lastSpork:=flowClient.lastSpork
+	lastSpork := flowClient.lastSpork
 	date, err := flowClient.GetDateByHeightMainnet(height)
 	for err != nil && strings.Contains(err.Error(), "failed to retrieve block ID for height") {
 		endpoint := fmt.Sprintf("access-001.mainnet%d.nodes.onflow.org:9000", lastSpork)

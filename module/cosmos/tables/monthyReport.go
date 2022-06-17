@@ -72,7 +72,6 @@ func GetMonthyReportForSingleAddress(address string, from time.Time, to time.Tim
 func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail, from time.Time, to time.Time, lcd, rpc string) ([]tabletypes.MonthyReportRow, error) {
 	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportForValidator")
 
-	
 	unclaimedRewardCommission, err := utils.GetUnclaimedRewardCommission(lcd, validatorDetail.ValidatorAddress)
 	if err != nil {
 		return nil, err
@@ -91,7 +90,6 @@ func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail, from tim
 func GetMonthyReportFromRewardCommission(rows tabletypes.RewardCommissions, to time.Time, from time.Time, lcdEndpoint string) ([]tabletypes.MonthyReportRow, error) {
 	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportFromRewardCommission")
 
-	
 	t := to
 	i := 0
 	var monthyReportRows []tabletypes.MonthyReportRow

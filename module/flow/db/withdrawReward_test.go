@@ -28,12 +28,12 @@ type DbTestSuite struct {
 func (suite *DbTestSuite) SetupTest() {
 	// Build the database
 	cfg := types.NewDatabase(
-				"localhost",
-				5433,
-				"bdjuno",
-				"bdjuno","disable",
-				"public",
-				"password",
+		"localhost",
+		5433,
+		"bdjuno",
+		"bdjuno", "disable",
+		"public",
+		"password",
 	)
 
 	db, err := database.Build(cfg)
@@ -66,38 +66,38 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.database = db
 }
 
-func (suite *DbTestSuite) Test_GetWithdrawReward(){
+func (suite *DbTestSuite) Test_GetWithdrawReward() {
 
-	timestamp:=time.Date(2020,1,1,1,1,1,1,time.UTC)
-	payer:="645007cf9b780ffd"
-	amount:=10.01
-	eventType:="A.8624b52f9ddcd04a.FlowIDTableStaking.RewardTokensWithdrawn"
-	height:=int64(1)
-	transactionId:="d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378"
-	eventValue:=fmt.Sprintf("%s(payer: %s, amount:%f)",eventType,payer,amount)
-	jsonPath:=[]byte("{}")
-	_,err:=suite.database.Sql.Exec(`
+	timestamp := time.Date(2020, 1, 1, 1, 1, 1, 1, time.UTC)
+	payer := "645007cf9b780ffd"
+	amount := 10.01
+	eventType := "A.8624b52f9ddcd04a.FlowIDTableStaking.RewardTokensWithdrawn"
+	height := int64(1)
+	transactionId := "d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378"
+	eventValue := fmt.Sprintf("%s(payer: %s, amount:%f)", eventType, payer, amount)
+	jsonPath := []byte("{}")
+	_, err := suite.database.Sql.Exec(`
 	INSERT INTO block(height,id,parent_id,collection_guarantees,timestamp) VALUES 
-	($1,$2,$3,$4,$5)`,height,"","",jsonPath,timestamp)
+	($1,$2,$3,$4,$5)`, height, "", "", jsonPath, timestamp)
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`
 	INSERT INTO transaction 
 		(height,transaction_id,script,arguments,reference_block_id,gas_limit,proposal_key ,payer,authorizers,payload_signature,envelope_signatures) 
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-	height,"d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378","",nil,
-	"852bc4a6e27c326dc1d270677a25340f2b7990fad3da29e2ce9f9c2c5c67d9e2",
-	9999,"","645007cf9b780ffd",nil,jsonPath,jsonPath)
+		height, "d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378", "", nil,
+		"852bc4a6e27c326dc1d270677a25340f2b7990fad3da29e2ce9f9c2c5c67d9e2",
+		9999, "", "645007cf9b780ffd", nil, jsonPath, jsonPath)
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`
 	INSERT INTO event(height,type,transaction_id,transaction_index,event_index,value)
-	VALUES ($1,$2,$3,$4,$5,$6)`,1,eventType,"","",1,eventValue)
+	VALUES ($1,$2,$3,$4,$5,$6)`, 1, eventType, "", "", 1, eventValue)
 	suite.Require().NoError(err)
 
-	val,err:=suite.database.GetWithdrawReward(payer)
+	val, err := suite.database.GetWithdrawReward(payer)
 	suite.Require().NoError(err)
 
-	expectedVal:=database.NewHeightValue(height,eventValue,transactionId)
-	suite.Require().Equal(val,expectedVal)
+	expectedVal := database.NewHeightValue(height, eventValue, transactionId)
+	suite.Require().Equal(expectedVal, val)
 }

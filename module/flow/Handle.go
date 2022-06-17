@@ -12,21 +12,21 @@ import (
 	"github.com/forbole/bookkeeper/types"
 )
 
-func HandleRewardTable(flow types.Flow, vsCurrency string, period types.Period)([]string, error){
-	db,err:=db.Build(flow.Db)
-	if err!=nil{
-		return nil,err
+func HandleRewardTable(flow types.Flow, vsCurrency string, period types.Period) ([]string, error) {
+	db, err := db.Build(flow.Db)
+	if err != nil {
+		return nil, err
 	}
-	flowClient, err := utils.NewFlowClient(flow.FlowEndpoint,16)
-	if err!=nil{
-		return nil,err
+	flowClient, err := utils.NewFlowClient(flow.FlowEndpoint, 16)
+	if err != nil {
+		return nil, err
 	}
 	var filenames []string
 
-	for _,address:=range flow.Addresses{
-		table,err:=tables.GetRewardCommission(address,db,flowClient,vsCurrency)
-		if err!=nil{
-			return nil,err
+	for _, address := range flow.Addresses {
+		table, err := tables.GetRewardCommission(address, db, flowClient, vsCurrency)
+		if err != nil {
+			return nil, err
 		}
 		outputcsv := table.GetCSV()
 		if err != nil {
@@ -40,7 +40,7 @@ func HandleRewardTable(flow types.Flow, vsCurrency string, period types.Period)(
 		}
 		filenames = append(filenames, filename)
 	}
-	return filenames,nil
+	return filenames, nil
 }
 
 func HandleNodeInfos(flow types.Flow, vsCurrency string, period types.Period) ([]string, error) {
@@ -48,7 +48,7 @@ func HandleNodeInfos(flow types.Flow, vsCurrency string, period types.Period) ([
 		return nil, nil
 	}
 	var filenames []string
-	flowClient, err := utils.NewFlowClient(flow.FlowEndpoint,16)
+	flowClient, err := utils.NewFlowClient(flow.FlowEndpoint, 16)
 	if err != nil {
 		return nil, err
 	}

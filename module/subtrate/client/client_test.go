@@ -19,20 +19,21 @@ type SubtrateClientTestSuite struct {
 func TestSubtrateTableTestSuite(t *testing.T) {
 	suite.Run(t, new(SubtrateClientTestSuite))
 }
+
 /* 	client := client.NewSubscanClient(subtrate.ChainName)
 
-	filename:=make([]string,len(subtrate.Address)) */
-func (suite *SubtrateClientTestSuite) SetupTest(){
-	suite.api="polkadot"
+filename:=make([]string,len(subtrate.Address)) */
+func (suite *SubtrateClientTestSuite) SetupTest() {
+	suite.api = "polkadot"
 }
 
 func (suite *SubtrateClientTestSuite) NewSubscanClient() {
-	c:=client.NewSubscanClient(suite.api)
+	c := client.NewSubscanClient(suite.api)
 	suite.Require().NotNil(c)
 }
 
 func (suite *SubtrateClientTestSuite) Test_GetRewardSlash() {
-	c:=client.NewSubscanClient(suite.api)
+	c := client.NewSubscanClient(suite.api)
 	requestUrl := "/api/scan/account/reward_slash"
 
 	type Payload struct {
@@ -41,14 +42,14 @@ func (suite *SubtrateClientTestSuite) Test_GetRewardSlash() {
 		Address string `json:"address"`
 	}
 
-	payload:=Payload{
-		Row: 1,
-		Page: 1,
+	payload := Payload{
+		Row:     1,
+		Page:    1,
 		Address: "12L5PhJ2CT4MujSXoHTsBRZHQym4e6WYRhpAkgNWSwAnjZTf",
 	}
-	
+
 	var rewardSlash types.RewardSlash
-	err:=c.CallApi(requestUrl,payload,&rewardSlash)
+	err := c.CallApi(requestUrl, payload, &rewardSlash)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(rewardSlash)
 }

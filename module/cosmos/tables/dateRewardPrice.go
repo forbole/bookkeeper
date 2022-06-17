@@ -74,7 +74,7 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions, denomMap denom
 		}
 
 		// If that is not in the denom list, not getting price
-		if _,ok:=denomMap[r.Denom];!ok{
+		if _, ok := denomMap[r.Denom]; !ok {
 			DateRewardPriceRow[i] = tabletypes.NewDateRewardPriceRow(*date, new(big.Float).SetInt(r.Reward), new(big.Float).SetInt(r.Commission), r.Denom, new(big.Float).SetInt64(0), new(big.Float).SetInt64(0))
 			continue
 		}

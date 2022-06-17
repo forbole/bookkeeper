@@ -49,23 +49,23 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 
 	cg := coingecko.NewClient(httpClient)
 	fmt.Println(date)
-	
+
 	prices, err := cg.CoinsIDHistory(coinid, date.Format("02-01-2006"), false)
-	if err != nil&& (strings.Contains(err.Error(),"1015")||
-			strings.Contains(err.Error(),"context deadline exceeded")){
-		log.Error().Str("module", "coinApi").Msg(fmt.Sprintf("Sleep:%s",err.Error()))
+	if err != nil && (strings.Contains(err.Error(), "1015") ||
+		strings.Contains(err.Error(), "context deadline exceeded")) {
+		log.Error().Str("module", "coinApi").Msg(fmt.Sprintf("Sleep:%s", err.Error()))
 		time.Sleep(time.Minute)
-		return GetCryptoPriceFromDate(date,coinid,vsCurrency)
+		return GetCryptoPriceFromDate(date, coinid, vsCurrency)
 	}
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	fmt.Println(vsCurrency)
 
-	if prices.MarketData==nil{
+	if prices.MarketData == nil {
 		// Set the coin value to 0 if the specific date don't have record
-		log.Error().Str("module", "coinApi").Msg(fmt.Sprintf("coingecko don't have record for the date:%s",date))
-		return new(big.Float).SetInt64(0),nil
+		log.Error().Str("module", "coinApi").Msg(fmt.Sprintf("coingecko don't have record for the date:%s", date))
+		return new(big.Float).SetInt64(0), nil
 	}
 
 	price := new(big.Float).SetFloat64(prices.MarketData.CurrentPrice[vsCurrency])

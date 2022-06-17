@@ -14,11 +14,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string,from int64) (*tabletypes.AddressDateRewardPrice, error) {
+func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string, from int64) (*tabletypes.AddressDateRewardPrice, error) {
 	//var rewardPrice tabletypes.DateRewardPriceTable
 	log.Trace().Str("module", "subtrate").Msg("GetRewardCommission")
 
-	rewardList, err := GetRewardSlash(api, address,from)
+	rewardList, err := GetRewardSlash(api, address, from)
 	if err != nil {
 		return nil, err
 	}
@@ -34,22 +34,22 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 		}
 		reward := new(big.Float).Mul(amount, exponent)
 
-		price, err := coinApi.GetCryptoPriceFromDate(timestamp,denom.CoinId, vsCurrency)
+		price, err := coinApi.GetCryptoPriceFromDate(timestamp, denom.CoinId, vsCurrency)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot get crypto price:%s",err)
+			return nil, fmt.Errorf("Cannot get crypto price:%s", err)
 		}
 
 		rewardPrice := new(big.Float).Mul(reward, price)
 
 		timeRewardPrice[i] = tabletypes.NewDateRewardPriceRow(timestamp, reward, new(big.Float).SetInt64(0),
 			denom.CoinId, rewardPrice, new(big.Float).SetInt64(0))
-		
+
 	}
-	addressRewardPrice:=tabletypes.NewAddressDateRewardPrice(address,timeRewardPrice)
+	addressRewardPrice := tabletypes.NewAddressDateRewardPrice(address, timeRewardPrice)
 	return &addressRewardPrice, nil
 }
 
-func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]subtratetypes.List, error) {
+func GetRewardSlash(api *client.SubscanClient, address string, from int64) ([]subtratetypes.List, error) {
 	log.Trace().Str("module", "subtrate").Msg("GetRewardSlash")
 
 	requestUrl := "/api/scan/account/reward_slash"
@@ -61,7 +61,6 @@ func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]sub
 		Address string `json:"address"`
 	}
 
-	
 	count := math.MaxInt
 	row := 50
 
@@ -74,17 +73,17 @@ func GetRewardSlash(api *client.SubscanClient, address string,from int64) ([]sub
 		var rewardSlash subtratetypes.RewardSlash
 		err := api.CallApi(requestUrl, payload, &rewardSlash)
 		if err != nil {
-			return nil, fmt.Errorf("cannot get rewardSlash:%s",err)
+			return nil, fmt.Errorf("cannot get rewardSlash:%s", err)
 		}
 		if count == math.MaxInt {
 			count = rewardSlash.Data.Count
 		}
-		rewardList:=rewardSlash.Data.List
-		if len(rewardList)==0{
+		rewardList := rewardSlash.Data.List
+		if len(rewardList) == 0 {
 			break
 		}
 		list = append(list, rewardList...)
-		if int64(rewardList[len(rewardList)-1].BlockTimestamp)<from{
+		if int64(rewardList[len(rewardList)-1].BlockTimestamp) < from {
 			break
 		}
 	}

@@ -14,8 +14,8 @@ import (
 	//"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/forbole/bookkeeper/email"
-	"github.com/forbole/bookkeeper/module/flow"
 	"github.com/forbole/bookkeeper/module/cosmos"
+	"github.com/forbole/bookkeeper/module/flow"
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -61,33 +61,29 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		return err
 	}
 
-		// make output directory
-		if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-			if err:=os.MkdirAll(outputFile,os.ModePerm);err!=nil{
-				return err
-			}
+	// make output directory
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		if err := os.MkdirAll(outputFile, os.ModePerm); err != nil {
+			return err
 		}
-	
+	}
+
 	//fmt.Println(*data)
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
-
-
 	var filenames []string
-	if data.Chains!=nil{
-		files,err:=	cosmos.HandleRewardPriceTable(data.Chains,data.VsCurrency,outputFile,data.Period)
-		if err!=nil{
+	if data.Chains != nil {
+		files, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
+		if err != nil {
 			return err
 		}
 
 		filenames = append(filenames, files...)
 
 	}
-	
 
-
-	if data.Flow.Db.Port!=0{
+	if data.Flow.Db.Port != 0 {
 		flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
 		if err != nil {
 			return err
@@ -95,8 +91,6 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		filenames = append(filenames, flowfile...)
 
 	}
-
-
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {
