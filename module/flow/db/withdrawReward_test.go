@@ -99,6 +99,8 @@ func (suite *DbTestSuite) Test_GetWithdrawReward() {
 	val, err := suite.database.GetWithdrawReward(payer)
 	suite.Require().NoError(err)
 
-	expectedVal := database.NewHeightValue(height, eventValue, transactionId)
+	expectedVal := []database.HeightValue{
+		database.NewHeightValue(height, eventValue, transactionId),
+	}
 	suite.Require().Equal(expectedVal, val)
 }
