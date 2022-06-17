@@ -60,25 +60,25 @@ type Period struct {
 }
 
 //host=%s port=%d dbname=%s user=%s sslmode=%s search_path=%s
-type Database struct{
-	Host string `json:"host"`
-	Port int `json:"port"`
-	DbName string `json:"db_name"`
-	User string `json:"user"`
-	SSLMode string `json:"ssl_mode"`
+type Database struct {
+	Host       string `json:"host"`
+	Port       int    `json:"port"`
+	DbName     string `json:"db_name"`
+	User       string `json:"user"`
+	SSLMode    string `json:"ssl_mode"`
 	SearchPath string `json:"search_path"`
-	Password string `json:"password"`
+	Password   string `json:"password"`
 }
 
-func NewDatabase(host string, port int, dbName,user,sslMode,searchPath,password string)Database{
+func NewDatabase(host string, port int, dbName, user, sslMode, searchPath, password string) Database {
 	return Database{
-		Host: host,
-		Port: port,
-		DbName: dbName,
-		User: user,
-		SSLMode: sslMode,
+		Host:       host,
+		Port:       port,
+		DbName:     dbName,
+		User:       user,
+		SSLMode:    sslMode,
 		SearchPath: searchPath,
-		Password: password,
+		Password:   password,
 	}
 }
 
@@ -89,5 +89,5 @@ type Flow struct {
 	Denom        string   `json:"denom"`
 	Exponent     int      `json:"exponent"`
 	LastSpork    int      `json:"last_spork"`
-	Db Database `json:"database"`
+	Db           Database `json:"database"`
 }

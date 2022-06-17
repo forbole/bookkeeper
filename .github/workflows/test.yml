@@ -22,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           AV_API_KEY: "${{ secrets.AV_API_KEY }}"
           SUBSCAN_API_KEY: "${{ secrets.SUBSCAN_API_KEY }}"
     steps:
