@@ -45,8 +45,8 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 	}
 	defer resp.Body.Close()
 
-	for resp.StatusCode == 429 || resp.StatusCode == 1015 {
-		log.Info().Str("module", "subtrate").Msg(fmt.Sprintf("API too many request"))
+	if resp.StatusCode == 429 || resp.StatusCode == 1015 {
+		log.Info().Str("module", "subtrate").Msg("API too many request")
 		retry := resp.Header.Get("Retry-After")
 		retryInt, err := strconv.Atoi(retry)
 		if err != nil {
