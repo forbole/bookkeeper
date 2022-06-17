@@ -2,6 +2,7 @@ package parse
 
 import (
 	"fmt"
+	"os"
 
 	//"time"
 
@@ -15,6 +16,9 @@ import (
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
+	"github.com/forbole/bookkeeper/module/subtrate"
+
+
 	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
@@ -58,42 +62,47 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	if err != nil {
 		return err
 	}
+
+	// make output directory
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		if err := os.MkdirAll(outputFile, os.ModePerm); err != nil {
+			return err
+		}
+	}
+
 	//fmt.Println(*data)
 
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
 	var filenames []string
-
-	for _, chain := range data.Chains {
-		switch chain.ChainType {
-		case "cosmos":
-			files2, err := cosmos.HandleCosmosMonthyReport(chain.Details, data.VsCurrency, outputFile, data.Period)
-			if err != nil {
-				return err
-			}
-			filenames = append(filenames, files2...)
-			/*
-				files3,err:=cosmos.HandleTxsTable(chain.Details,outputFile,data.Period)
-				if err!=nil{
-					return err
-				}
-				filenames = append(filenames, files3...)
-
-				files4,err:=cosmos.HandleRewardCommissionTable(chain.Details,outputFile,data.Period)
-				if err!=nil{
-					return err
-				}
-				filenames = append(filenames, files4...)
-			*/
+	if data.Chains != nil {
+		files, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
+		if err != nil {
+			return err
 		}
+
+		filenames = append(filenames, files...)
+
 	}
 
-	flowfile, err := flow.HandleNodeInfos(data.Flow, data.VsCurrency, data.Period)
-	if err != nil {
-		return err
+	if data.Flow.Db.Port != 0 {
+		flowfile, err := flow.HandleRewardTable(data.Flow, data.VsCurrency, data.Period)
+		if err != nil {
+			return err
+		}
+		filenames = append(filenames, flowfile...)
+
 	}
 
-	filenames = append(filenames, flowfile...)
+	for _,sub:=range data.Subtrate{
+		subtratefile,err:=subtrate.Handle(sub,data.VsCurrency,outputFile,data.Period)
+		if err!=nil{
+			return err
+		}
+		
+		filenames = append(filenames, subtratefile...)
+
+	}
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {

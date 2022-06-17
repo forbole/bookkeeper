@@ -12,6 +12,7 @@ import (
 
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	cosmostypes "github.com/forbole/bookkeeper/module/cosmos/types"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -27,6 +28,8 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 // GetHeightByDate get height for the cloest time stamp within 10 seconds, log2 complexity
 // If the height do not exist, will return the Lowest Height
 func GetHeightByDate(t time.Time, lcd string) (int, error) {
+	log.Trace().Str("module", "cosmos").Msg(fmt.Sprintf("GetHeightByDate:%s", t))
+
 	query := fmt.Sprintf(`%s/blocks/latest`, lcd)
 	//fmt.Println(query)
 	resp, err := http.Get(query)
@@ -65,15 +68,15 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 	}
 	//fmt.Println(t)
 
-	for !((t.After(newT) && t.Sub(newT) < (time.Hour*23)) ||
-		(t.Before(newT) && newT.Sub(t) < (time.Hour*23))) {
+	for !((t.After(newT) && t.Sub(newT) < (time.Hour*12)) ||
+		(t.Before(newT) && newT.Sub(t) < (time.Hour*12))) {
 		middle = (left + right) / 2
 
 		if middle == 1 {
 			// 1 is the earliest block time
 			return 1, nil
 		}
-
+		fmt.Print(middle)
 		T, err := GetTimeByHeight(middle, lcd)
 
 		if err != nil && strings.Contains(err.Error(), "is not available, lowest height is ") {
@@ -85,10 +88,11 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 			}
 
 			// Check if requested t is out of chain scope
-			lowestTime, err := GetTimeByHeight(lowestHeight, lcd)
+			lowestTime, err := GetTimeByHeight(lowestHeight+1, lcd)
 			if err != nil {
 				return 0, err
 			}
+			fmt.Printf("LowestTime:%s", lowestTime)
 			if t.Before(*lowestTime) {
 				//return 0,fmt.Errorf("Request time is out of scope: eariest time: %s, request time: %s",
 				//*lowestTime,t)
@@ -114,8 +118,10 @@ func GetHeightByDate(t time.Time, lcd string) (int, error) {
 }
 
 func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetTimeByHeight")
+
 	query := fmt.Sprintf(`%s/blocks/%d`, lcd, height)
-	//fmt.Println(query)
+	fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, err
@@ -136,7 +142,18 @@ func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
 		if err != nil {
 			return nil, err
 		}
-		return nil, fmt.Errorf(e.E)
+
+		if strings.Contains(e.E, "is not available, lowest height is ") {
+			lastIndex := strings.LastIndex(e.E, " ")
+			lowHeightString := e.E[lastIndex+1:]
+			lowestHeight, err := strconv.Atoi(lowHeightString)
+			if err != nil {
+				return nil, err
+			}
+			return GetTimeByHeight(lowestHeight+1, lcd)
+		}
+
+		return nil, fmt.Errorf("Statuscode!=200:%s", e.E)
 	}
 
 	bz, err := io.ReadAll(resp.Body)

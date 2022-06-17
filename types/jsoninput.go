@@ -1,8 +1,9 @@
 package types
 
-type BigChainType struct {
-	ChainType string            `json:"chain_type"`
-	Details   []IndividualChain `json:"details"`
+type Subtrate struct {
+	ChainName string   `json:"chain_name"`
+	Address   []string `json:"address"`
+	Denom     []Denom  `json:"denom"`
 }
 
 type Denom struct {
@@ -12,7 +13,7 @@ type Denom struct {
 	Cointype string `json:"cointype"`
 }
 
-type IndividualChain struct {
+type CosmosDetails struct {
 	ChainName          string            `json:"chain_name"`
 	Denom              []Denom           `json:"denom"`
 	Validators         []ValidatorDetail `json:"validators"`
@@ -42,18 +43,43 @@ type EmailDetails struct {
 }
 
 type Data struct {
-	Chains       []BigChainType `json:"chains"`
-	EmailDetails EmailDetails   `json:"email_details"`
-	Prometheus   string         `json:"prometheus"`
-	Flow         Flow           `json:"flow"`
-	VsCurrency   string         `json:"vs_currency"`
-	Period       Period         `json:"period"`
+	Chains   []CosmosDetails `json:"chains"`
+	Subtrate []Subtrate      `json:"subtrate"`
+
+	EmailDetails EmailDetails `json:"email_details"`
+	Prometheus   string       `json:"prometheus"`
+	Flow         Flow         `json:"flow"`
+	VsCurrency   string       `json:"vs_currency"`
+	Period       Period       `json:"period"`
 }
 
 // Period get the unix time period from and until date
 type Period struct {
 	From int64 `json:"from"`
 	To   int64 `json:"to"`
+}
+
+//host=%s port=%d dbname=%s user=%s sslmode=%s search_path=%s
+type Database struct {
+	Host       string `json:"host"`
+	Port       int    `json:"port"`
+	DbName     string `json:"db_name"`
+	User       string `json:"user"`
+	SSLMode    string `json:"ssl_mode"`
+	SearchPath string `json:"search_path"`
+	Password   string `json:"password"`
+}
+
+func NewDatabase(host string, port int, dbName, user, sslMode, searchPath, password string) Database {
+	return Database{
+		Host:       host,
+		Port:       port,
+		DbName:     dbName,
+		User:       user,
+		SSLMode:    sslMode,
+		SearchPath: searchPath,
+		Password:   password,
+	}
 }
 
 type Flow struct {
@@ -63,4 +89,5 @@ type Flow struct {
 	Denom        string   `json:"denom"`
 	Exponent     int      `json:"exponent"`
 	LastSpork    int      `json:"last_spork"`
+	Db           Database `json:"database"`
 }

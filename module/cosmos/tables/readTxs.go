@@ -21,13 +21,21 @@ import (
 )
 
 // GetTxs get all the transactions from a fund raising address or self delegation address
-func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBalanceEntry, error) {
+func GetTxs(details types.CosmosDetails, from int64) ([]tabletypes.AddressBalanceEntry, error) {
 	log.Trace().Str("module", "cosmos").Msg("get txs")
 
 	var accountbalanceEntries []tabletypes.AddressBalanceEntry
 	targetHeight, err := utils.GetHeightByDate(time.Unix(from, 0), details.LcdEndpoint)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, validator := range details.Validators {
+		accountBalanceSheet, err := GetTxsForAnAddress(validator.SelfDelegationAddress, details.RpcEndpoint, targetHeight)
+		if err != nil {
+			return nil, err
+		}
+		accountbalanceEntries = append(accountbalanceEntries, *accountBalanceSheet)
 	}
 
 	for _, address := range details.FundHoldingAccount {
@@ -43,6 +51,7 @@ func GetTxs(details types.IndividualChain, from int64) ([]tabletypes.AddressBala
 
 // GetTxsForAnAddress get txs for a single address from from now to the target height
 func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int) (*tabletypes.AddressBalanceEntry, error) {
+	log.Trace().Str("module", "cosmos").Msg("GetTxsForAnAddress")
 	var balanceEntries []tabletypes.BalanceEntry
 	res, err := readTxs(rpcEndpoint, address, targetHeight)
 	if err != nil {
@@ -55,11 +64,14 @@ func GetTxsForAnAddress(address string, rpcEndpoint string, targetHeight int) (*
 			rawlog = strings.ReplaceAll(rawlog, `}"`, `}`)
 			rawlog = strings.ReplaceAll(rawlog, `\n`, `,`)
 			rawlog = strings.ReplaceAll(rawlog, `\`, ``)
+			rawlog = strings.ReplaceAll(rawlog, `""`, `"`)
 
 			var logs []cosmostypes.RawLog
 			err = json.Unmarshal([]byte(rawlog), &logs)
 			if err != nil {
-				return nil, err
+				balanceEntries = append(balanceEntries,
+					tabletypes.NewBalanceEntry(0, "cannot read tx", "0", "0", "cannot read tx"))
+
 			}
 			height, err := strconv.Atoi(tx.Height)
 			if err != nil {
@@ -162,6 +174,8 @@ func ConvertAttributeToMap(array []cosmostypes.Attributes) map[string]json.RawMe
 
 // readtxs read the height and read to the page that meet the target height
 func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSearchRespond, error) {
+	log.Trace().Str("module", "cosmos").Msg("readTxs")
+
 	var res []*cosmostypes.TxSearchRespond
 	limit := 30
 	lastHeight := math.MaxInt
@@ -206,7 +220,10 @@ func readTxs(api string, address string, targetHeight int) ([]*cosmostypes.TxSea
 			if err != nil {
 				return nil, err
 			}
-			pageCount = totalCount/limit + 1
+			pageCount = totalCount / limit
+			if totalCount%limit != 0 {
+				pageCount++
+			}
 		}
 		res = append(res, &txSearchRes)
 	}

@@ -11,10 +11,15 @@ import (
 	"time"
 
 	cointypes "github.com/forbole/bookkeeper/coinApi/types"
+	"github.com/rs/zerolog/log"
 )
 
-// GetPriceFromAV get currency from AlphaVantage
-func GetPriceFromAV(coinId, vsCurrency string) (*big.Float, error) {
+// GetCurrencyPrice get currency from AlphaVantage
+func GetCurrencyPrice(coinId, vsCurrency string) (*big.Float, error) {
+	// Prevent call limit
+	time.Sleep(time.Second)
+	log.Trace().Str("module", "coinApi").Msg("GetCurrencyPrice")
+
 	query := fmt.Sprintf("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=%s&to_currency=%s&apikey=%s",
 		coinId, vsCurrency, os.Getenv("AV_API_KEY"))
 	//fmt.Println(query)
@@ -66,5 +71,6 @@ func GetPriceFromAV(coinId, vsCurrency string) (*big.Float, error) {
 	if !ok {
 		return nil, fmt.Errorf("Fail to set string:%s", string(bz))
 	}
+
 	return rate, nil
 }
