@@ -22,7 +22,6 @@ func Build(dbSpec types.Database) (*FlowDb, error) {
 	connstr := fmt.Sprintf("host=%s port=%d dbname=%s user=%s sslmode=%s search_path=%s password=%s",
 		dbSpec.Host, dbSpec.Port, dbSpec.DbName, dbSpec.User, dbSpec.SSLMode, dbSpec.SearchPath, dbSpec.Password)
 
-	fmt.Println(connstr)
 	postgresDb, err := sqlx.Open("postgres", connstr)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot open connection:%s", err)

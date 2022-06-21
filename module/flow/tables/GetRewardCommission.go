@@ -29,7 +29,6 @@ func GetRewardCommission(payer string, db *db.FlowDb, flowClient *flowutils.Flow
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(price)
 
 		rewardIndex := strings.Index(r.Value, "amount: ")
 		rewardStr := r.Value[rewardIndex+8 : len(r.Value)-2]

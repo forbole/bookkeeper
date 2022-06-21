@@ -1,7 +1,6 @@
 package tables
 
 import (
-	"fmt"
 	"math"
 	"math/big"
 	"time"
@@ -91,7 +90,6 @@ func GetDateRewardCommissionValue(v tabletypes.RewardCommissions, denomMap denom
 				return nil, err
 			}
 		}
-		fmt.Println(r.Denom)
 		commission := new(big.Float).Mul(new(big.Float).SetInt(r.Commission), denomMap[r.Denom].Exponent)
 		reward := new(big.Float).Mul(new(big.Float).SetInt(r.Reward), denomMap[r.Denom].Exponent)
 

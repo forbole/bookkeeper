@@ -52,7 +52,6 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 		if err != nil {
 			return fmt.Errorf("cannot parse int:%s,%s", retry, err)
 		}
-		fmt.Println(retryInt)
 		time.Sleep(time.Duration(retryInt) * time.Second)
 
 		return client.CallApi(url, payload, v)
@@ -68,7 +67,6 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 		return fmt.Errorf("cannot do request:%s", err)
 	}
 
-	fmt.Println(string(bz))
 
 	for strings.Contains(string(bz), "rate limit") {
 		log.Info().Str("module", "subtrate").Msg(fmt.Sprintf("API rate limit exceeded %s", err.Error()))

@@ -48,7 +48,6 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 	}
 
 	cg := coingecko.NewClient(httpClient)
-	fmt.Println(date)
 
 	prices, err := cg.CoinsIDHistory(coinid, date.Format("02-01-2006"), false)
 	if err != nil && (strings.Contains(err.Error(), "1015") ||
@@ -60,7 +59,6 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(vsCurrency)
 
 	if prices.MarketData == nil {
 		// Set the coin value to 0 if the specific date don't have record

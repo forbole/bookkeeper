@@ -121,7 +121,6 @@ func GetTimeByHeight(height int, lcd string) (*time.Time, error) {
 	log.Trace().Str("module", "cosmos").Msg("GetTimeByHeight")
 
 	query := fmt.Sprintf(`%s/blocks/%d`, lcd, height)
-	fmt.Println(query)
 	resp, err := http.Get(query)
 	if err != nil {
 		return nil, err

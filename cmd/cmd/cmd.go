@@ -17,6 +17,7 @@ import (
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/flow"
 	"github.com/forbole/bookkeeper/module/subtrate"
+	"github.com/forbole/bookkeeper/module/elrond"
 
 
 	"github.com/forbole/bookkeeper/utils"
@@ -101,8 +102,17 @@ func Execute(cmd *cobra.Command, arg []string) error {
 		}
 		
 		filenames = append(filenames, subtratefile...)
+	}
+
+	if data.Elrond.Addresses!=nil{
+		file,err:=elrond.HandleTx(data.Elrond,data.Period,outputFile)
+		if err!=nil{
+			return err
+		}
+		filenames = append(filenames, file...)
 
 	}
+
 
 	err = email.SendEmail(data.EmailDetails, filenames)
 	if err != nil {
