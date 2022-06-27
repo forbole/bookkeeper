@@ -78,7 +78,7 @@ func (suite *FlowRewardCommissionTestSuite) Test_GetRewardCommission() {
 	eventType := "A.8624b52f9ddcd04a.FlowIDTableStaking.RewardTokensWithdrawn"
 	height := int64(31836616)
 	transactionId := "d502d00cb4f9b4ba5c9479dbae3dc5dd10de68523077cd7b21d509f82cab7378"
-	eventValue := fmt.Sprintf("%s(payer: %s, amount:%f)", eventType, payer, amount)
+	eventValue := fmt.Sprintf("%s(payer: %s, amount: %f)", eventType, payer, amount)
 	jsonPath := []byte("{}")
 
 	// set up db
