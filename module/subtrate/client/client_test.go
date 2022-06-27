@@ -34,18 +34,18 @@ func (suite *SubtrateClientTestSuite) NewSubscanClient() {
 func (suite *SubtrateClientTestSuite) Test_GetRewardSlash() {
 	c := client.NewSubscanClient(suite.api)
 	requestUrl := "/api/now"
-	
+
 	var timestamp timestamp
 	err := c.CallApi(requestUrl, nil, &timestamp)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(timestamp)
 }
 
-type timestamp struct{
-	Code int `json:"code"`
-	Message string `json:"message"`
-	GeneratedAt int `json:"generated_at"`
-	Data int `json:"data"`
+type timestamp struct {
+	Code        int    `json:"code"`
+	Message     string `json:"message"`
+	GeneratedAt int    `json:"generated_at"`
+	Data        int    `json:"data"`
 }
 
 func (v *timestamp) SubscanApi() {}

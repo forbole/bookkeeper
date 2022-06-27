@@ -20,7 +20,6 @@ func Handle(subtrate types.Subtrate, vsCurrency string, outputFolder string, per
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(rewardSlash.GetCSV())
 
 		outputcsv2 := rewardSlash.GetCSV()
 

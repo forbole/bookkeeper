@@ -15,9 +15,9 @@ import (
 
 	"github.com/forbole/bookkeeper/email"
 	"github.com/forbole/bookkeeper/module/cosmos"
+	"github.com/forbole/bookkeeper/module/elrond"
 	"github.com/forbole/bookkeeper/module/flow"
 	"github.com/forbole/bookkeeper/module/subtrate"
-
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -94,13 +94,21 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	}
 
-	for _,sub:=range data.Subtrate{
-		subtratefile,err:=subtrate.Handle(sub,data.VsCurrency,outputFile,data.Period)
-		if err!=nil{
+	for _, sub := range data.Subtrate {
+		subtratefile, err := subtrate.Handle(sub, data.VsCurrency, outputFile, data.Period)
+		if err != nil {
 			return err
 		}
-		
+
 		filenames = append(filenames, subtratefile...)
+	}
+
+	if data.Elrond.Addresses != nil {
+		file, err := elrond.HandleTx(data.Elrond, data.Period, outputFile, data.VsCurrency)
+		if err != nil {
+			return err
+		}
+		filenames = append(filenames, file...)
 
 	}
 

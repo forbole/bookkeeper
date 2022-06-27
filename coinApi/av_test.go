@@ -8,7 +8,7 @@ import (
 )
 
 func (suite *CoinApiTestSuite) Test_GetCurrencyPrice() {
-	fmt.Printf("AV_API_KEY:%s",os.Getenv("AV_API_KEY"))
+	fmt.Printf("AV_API_KEY:%s", os.Getenv("AV_API_KEY"))
 	price, err := coinApi.GetCurrencyPrice("hkd", "usd")
 	suite.Require().NoError(err)
 	suite.Require().NotZero(price)

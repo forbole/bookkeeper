@@ -29,13 +29,12 @@ func GetRewardCommission(payer string, db *db.FlowDb, flowClient *flowutils.Flow
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(price)
 
 		rewardIndex := strings.Index(r.Value, "amount: ")
 		rewardStr := r.Value[rewardIndex+8 : len(r.Value)-2]
 		reward, ok := new(big.Float).SetString(rewardStr)
 		if !ok {
-			return nil, fmt.Errorf("Cannot convert to big.Float from string")
+			return nil, fmt.Errorf("Cannot convert to big.Float from string:%s",rewardStr)
 		}
 
 		rewardPrice := new(big.Float).Mul(reward, price)
