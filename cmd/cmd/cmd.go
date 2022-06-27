@@ -105,7 +105,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	}
 
 	if data.Elrond.Addresses!=nil{
-		file,err:=elrond.HandleTx(data.Elrond,data.Period,outputFile)
+		file,err:=elrond.HandleTx(data.Elrond,data.Period,outputFile,data.VsCurrency)
 		if err!=nil{
 			return err
 		}

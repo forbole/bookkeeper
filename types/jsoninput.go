@@ -58,6 +58,7 @@ type Elrond struct{
 	Api string `json:"api"`
 	ValidatorContract string `json:"validator_contract"`
 	Addresses []string `json:"addresses"`
+	Denom Denom `json:"denom"`
 }
 
 // Period get the unix time period from and until date

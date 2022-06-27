@@ -14,10 +14,10 @@ type ElrondClient struct{
 	api string
 }
 
-func NewElrondClient(api string)ElrondClient{
-	return ElrondClient{
+func NewElrondClient(api string)*ElrondClient{
+	return &(ElrondClient{
 		api: api,
-	}
+	})
 }
 
 // GetSelfRedelegate get transaction for the speific contract
