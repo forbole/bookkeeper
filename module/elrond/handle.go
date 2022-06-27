@@ -13,7 +13,6 @@ import (
 func HandleTx(elrond types.Elrond, period types.Period, outputFolder string, vsCurrency string) ([]string, error) {
 	log.Trace().Str("module", "elrond").Msg("HandleTx")
 
-	var filenames []string
 	client := client.NewElrondClient(elrond.Api)
 	for _, address := range elrond.Addresses {
 		txs, err := tables.GetTxs(client, address, elrond.ValidatorContract, period.From, vsCurrency)
@@ -32,7 +31,6 @@ func HandleTx(elrond types.Elrond, period types.Period, outputFolder string, vsC
 		if err != nil {
 			return nil, err
 		}
-		filenames = append(filenames, filename2)
 	}
 	return nil, nil
 }

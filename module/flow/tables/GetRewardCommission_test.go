@@ -98,7 +98,7 @@ func (suite *FlowRewardCommissionTestSuite) Test_GetRewardCommission() {
 
 	_, err = suite.database.Sql.Exec(`
 	INSERT INTO event(height,type,transaction_id,transaction_index,event_index,value)
-	VALUES ($1,$2,$3,$4,$5,$6)`, 1, eventType, transactionId, "", 1, eventValue)
+	VALUES ($1,$2,$3,$4,$5,$6)`, height, eventType, transactionId, "", 1, eventValue)
 	suite.Require().NoError(err)
 
 	// flow client
