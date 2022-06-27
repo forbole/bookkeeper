@@ -67,7 +67,6 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 		return fmt.Errorf("cannot do request:%s", err)
 	}
 
-
 	for strings.Contains(string(bz), "rate limit") {
 		log.Info().Str("module", "subtrate").Msg(fmt.Sprintf("API rate limit exceeded %s", err.Error()))
 		time.Sleep(time.Minute)
@@ -92,8 +91,8 @@ func (client SubscanClient) makeRequest(url string, payload interface{}) (*http.
 	}
 	body := bytes.NewReader(payloadBytes)
 
-	if url[0]=='/'{
-		url=url[1:]
+	if url[0] == '/' {
+		url = url[1:]
 	}
 
 	api := fmt.Sprintf("https://%s.api.subscan.io/%s", client.api, url)

@@ -24,26 +24,26 @@ func TestElrondTableTestSuite(t *testing.T) {
 	suite.Run(t, new(ElrondTableTestSuite))
 }
 
-func (suite *ElrondTableTestSuite) SetupTest(){
-	suite.client=elrondclient.NewElrondClient("https://api.elrond.com")
+func (suite *ElrondTableTestSuite) SetupTest() {
+	suite.client = elrondclient.NewElrondClient("https://api.elrond.com")
 }
 
 func (suite *ElrondTableTestSuite) Test_GetSelfRedelegate() {
 
-	address:="erd1q7mu5ek4nwgcszvzp9ycp9ehf6lay96dsap6j4luhdv9nt8m6smsmqmf3y"
-	contract:="erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq40llllsfjmn54"
-	from:=int64(1619564400)
+	address := "erd1q7mu5ek4nwgcszvzp9ycp9ehf6lay96dsap6j4luhdv9nt8m6smsmqmf3y"
+	contract := "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq40llllsfjmn54"
+	from := int64(1619564400)
 
-	txs,err:=tables.GetTxs(suite.client,address,contract,from,"usd")
+	txs, err := tables.GetTxs(suite.client, address, contract, from, "usd")
 
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(txs)
 }
 
-func (suite *ElrondTableTestSuite) Test_GetValueRow(){
-	contract:="erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq40llllsfjmn54"
+func (suite *ElrondTableTestSuite) Test_GetValueRow() {
+	contract := "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq40llllsfjmn54"
 
-	resultStr:=`{
+	resultStr := `{
 		"txHash": "cac935f6f3ebe0216d69a55ba08f1ad0ac96176404cbac1d5b26a8cde121ecb7",
 		"gasLimit": 12000000,
 		"gasPrice": 1000000000,
@@ -145,26 +145,24 @@ func (suite *ElrondTableTestSuite) Test_GetValueRow(){
 	  }`
 
 	var expectedTx elrondtypes.TxResult
-	err:=json.Unmarshal([]byte(resultStr),&expectedTx)
+	err := json.Unmarshal([]byte(resultStr), &expectedTx)
 	suite.Require().NoError(err)
 
-	input:=[]elrondtypes.TxResult{
+	input := []elrondtypes.TxResult{
 		expectedTx,
 	}
 
-	denomStr:=`{"denom":"egld",
+	denomStr := `{"denom":"egld",
       "exponent":18,
       "coin_id":"elrond-erd-2",
       "cointype":"crypto"
     }`
 
 	var denom types.Denom
-	err=json.Unmarshal([]byte(denomStr),&denom)
+	err = json.Unmarshal([]byte(denomStr), &denom)
 	suite.Require().NoError(err)
 
-	
-	rows,err:=tables.GetValueRow(input,"usd",denom,contract)
+	rows, err := tables.GetValueRow(input, "usd", denom, contract)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(rows)
 }
-

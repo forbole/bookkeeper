@@ -54,7 +54,7 @@ func (v AddressDateRewardPrice) GetCSV() string {
 // GetDelegationCSV when the source use delegation instead of commission
 // show delegation instead of commission
 func (v AddressDateRewardPrice) GetDelegationCSV() string {
-	csv:="Date,delegation,$delegation_value\n"
+	csv := "Date,delegation,$delegation_value\n"
 	for _, row := range v.Rows {
 		csv += fmt.Sprintf("%s,%f,%s,%f\n", row.Date, row.Reward, row.Denom, row.RewardPrice)
 	}

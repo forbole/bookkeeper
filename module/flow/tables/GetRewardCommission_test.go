@@ -102,14 +102,14 @@ func (suite *FlowRewardCommissionTestSuite) Test_GetRewardCommission() {
 	suite.Require().NoError(err)
 
 	// flow client
-	flowEndpoint:="access.mainnet.nodes.onflow.org:9000"
-	lastSpork:=16
-	vsCurrency:="usd"
+	flowEndpoint := "access.mainnet.nodes.onflow.org:9000"
+	lastSpork := 16
+	vsCurrency := "usd"
 
-	flowclient,err:=client.NewFlowClient(flowEndpoint, lastSpork)
+	flowclient, err := client.NewFlowClient(flowEndpoint, lastSpork)
 	suite.Require().NoError(err)
 
-	val, err := tables.GetRewardCommission(payer,suite.database,flowclient,vsCurrency)
+	val, err := tables.GetRewardCommission(payer, suite.database, flowclient, vsCurrency)
 	suite.Require().NoError(err)
 
 	suite.Require().Equal(payer, val.Address)

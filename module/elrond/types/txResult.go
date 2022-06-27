@@ -3,26 +3,26 @@ package types
 import "encoding/json"
 
 type TxResult struct {
-	TxHash        string `json:"txHash"`
-	GasLimit      int    `json:"gasLimit"`
-	GasPrice      int    `json:"gasPrice"`
-	GasUsed       int    `json:"gasUsed"`
-	MiniBlockHash string `json:"miniBlockHash"`
-	Nonce         int    `json:"nonce"`
-	Receiver      string `json:"receiver"`
-	ReceiverShard int64  `json:"receiverShard"`
-	Round         int    `json:"round"`
-	Sender        string `json:"sender"`
-	SenderShard   int    `json:"senderShard"`
-	Signature     string `json:"signature"`
-	Status        string `json:"status"`
-	Value         string `json:"value"`
-	Fee           string `json:"fee"`
-	Timestamp     int    `json:"timestamp"`
-	Data          string `json:"data"`
-	Function      string `json:"function"`
+	TxHash        string          `json:"txHash"`
+	GasLimit      int             `json:"gasLimit"`
+	GasPrice      int             `json:"gasPrice"`
+	GasUsed       int             `json:"gasUsed"`
+	MiniBlockHash string          `json:"miniBlockHash"`
+	Nonce         int             `json:"nonce"`
+	Receiver      string          `json:"receiver"`
+	ReceiverShard int64           `json:"receiverShard"`
+	Round         int             `json:"round"`
+	Sender        string          `json:"sender"`
+	SenderShard   int             `json:"senderShard"`
+	Signature     string          `json:"signature"`
+	Status        string          `json:"status"`
+	Value         string          `json:"value"`
+	Fee           string          `json:"fee"`
+	Timestamp     int             `json:"timestamp"`
+	Data          string          `json:"data"`
+	Function      string          `json:"function"`
 	Action        json.RawMessage `json:"action,omitmpty"`
-	Results []struct {
+	Results       []struct {
 		Hash           string `json:"hash"`
 		Timestamp      int    `json:"timestamp"`
 		Nonce          int    `json:"nonce"`
@@ -48,7 +48,7 @@ type TxResult struct {
 	} `json:"results"`
 	Price float64 `json:"price"`
 	Logs  struct {
-		Address string `json:"address"`
+		Address string          `json:"address"`
 		Events  json.RawMessage `json:"events,omitempty"`
 	} `json:"logs,omitempty"`
 	Operations []struct {
