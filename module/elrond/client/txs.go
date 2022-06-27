@@ -43,11 +43,14 @@ func (client *ElrondClient) GetTxs(address string, parameters string) ([]elrondt
 			address, size, i*size, parameters)
 
 		bz, err := client.ping(query)
+		if err != nil {
+			return nil, err
+		}
 
 		var txs []elrondtypes.Tx
 		err = json.Unmarshal(bz, &txs)
 		if err != nil {
-			return nil, fmt.Errorf("Fail to marshal:%s", err)
+			return nil, fmt.Errorf("fail to marshal:%s", err)
 		}
 
 		elrondTxs = append(elrondTxs, txs...)
@@ -64,6 +67,9 @@ func (client *ElrondClient) GetTxResult(txHash string) (*elrondtypes.TxResult, e
 	query := fmt.Sprintf("transactions/%s", txHash)
 
 	bz, err := client.ping(query)
+	if err != nil {
+		return nil, err
+	}
 
 	var tx elrondtypes.TxResult
 	err = json.Unmarshal(bz, &tx)

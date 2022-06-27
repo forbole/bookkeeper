@@ -50,7 +50,7 @@ func (suite *FlowRewardCommissionTestSuite) SetupTest() {
 	_, err = db.Sql.Exec(`CREATE SCHEMA public;`)
 	suite.Require().NoError(err)
 
-	dirPath := path.Join(".", "schema")
+	dirPath := path.Join("..", "db", "schema")
 	dir, err := ioutil.ReadDir(dirPath)
 	suite.Require().NoError(err)
 

@@ -21,5 +21,5 @@ type Tx struct {
 	Timestamp     int             `json:"timestamp"`
 	Data          string          `json:"data"`
 	Function      string          `json:"function"`
-	Action        json.RawMessage `json:"action,omitmpty"`
+	Action        json.RawMessage `json:"action,omitempty"`
 }
