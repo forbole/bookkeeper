@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
+	"os"
 
 	solanatypes "github.com/forbole/bookkeeper/module/solana/types"
 	"github.com/rs/zerolog/log"
@@ -20,35 +22,42 @@ func NewSolanaBeachClient(api string)*SolanaBeachClient{
 	})
 }
 
+func (client *SolanaBeachClient) GetEpochHistory()([]byte,error){
+	log.Trace().Str("module", "solana").Msg("GetEpochHistory")
+	
+	query:="v1/epoch-history"
+	return client.get(query)
+}
+
 // GetStakeReward get stake eward from given address from now to given epoch
 func (client *SolanaBeachClient) GetStakeReward(address string,epochFrom int)([]solanatypes.StakeReward,error){
 	log.Trace().Str("module", "solana").Msg("GetStakeReward")
 
+	cursor:=""
 	var stakeReward []solanatypes.StakeReward
-	size := 50
-	for i := 0; ; i++ {
+	currentEpoch:=math.MaxInt
+	for ;currentEpoch>=epochFrom;{
 
-		query := fmt.Sprintf("v1/account/%s/stake-rewards?cursor=310",
-		pubKey,size, i*size)
+		query := fmt.Sprintf("v1/account/%s/stake-rewards%s",
+		address,cursor)
 
-		bz, err := client.ping(query)
+		bz, err := client.get(query)
 		if err != nil {
 			return nil, err
 		}
 
-		var tx solanatypes.Stake
+		var tx []solanatypes.StakeReward
 		err = json.Unmarshal(bz, &tx)
 		if err != nil {
 			return nil, fmt.Errorf("fail to marshal:%s", err)
 		}
-		stakeTxs = append(stakeTxs, tx.Data...)
-		if tx.TotalPages==i+1{
-			break
-		}
+		stakeReward = append(stakeReward, tx...)
 
+		currentEpoch:=tx[len(tx)-1].Epoch
+		cursor=fmt.Sprintf("?cursor=%d",currentEpoch)
 	}
 
-	return stakeTxs, nil
+	return stakeReward, nil
 }
 
 // GetStakeAccount get the staking accounts associate to the pubkey
@@ -62,7 +71,7 @@ func (client *SolanaBeachClient) GetStakeAccounts(pubKey string)([]solanatypes.S
 		query := fmt.Sprintf("v1/account/%s/stakes?limit=%d&offset=%d",
 		pubKey,size, i*size)
 
-		bz, err := client.ping(query)
+		bz, err := client.get(query)
 		if err != nil {
 			return nil, err
 		}
@@ -82,13 +91,16 @@ func (client *SolanaBeachClient) GetStakeAccounts(pubKey string)([]solanatypes.S
 	return stakeTxs, nil
 }
 
-func (client *SolanaBeachClient) ping(query string) ([]byte, error) {
+func (client *SolanaBeachClient) get(query string) ([]byte, error) {
 
 	q := fmt.Sprintf("%s/%s", client.api, query)
+	var bearer = "Bearer " + os.Getenv("SOLANABEACH_API_KEY")
 
-	fmt.Println(q)
-	var bz []byte
-	resp, err := http.Get(q)
+    // Create a new request using http
+    req, err := http.NewRequest("GET", q, nil)
+    req.Header.Add("Authorization", bearer)
+	httpClient := &http.Client{}
+    resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
 	}
@@ -98,6 +110,7 @@ func (client *SolanaBeachClient) ping(query string) ([]byte, error) {
 		return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)
 	}
 
+	var bz []byte
 	bz, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

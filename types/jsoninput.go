@@ -99,3 +99,9 @@ type Flow struct {
 	LastSpork    int      `json:"last_spork"`
 	Db           Database `json:"database"`
 }
+
+type Solana struct{
+	PubKey string `json:"pubkey"`
+	ValidatorIdentity string `json:"validator_identity"`
+	Denom Denom `json:"denom"`
+}
