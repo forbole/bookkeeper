@@ -1,12 +1,12 @@
 package parse
 
 import (
-	"fmt"
 	"os"
+	"path/filepath"
 
 	//"time"
 
-	"io/ioutil"
+	"io/fs"
 
 	//"net/http"
 
@@ -18,12 +18,11 @@ import (
 	"github.com/forbole/bookkeeper/module/elrond"
 	"github.com/forbole/bookkeeper/module/flow"
 	"github.com/forbole/bookkeeper/module/subtrate"
+	"github.com/rs/zerolog"
 
 	"github.com/forbole/bookkeeper/utils"
 
 	"github.com/joho/godotenv"
-
-	"github.com/forbole/bookkeeper/types"
 
 	//"google.golang.org/grpc"
 
@@ -35,6 +34,7 @@ import (
 const (
 	flagInputJsonPath = "input_json_path"
 	flagOutputFolder  = "output_folder"
+	flagLogLevel = "log_level"
 )
 
 // ParseCmd returns the command that should be run when we want to start parsing a chain state.
@@ -46,18 +46,52 @@ func ParseCmd() *cobra.Command {
 	}
 	cmd.Flags().String(flagInputJsonPath, "./input.json", "The path that the input file should read from")
 	cmd.Flags().String(flagOutputFolder, "./output", "The path output .csv file sit at")
+	cmd.Flags().Int8(flagLogLevel, int8(-1), "log level that output")
+
 	return &cmd
 }
 
 func Execute(cmd *cobra.Command, arg []string) error {
 	jsonPath, _ := cmd.Flags().GetString(flagInputJsonPath)
 	outputFile, _ := cmd.Flags().GetString(flagOutputFolder)
+	logLevel, _ := cmd.Flags().GetInt8(flagLogLevel)
+
+    zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 
 	err := godotenv.Load()
 	if err != nil {
 		return err
 	}
 
+	// This returns an *os.FileInfo type
+	fileInfo, err := os.Stat(jsonPath)
+	if err != nil {
+		return err
+	}
+
+	// IsDir is short for fileInfo.Mode().IsDir()
+	if fileInfo.IsDir() {
+	// file is a directory
+		filepath.Walk(jsonPath,func(path string, _ fs.FileInfo, _ error)error{
+			err=handleSingleFile(path,outputFile)
+			if err!=nil{
+				return err
+			}
+			return nil
+		})
+	} else {
+		err=handleSingleFile(jsonPath,outputFile)
+		if err!=nil{
+			return err
+		}
+	}
+
+	return nil
+
+}
+
+// handleSingleFile handle a json file
+func handleSingleFile(jsonPath string,outputFile string)error{
 	data, err := utils.ImportJsonInput(jsonPath)
 	if err != nil {
 		return err
@@ -116,81 +150,5 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	if err != nil {
 		return err
 	}
-
-	/* grpcConn, err := grpc.Dial(data.Chains[0].Details[0].GrpcEndpoint, grpc.WithInsecure())
-	if err != nil {
-		panic(err)
-	}
-	defer grpcConn.Close() */
-
-	//coingecko
-	/* httpClient := &http.Client{
-			Timeout: time.Second * 10,
-		}
-		cg := coingecko.NewClient(httpClient)
-
-		// Import coin info
-		// Assume the dateQuantity pair is always by time asc
-		coin := types.NewCoin("bitcoin", []types.DateQuantity{
-			types.NewDateQuantity(5.1234,
-				time.Date(2020, time.January, 28, 0, 0, 0, 0, time.UTC)),
-			types.NewDateQuantity(15.5642,
-				time.Date(2020, time.August, 28, 0, 0, 0, 0, time.UTC)),
-		})
-
-		eth := types.NewCoin("ethereum", []types.DateQuantity{
-			types.NewDateQuantity(30.4501,
-				time.Date(2020, time.January, 28, 0, 0, 0, 0, time.UTC)),
-			types.NewDateQuantity(16.4564,
-				time.Date(2020, time.December, 28, 0, 0, 0, 0, time.UTC)),
-		})
-
-		vsCurrency := "USD"
-
-		// getting balance for the address
-		// May need to query from graphql if we want to get exact balance
-		// Like what X does?
-		// For now just using the price
-		balances, err := balancesheet.ParseBalanceSheet(coin, vsCurrency, cg)
-		if err != nil {
-			return err
-		}
-
-		totalBalance,err :=balancesheet.TotalValueBalanceSheet([]types.Coin{
-			coin,eth,
-		},vsCurrency,cg)
-
-		ethBalance,err := balancesheet.ParseBalanceSheet(eth, vsCurrency, cg)
-		if err!=nil{
-			return err
-		}
-
-		// Output the .csv file contains the
-		// schema
-		// date, coin price, account balance
-		outputcsv := balances.GetCSV()
-		//fmt.Println(outputcsv)
-		err = ioutil.WriteFile(fmt.Sprintf("%s.csv",balances[0].Coin), []byte(outputcsv), 0600)
-	    if err != nil {
-	        return err
-	    }
-
-		totalCsv:=totalBalance.GetCSV()
-		//fmt.Println(totalCsv)
-		err= ioutil.WriteFile("totalValue.csv", []byte(totalCsv), 0600)
-		if err!=nil{
-			return err
-		}
-
-		err=OutputCsv(ethBalance)
-		if err!=nil{
-			return err
-		} */
 	return nil
-}
-
-func OutputCsv(b types.Balances) error {
-	totalCsv := b.GetCSV()
-	//fmt.Println(totalCsv)
-	return ioutil.WriteFile(fmt.Sprintf("%s.csv", b[0].Coin), []byte(totalCsv), 0600)
 }
