@@ -90,7 +90,7 @@ func GetMonthyReportForValidator(validatorDetail types.ValidatorDetail, from tim
 func GetMonthyReportFromRewardCommission(rows tabletypes.RewardCommissions, to time.Time, from time.Time, lcdEndpoint string) ([]tabletypes.MonthyReportRow, error) {
 	log.Trace().Str("module", "cosmos").Msg("GetMonthyReportFromRewardCommission")
 
-	t := to
+	t := time.Now()
 	i := 0
 	var monthyReportRows []tabletypes.MonthyReportRow
 	for t.After(from) && len(rows) > i {
