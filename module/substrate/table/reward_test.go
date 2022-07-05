@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type SubtrateTableTestSuite struct {
+type SubstrateTableTestSuite struct {
 	suite.Suite
 
 	client     *client.SubscanClient
@@ -22,14 +22,14 @@ type SubtrateTableTestSuite struct {
 
 // We need this function to kick off the test suite, otherwise
 // "go test" won't know about our tests
-func TestSubtrateTableTestSuite(t *testing.T) {
-	suite.Run(t, new(SubtrateTableTestSuite))
+func TestSubstrateTableTestSuite(t *testing.T) {
+	suite.Run(t, new(SubstrateTableTestSuite))
 }
 
 /* 	client := client.NewSubscanClient(substrate.ChainName)
 
 filename:=make([]string,len(substrate.Address)) */
-func (suite *SubtrateTableTestSuite) SetupTest() {
+func (suite *SubstrateTableTestSuite) SetupTest() {
 
 	client := client.NewSubscanClient("polkadot")
 
@@ -49,7 +49,7 @@ func (suite *SubtrateTableTestSuite) SetupTest() {
 	suite.from = 1619564400
 }
 
-func (suite *SubtrateTableTestSuite) Test_GetCryptoPriceFromDate() {
+func (suite *SubstrateTableTestSuite) Test_GetCryptoPriceFromDate() {
 	addressRewardPrice, err := table.GetRewardCommission(suite.client, suite.address, suite.denom,
 		suite.vsCurrency, suite.from)
 	suite.Require().NoError(err)
@@ -57,7 +57,7 @@ func (suite *SubtrateTableTestSuite) Test_GetCryptoPriceFromDate() {
 	suite.Require().Equal(addressRewardPrice.Address, suite.address)
 }
 
-func (suite *SubtrateTableTestSuite) Test_GetRewardSlash() {
+func (suite *SubstrateTableTestSuite) Test_GetRewardSlash() {
 	list, err := table.GetRewardSlash(suite.client, suite.address, suite.from)
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(list)

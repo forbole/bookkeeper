@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type SubtrateUtilTestSuite struct {
+type SubstrateUtilTestSuite struct {
 	suite.Suite
 
 	client *client.SubscanClient
@@ -17,14 +17,14 @@ type SubtrateUtilTestSuite struct {
 
 // We need this function to kick off the test suite, otherwise
 // "go test" won't know about our tests
-func TestSubtrateUtilTestSuite(t *testing.T) {
-	suite.Run(t, new(SubtrateUtilTestSuite))
+func TestSubstrateUtilTestSuite(t *testing.T) {
+	suite.Run(t, new(SubstrateUtilTestSuite))
 }
 
 /* 	client := client.NewSubscanClient(substrate.ChainName)
 
 filename:=make([]string,len(substrate.Address)) */
-func (suite *SubtrateUtilTestSuite) SetupTest() {
+func (suite *SubstrateUtilTestSuite) SetupTest() {
 
 	client := client.NewSubscanClient("polkadot")
 
@@ -32,7 +32,7 @@ func (suite *SubtrateUtilTestSuite) SetupTest() {
 
 }
 
-func (suite *SubtrateUtilTestSuite) Test_GetTimeByBlockNum() {
+func (suite *SubstrateUtilTestSuite) Test_GetTimeByBlockNum() {
 	//2022-06-17 12:42:00 (+UTC)
 	expectedTimestamp := time.Date(2022, 6, 17, 12, 42, 00, 00, time.UTC)
 	timestamp, err := utils.GetTimeByBlockNum(10781140, suite.client)

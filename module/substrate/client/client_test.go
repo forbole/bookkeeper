@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type SubtrateClientTestSuite struct {
+type SubstrateClientTestSuite struct {
 	suite.Suite
 
 	api string
@@ -15,23 +15,23 @@ type SubtrateClientTestSuite struct {
 
 // We need this function to kick off the test suite, otherwise
 // "go test" won't know about our tests
-func TestSubtrateTableTestSuite(t *testing.T) {
-	suite.Run(t, new(SubtrateClientTestSuite))
+func TestSubstrateTableTestSuite(t *testing.T) {
+	suite.Run(t, new(SubstrateClientTestSuite))
 }
 
 /* 	client := client.NewSubscanClient(substrate.ChainName)
 
 filename:=make([]string,len(substrate.Address)) */
-func (suite *SubtrateClientTestSuite) SetupTest() {
+func (suite *SubstrateClientTestSuite) SetupTest() {
 	suite.api = "polkadot"
 }
 
-func (suite *SubtrateClientTestSuite) NewSubscanClient() {
+func (suite *SubstrateClientTestSuite) NewSubscanClient() {
 	c := client.NewSubscanClient(suite.api)
 	suite.Require().NotNil(c)
 }
 
-func (suite *SubtrateClientTestSuite) Test_GetRewardSlash() {
+func (suite *SubstrateClientTestSuite) Test_GetRewardSlash() {
 	c := client.NewSubscanClient(suite.api)
 	requestUrl := "/api/now"
 
