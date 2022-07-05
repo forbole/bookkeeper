@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -17,8 +18,9 @@ import (
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/elrond"
 	"github.com/forbole/bookkeeper/module/flow"
-	"github.com/forbole/bookkeeper/module/subtrate"
+	"github.com/forbole/bookkeeper/module/substrate"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -68,17 +70,25 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	if err != nil {
 		return err
 	}
-
+fmt.Println(fileInfo.IsDir())
 	// IsDir is short for fileInfo.Mode().IsDir()
 	if fileInfo.IsDir() {
 	// file is a directory
-		filepath.Walk(jsonPath,func(path string, _ fs.FileInfo, _ error)error{
+	err =filepath.Walk(jsonPath,func(path string, _ fs.FileInfo, _ error)error{
+			fmt.Println(path)
+			if path==jsonPath{
+				return nil
+			}		
 			err=handleSingleFile(path,outputFile)
-			if err!=nil{
-				return err
-			}
-			return nil
+				if err!=nil{
+					log.Error().Msgf("cannot parse:%s file:%s",err,path)
+					return nil
+				}
+				return nil
 		})
+	if err!=nil{
+		return err
+	}
 	} else {
 		err=handleSingleFile(jsonPath,outputFile)
 		if err!=nil{
@@ -109,8 +119,8 @@ func handleSingleFile(jsonPath string,outputFile string)error{
 	//inputfile:=[]string{"bitcoin.csv","ethereum.csv"}
 
 	var filenames []string
-	if data.Chains != nil {
-		files, err := cosmos.HandleRewardPriceTable(data.Chains, data.VsCurrency, outputFile, data.Period)
+	for _ , chain:=range data.Chains {
+		files, err := cosmos.HandleRewardPriceTable(chain, data.VsCurrency, outputFile, data.Period)
 		if err != nil {
 			return err
 		}
@@ -128,8 +138,8 @@ func handleSingleFile(jsonPath string,outputFile string)error{
 
 	}
 
-	for _, sub := range data.Subtrate {
-		subtratefile, err := subtrate.Handle(sub, data.VsCurrency, outputFile, data.Period)
+	for _, sub := range data.Substrate {
+		subtratefile, err := substrate.Handle(sub, data.VsCurrency, outputFile, data.Period)
 		if err != nil {
 			return err
 		}

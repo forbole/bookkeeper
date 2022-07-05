@@ -3,7 +3,7 @@ package client_test
 import (
 	"testing"
 
-	"github.com/forbole/bookkeeper/module/subtrate/client"
+	"github.com/forbole/bookkeeper/module/substrate/client"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -19,9 +19,9 @@ func TestSubtrateTableTestSuite(t *testing.T) {
 	suite.Run(t, new(SubtrateClientTestSuite))
 }
 
-/* 	client := client.NewSubscanClient(subtrate.ChainName)
+/* 	client := client.NewSubscanClient(substrate.ChainName)
 
-filename:=make([]string,len(subtrate.Address)) */
+filename:=make([]string,len(substrate.Address)) */
 func (suite *SubtrateClientTestSuite) SetupTest() {
 	suite.api = "polkadot"
 }

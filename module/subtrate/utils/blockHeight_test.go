@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/forbole/bookkeeper/module/subtrate/client"
-	"github.com/forbole/bookkeeper/module/subtrate/utils"
+	"github.com/forbole/bookkeeper/module/substrate/client"
+	"github.com/forbole/bookkeeper/module/substrate/utils"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,9 +21,9 @@ func TestSubtrateUtilTestSuite(t *testing.T) {
 	suite.Run(t, new(SubtrateUtilTestSuite))
 }
 
-/* 	client := client.NewSubscanClient(subtrate.ChainName)
+/* 	client := client.NewSubscanClient(substrate.ChainName)
 
-filename:=make([]string,len(subtrate.Address)) */
+filename:=make([]string,len(substrate.Address)) */
 func (suite *SubtrateUtilTestSuite) SetupTest() {
 
 	client := client.NewSubscanClient("polkadot")

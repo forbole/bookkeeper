@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/forbole/bookkeeper/coinApi"
-	"github.com/forbole/bookkeeper/module/subtrate/client"
-	subtratetypes "github.com/forbole/bookkeeper/module/subtrate/types"
+	"github.com/forbole/bookkeeper/module/substrate/client"
+	subtratetypes "github.com/forbole/bookkeeper/module/substrate/types"
 	"github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 	"github.com/rs/zerolog/log"
@@ -16,7 +16,7 @@ import (
 
 func GetRewardCommission(api *client.SubscanClient, address string, denom types.Denom, vsCurrency string, from int64) (*tabletypes.AddressDateRewardPrice, error) {
 	//var rewardPrice tabletypes.DateRewardPriceTable
-	log.Trace().Str("module", "subtrate").Msg("GetRewardCommission")
+	log.Trace().Str("module", "substrate").Msg("GetRewardCommission")
 
 	rewardList, err := GetRewardSlash(api, address, from)
 	if err != nil {
@@ -50,7 +50,7 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 }
 
 func GetRewardSlash(api *client.SubscanClient, address string, from int64) ([]subtratetypes.List, error) {
-	log.Trace().Str("module", "subtrate").Msg("GetRewardSlash")
+	log.Trace().Str("module", "substrate").Msg("GetRewardSlash")
 
 	requestUrl := "/api/scan/account/reward_slash"
 	var list []subtratetypes.List

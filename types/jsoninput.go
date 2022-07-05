@@ -1,6 +1,6 @@
 package types
 
-type Subtrate struct {
+type Substrate struct {
 	ChainName string   `json:"chain_name"`
 	Address   []string `json:"address"`
 	Denom     []Denom  `json:"denom"`
@@ -44,7 +44,7 @@ type EmailDetails struct {
 
 type Data struct {
 	Chains   []CosmosDetails `json:"chains"`
-	Subtrate []Subtrate      `json:"subtrate"`
+	Substrate []Substrate      `json:"substrate"`
 
 	EmailDetails EmailDetails `json:"email_details"`
 	Prometheus   string       `json:"prometheus"`

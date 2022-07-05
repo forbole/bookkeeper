@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/forbole/bookkeeper/module/subtrate/types"
+	"github.com/forbole/bookkeeper/module/substrate/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,7 +32,7 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 	// Prevent call limit
 	time.Sleep(time.Second)
 
-	log.Trace().Str("module", "subtrate").Msg("CallApi")
+	log.Trace().Str("module", "substrate").Msg("CallApi")
 
 	req, err := client.makeRequest(url, payload)
 	if err != nil {
@@ -46,7 +46,7 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 429 || resp.StatusCode == 1015 {
-		log.Info().Str("module", "subtrate").Msg("API too many request")
+		log.Info().Str("module", "substrate").Msg("API too many request")
 		retry := resp.Header.Get("Retry-After")
 		retryInt, err := strconv.Atoi(retry)
 		if err != nil {
@@ -68,7 +68,7 @@ func (client SubscanClient) CallApi(url string, payload interface{}, v types.Sub
 	}
 
 	for strings.Contains(string(bz), "rate limit") {
-		log.Info().Str("module", "subtrate").Msg(fmt.Sprintf("API rate limit exceeded %s", err.Error()))
+		log.Info().Str("module", "substrate").Msg(fmt.Sprintf("API rate limit exceeded %s", err.Error()))
 		time.Sleep(time.Minute)
 
 		return client.CallApi(url, payload, v)

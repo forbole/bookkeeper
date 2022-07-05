@@ -3,8 +3,8 @@ package utils
 import (
 	"time"
 
-	"github.com/forbole/bookkeeper/module/subtrate/client"
-	subtratetypes "github.com/forbole/bookkeeper/module/subtrate/types"
+	"github.com/forbole/bookkeeper/module/substrate/client"
+	subtratetypes "github.com/forbole/bookkeeper/module/substrate/types"
 )
 
 func GetTimeByBlockNum(blockNum int, api *client.SubscanClient) (*time.Time, error) {

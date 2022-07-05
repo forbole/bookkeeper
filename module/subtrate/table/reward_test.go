@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/forbole/bookkeeper/module/subtrate/client"
-	"github.com/forbole/bookkeeper/module/subtrate/table"
+	"github.com/forbole/bookkeeper/module/substrate/client"
+	"github.com/forbole/bookkeeper/module/substrate/table"
 	"github.com/forbole/bookkeeper/types"
 	"github.com/stretchr/testify/suite"
 )
@@ -26,9 +26,9 @@ func TestSubtrateTableTestSuite(t *testing.T) {
 	suite.Run(t, new(SubtrateTableTestSuite))
 }
 
-/* 	client := client.NewSubscanClient(subtrate.ChainName)
+/* 	client := client.NewSubscanClient(substrate.ChainName)
 
-filename:=make([]string,len(subtrate.Address)) */
+filename:=make([]string,len(substrate.Address)) */
 func (suite *SubtrateTableTestSuite) SetupTest() {
 
 	client := client.NewSubscanClient("polkadot")
