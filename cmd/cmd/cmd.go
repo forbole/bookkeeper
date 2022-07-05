@@ -139,12 +139,12 @@ func handleSingleFile(jsonPath string,outputFile string)error{
 	}
 
 	for _, sub := range data.Substrate {
-		subtratefile, err := substrate.Handle(sub, data.VsCurrency, outputFile, data.Period)
+		substratefile, err := substrate.Handle(sub, data.VsCurrency, outputFile, data.Period)
 		if err != nil {
 			return err
 		}
 
-		filenames = append(filenames, subtratefile...)
+		filenames = append(filenames, substratefile...)
 	}
 
 	if data.Elrond.Addresses != nil {

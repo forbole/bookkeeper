@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bookkeeper/coinApi"
 	"github.com/forbole/bookkeeper/module/substrate/client"
-	subtratetypes "github.com/forbole/bookkeeper/module/substrate/types"
+	substratetypes "github.com/forbole/bookkeeper/module/substrate/types"
 	"github.com/forbole/bookkeeper/types"
 	tabletypes "github.com/forbole/bookkeeper/types/tabletypes"
 	"github.com/rs/zerolog/log"
@@ -49,11 +49,11 @@ func GetRewardCommission(api *client.SubscanClient, address string, denom types.
 	return &addressRewardPrice, nil
 }
 
-func GetRewardSlash(api *client.SubscanClient, address string, from int64) ([]subtratetypes.List, error) {
+func GetRewardSlash(api *client.SubscanClient, address string, from int64) ([]substratetypes.List, error) {
 	log.Trace().Str("module", "substrate").Msg("GetRewardSlash")
 
 	requestUrl := "/api/scan/account/reward_slash"
-	var list []subtratetypes.List
+	var list []substratetypes.List
 
 	type Payload struct {
 		Row     int    `json:"row"`
@@ -70,7 +70,7 @@ func GetRewardSlash(api *client.SubscanClient, address string, from int64) ([]su
 			Page:    page,
 			Address: address,
 		}
-		var rewardSlash subtratetypes.RewardSlash
+		var rewardSlash substratetypes.RewardSlash
 		err := api.CallApi(requestUrl, payload, &rewardSlash)
 		if err != nil {
 			return nil, fmt.Errorf("cannot get rewardSlash:%s", err)

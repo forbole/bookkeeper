@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 
 	client "github.com/forbole/bookkeeper/module/substrate/client"
-	subtratetable "github.com/forbole/bookkeeper/module/substrate/table"
+	substratetable "github.com/forbole/bookkeeper/module/substrate/table"
 	"github.com/forbole/bookkeeper/types"
 )
 
@@ -16,7 +16,7 @@ func Handle(substrate types.Substrate, vsCurrency string, outputFolder string, p
 	filename := make([]string, len(substrate.Address))
 
 	for i, address := range substrate.Address {
-		rewardSlash, err := subtratetable.GetRewardCommission(client, address, substrate.Denom[0], vsCurrency, period.From)
+		rewardSlash, err := substratetable.GetRewardCommission(client, address, substrate.Denom[0], vsCurrency, period.From)
 		if err != nil {
 			return nil, err
 		}

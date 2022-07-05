@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/forbole/bookkeeper/module/substrate/client"
-	subtratetypes "github.com/forbole/bookkeeper/module/substrate/types"
+	substratetypes "github.com/forbole/bookkeeper/module/substrate/types"
 )
 
 func GetTimeByBlockNum(blockNum int, api *client.SubscanClient) (*time.Time, error) {
@@ -17,7 +17,7 @@ func GetTimeByBlockNum(blockNum int, api *client.SubscanClient) (*time.Time, err
 		BlockNum: blockNum,
 	}
 
-	var block subtratetypes.Block
+	var block substratetypes.Block
 	err := api.CallApi(requestUrl, payload, &block)
 	if err != nil {
 		return nil, err
