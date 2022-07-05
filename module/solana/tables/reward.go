@@ -15,7 +15,7 @@ import (
 
 func GetStakeRewardForPubKey(solana types.Solana,from int64,vsCurrency string,client *client.SolanaBeachClient)([]tabletypes.AddressDateRewardPrice,error){
 	var addressRewardPrice []tabletypes.AddressDateRewardPrice
-	addresses,err:=utils.GetDelegatorAddresses(solana.PubKey,solana.ValidatorIdentity,client)
+	addresses,err:=utils.GetSelfDelegatorAddresses(solana.PubKey,solana.ValidatorIdentity,client)
 	if err!=nil{
 		return nil,err
 	}

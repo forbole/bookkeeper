@@ -37,7 +37,7 @@ type StakeData struct{
 					} `json:"voter_pubkey"`
 					Stake              int64   `json:"stake"`
 					ActivationEpoch    int     `json:"activation_epoch"`
-					DeactivationEpoch  int64   `json:"deactivation_epoch"`
+					//DeactivationEpoch  uint64   `json:"deactivation_epoch"`
 					WarmupCooldownRate float64 `json:"warmup_cooldown_rate"`
 					ValidatorInfo      struct {
 						Name            string `json:"name"`

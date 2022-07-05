@@ -18,6 +18,8 @@ import (
 	"github.com/forbole/bookkeeper/module/elrond"
 	"github.com/forbole/bookkeeper/module/flow"
 	"github.com/forbole/bookkeeper/module/subtrate"
+	"github.com/forbole/bookkeeper/module/solana"
+
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -105,6 +107,15 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	if data.Elrond.Addresses != nil {
 		file, err := elrond.HandleTx(data.Elrond, data.Period, outputFile, data.VsCurrency)
+		if err != nil {
+			return err
+		}
+		filenames = append(filenames, file...)
+
+	}
+
+	if data.Solana.PubKey != ""{
+		file, err := solana.HandleReward(data.Solana, data.Period, data.VsCurrency)
 		if err != nil {
 			return err
 		}

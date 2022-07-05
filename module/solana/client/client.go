@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"time"
 
 	solanatypes "github.com/forbole/bookkeeper/module/solana/types"
 	"github.com/rs/zerolog/log"
@@ -51,6 +52,9 @@ func (client *SolanaBeachClient) GetStakeReward(address string,epochFrom int)([]
 		if err != nil {
 			return nil, fmt.Errorf("fail to marshal:%s", err)
 		}
+		if len(tx)==0{
+			return stakeReward,nil
+		}
 		stakeReward = append(stakeReward, tx...)
 
 		currentEpoch:=tx[len(tx)-1].Epoch
@@ -62,7 +66,7 @@ func (client *SolanaBeachClient) GetStakeReward(address string,epochFrom int)([]
 
 // GetStakeAccount get the staking accounts associate to the pubkey
 func (client *SolanaBeachClient) GetStakeAccounts(pubKey string)([]solanatypes.StakeData,error){
-	log.Trace().Str("module", "solana").Msg("GetStakes")
+	log.Trace().Str("module", "solana").Msg("GetStakeAccounts")
 
 	var stakeTxs []solanatypes.StakeData
 	size := 50
@@ -79,6 +83,7 @@ func (client *SolanaBeachClient) GetStakeAccounts(pubKey string)([]solanatypes.S
 		var tx solanatypes.Stake
 		err = json.Unmarshal(bz, &tx)
 		if err != nil {
+			fmt.Println(string(bz))
 			return nil, fmt.Errorf("fail to marshal:%s", err)
 		}
 		stakeTxs = append(stakeTxs, tx.Data...)
@@ -94,6 +99,7 @@ func (client *SolanaBeachClient) GetStakeAccounts(pubKey string)([]solanatypes.S
 func (client *SolanaBeachClient) get(query string) ([]byte, error) {
 
 	q := fmt.Sprintf("%s/%s", client.api, query)
+	fmt.Println(q)
 	var bearer = "Bearer " + os.Getenv("SOLANABEACH_API_KEY")
 
     // Create a new request using http
@@ -105,6 +111,11 @@ func (client *SolanaBeachClient) get(query string) ([]byte, error) {
 		return nil, fmt.Errorf("Fail to get tx from rpc:%s", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 429{
+		time.Sleep(time.Second)
+		return client.get(query)
+	}
 
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("Fail to get tx from rpc:Status :%s", resp.Status)

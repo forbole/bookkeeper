@@ -7,7 +7,7 @@ import (
 
 // GetDelegatorAddresses the addresses associated to the pubkey that 
 // delegated to the validator specified
-func GetDelegatorAddresses(pubKey string,validatorIdentity string,client *client.SolanaBeachClient)([]string,error){
+func GetSelfDelegatorAddresses(pubKey string,validatorIdentity string,client *client.SolanaBeachClient)([]string,error){
 	accounts,err:=client.GetStakeAccounts(pubKey)
 	if err!=nil{
 		return nil,err
@@ -21,4 +21,17 @@ func GetDelegatorAddresses(pubKey string,validatorIdentity string,client *client
 	}
 	return addresses,nil
 
+}
+
+func GetDelegatorAddress(pubKey string,client *client.SolanaBeachClient)([]string,error){
+	accounts,err:=client.GetStakeAccounts(pubKey)
+	if err!=nil{
+		return nil,err
+	}
+
+	var addresses []string
+	for _,account:=range accounts{
+			addresses=append(addresses,account.Pubkey.Address)
+	}
+	return addresses,nil
 }

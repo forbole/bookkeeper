@@ -52,6 +52,7 @@ type Data struct {
 	VsCurrency   string       `json:"vs_currency"`
 	Period       Period       `json:"period"`
 	Elrond       Elrond       `json:"elrond"`
+	Solana Solana `json:"solana"`
 }
 
 type Elrond struct {
@@ -104,4 +105,5 @@ type Solana struct{
 	PubKey string `json:"pubkey"`
 	ValidatorIdentity string `json:"validator_identity"`
 	Denom Denom `json:"denom"`
+	SolanaBeachApi string `json:"solana_beach_api"`
 }
