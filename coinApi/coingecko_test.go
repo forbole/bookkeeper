@@ -26,7 +26,7 @@ func (suite *CoinApiTestSuite) Test_GetCryptoPriceFromDate() {
 
 	price, err := coinApi.GetCryptoPriceFromDate(date, "bitcoin", "usd")
 	suite.Require().NoError(err)
-	suite.Require().Equal(expectedPrice,price )
+	suite.Require().Equal(expectedPrice, price)
 
 }
 

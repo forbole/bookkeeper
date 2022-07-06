@@ -23,7 +23,6 @@ func TestSolanaTableTestSuite(t *testing.T) {
 	suite.Run(t, new(SolanaTableTestSuite))
 }
 
-
 func (suite *SolanaTableTestSuite) SetupTest() {
 	chainStrings := `{
 		"pubkey":"DXRTh7JBgeaphmQVsdVKcafpWfznB12375MKEEDAEDLb",
@@ -41,8 +40,8 @@ func (suite *SolanaTableTestSuite) SetupTest() {
 		panic(err)
 	}
 
-	c:=client.NewSolanaBeachClient(chain.SolanaBeachApi)
-	suite.solclient=c
+	c := client.NewSolanaBeachClient(chain.SolanaBeachApi)
+	suite.solclient = c
 
 	suite.testInput = chain
 	suite.period = types.Period{
@@ -50,15 +49,15 @@ func (suite *SolanaTableTestSuite) SetupTest() {
 		To:   1651100400,
 	}
 }
-func (suite *SolanaTableTestSuite) TestGetStakeRewardForPubKey(){
-	vsCurrency:="usd"
-	_,err:=tables.GetStakeRewardForPubKey(suite.testInput,suite.period.From,vsCurrency,suite.solclient)
+func (suite *SolanaTableTestSuite) TestGetStakeRewardForPubKey() {
+	vsCurrency := "usd"
+	_, err := tables.GetStakeRewardForPubKey(suite.testInput, suite.period.From, vsCurrency, suite.solclient)
 	suite.Require().NoError(err)
 }
-func (suite *SolanaTableTestSuite) TestGetRewardFromAddress(){
-	address:="22i7vwvn9eNQU7FB7HqyyfLXUbVoh7yMBpMty61mDutM"
-	epoch:=315
-	vsCurrency:="usd"
-	_,err:=tables.GetRewardFromAddress(address,suite.testInput.Denom,epoch,vsCurrency,suite.solclient)
+func (suite *SolanaTableTestSuite) TestGetRewardFromAddress() {
+	address := "22i7vwvn9eNQU7FB7HqyyfLXUbVoh7yMBpMty61mDutM"
+	epoch := 315
+	vsCurrency := "usd"
+	_, err := tables.GetRewardFromAddress(address, suite.testInput.Denom, epoch, vsCurrency, suite.solclient)
 	suite.Require().NoError(err)
 }

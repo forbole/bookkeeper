@@ -113,8 +113,8 @@ func Execute(cmd *cobra.Command, arg []string) error {
 
 	}
 
-	if data.Solana.PubKey != ""{
-		file, err := solana.HandleReward(data.Solana, data.Period, data.VsCurrency,outputFile)
+	if data.Solana.PubKey != "" {
+		file, err := solana.HandleReward(data.Solana, data.Period, data.VsCurrency, outputFile)
 		if err != nil {
 			return err
 		}
