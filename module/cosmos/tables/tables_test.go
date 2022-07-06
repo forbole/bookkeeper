@@ -58,5 +58,5 @@ func (suite *CosmosTableTestSuite) SetupTest() {
 		To:   1651100400,
 	}
 
-	suite.testVsCurrency = "USD"
+	suite.testVsCurrency = "usd"
 }

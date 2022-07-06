@@ -112,7 +112,7 @@ func (client *SolanaBeachClient) get(query string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 429{
+	if resp.StatusCode == 429 || resp.StatusCode == 524{
 		time.Sleep(time.Second)
 		return client.get(query)
 	}

@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"time"
@@ -26,7 +27,19 @@ func GetStakeRewardForPubKey(solana types.Solana,from int64,vsCurrency string,cl
 	}
 
 	for _,address:=range addresses{
-		reward,err:=client.GetStakeReward(address,epoch)
+		table,err:=GetRewardFromAddress(address,solana.Denom,epoch,vsCurrency,client)
+		if err!=nil{
+			return nil,err
+		}
+		addressRewardPrice=append(addressRewardPrice, *table)
+
+	}
+
+	return addressRewardPrice,nil
+}
+
+func GetRewardFromAddress(address string,denom types.Denom,epoch int,vsCurrency string,client *client.SolanaBeachClient )(*tabletypes.AddressDateRewardPrice,error){
+	reward,err:=client.GetStakeReward(address,epoch)
 		if err!=nil{
 			return nil,err
 		}
@@ -34,20 +47,21 @@ func GetStakeRewardForPubKey(solana types.Solana,from int64,vsCurrency string,cl
 		for _,r:=range reward{
 			timestamp:=time.Unix(int64(r.Timestamp),0)
 			rewardRaw:=new(big.Float).SetInt64(int64(r.Amount))
-			exp := new(big.Float).SetFloat64(math.Pow10(-1 * solana.Denom.Exponent))
+			exp := new(big.Float).SetFloat64(math.Pow10(-1 * denom.Exponent))
 			reward:=new(big.Float).Mul(rewardRaw,exp)
-			
 
-			price,err:=coinApi.GetCryptoPriceFromDate(timestamp,solana.Denom.CoinId,vsCurrency)
+			price,err:=coinApi.GetCryptoPriceFromDate(timestamp,denom.CoinId,vsCurrency)
 			if err!=nil{
 				return nil,err
 			}
+			fmt.Println(price)
+
 			rewardPrice:=new(big.Float).Mul(reward,price)
 			
 			dateRewardPrice=append(dateRewardPrice,tabletypes.NewDateRewardPriceRow(timestamp,reward,
-				new(big.Float).SetInt64(0),solana.Denom.Denom,rewardPrice,new(big.Float).SetInt64(0)))
+				new(big.Float).SetInt64(0),denom.Denom,rewardPrice,new(big.Float).SetInt64(0)))
 		}
-		addressRewardPrice=append(addressRewardPrice, tabletypes.NewAddressDateRewardPrice(address,dateRewardPrice))
-	}
-	return addressRewardPrice,nil
+	addressRewardPrice:=tabletypes.NewAddressDateRewardPrice(address,dateRewardPrice)
+
+	return &addressRewardPrice,nil
 }

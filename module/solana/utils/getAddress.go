@@ -22,16 +22,3 @@ func GetSelfDelegatorAddresses(pubKey string,validatorIdentity string,client *cl
 	return addresses,nil
 
 }
-
-func GetDelegatorAddress(pubKey string,client *client.SolanaBeachClient)([]string,error){
-	accounts,err:=client.GetStakeAccounts(pubKey)
-	if err!=nil{
-		return nil,err
-	}
-
-	var addresses []string
-	for _,account:=range accounts{
-			addresses=append(addresses,account.Pubkey.Address)
-	}
-	return addresses,nil
-}

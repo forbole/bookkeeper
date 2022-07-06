@@ -17,9 +17,8 @@ import (
 	"github.com/forbole/bookkeeper/module/cosmos"
 	"github.com/forbole/bookkeeper/module/elrond"
 	"github.com/forbole/bookkeeper/module/flow"
-	"github.com/forbole/bookkeeper/module/subtrate"
 	"github.com/forbole/bookkeeper/module/solana"
-
+	"github.com/forbole/bookkeeper/module/subtrate"
 
 	"github.com/forbole/bookkeeper/utils"
 
@@ -115,7 +114,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 	}
 
 	if data.Solana.PubKey != ""{
-		file, err := solana.HandleReward(data.Solana, data.Period, data.VsCurrency)
+		file, err := solana.HandleReward(data.Solana, data.Period, data.VsCurrency,outputFile)
 		if err != nil {
 			return err
 		}
@@ -156,7 +155,7 @@ func Execute(cmd *cobra.Command, arg []string) error {
 				time.Date(2020, time.December, 28, 0, 0, 0, 0, time.UTC)),
 		})
 
-		vsCurrency := "USD"
+		vsCurrency := "usd"
 
 		// getting balance for the address
 		// May need to query from graphql if we want to get exact balance
