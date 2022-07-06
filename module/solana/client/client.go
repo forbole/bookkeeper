@@ -104,6 +104,9 @@ func (client *SolanaBeachClient) get(query string) ([]byte, error) {
 
 	// Create a new request using http
 	req, err := http.NewRequest("GET", q, nil)
+	if err!=nil{
+		return nil,err
+	}
 	req.Header.Add("Authorization", bearer)
 	httpClient := &http.Client{}
 	resp, err := httpClient.Do(req)

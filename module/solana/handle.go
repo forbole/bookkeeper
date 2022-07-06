@@ -25,5 +25,5 @@ func HandleReward(solana types.Solana, period types.Period, vsCurrency string, o
 		}
 		filenames = append(filenames, filename)
 	}
-	return nil, nil
+	return filenames, nil
 }
