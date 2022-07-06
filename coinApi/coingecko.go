@@ -60,14 +60,13 @@ func GetCryptoPriceFromDate(date time.Time, coinid, vsCurrency string) (*big.Flo
 		return nil, err
 	}
 
-	if prices.MarketData == nil {
+	if len(prices.MarketData.CurrentPrice) == 0 {
 		// Set the coin value to 0 if the specific date don't have record
 		log.Error().Str("module", "coinApi").Msg(fmt.Sprintf("coingecko don't have record for the date:%s", date))
 		return new(big.Float).SetInt64(0), nil
 	}
 
 	price := new(big.Float).SetFloat64(prices.MarketData.CurrentPrice[vsCurrency])
-
 	return price, nil
 
 }

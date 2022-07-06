@@ -142,7 +142,7 @@ func readlogs(logs []cosmostypes.RawLog, address, hash string, height int) ([]ta
 
 					spender := string(bz)
 					spender = strings.ReplaceAll(spender, "\"", "")
-					if string(spender) == address {
+					if spender == address {
 						out = amount
 					}
 				}

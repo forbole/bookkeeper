@@ -48,7 +48,10 @@ func GetNodeInfo(nodeId string, flowjuno string) (flowtypes.NodeInfoFromTables, 
 	if response.StatusCode != 200 {
 		return nil, fmt.Errorf("Error when getting response:%s", response.Status)
 	}
-	bz, _ := ioutil.ReadAll(response.Body)
+	bz, err := ioutil.ReadAll(response.Body)
+	if err!=nil{
+		return nil,err
+	}
 	var txSearchRes flowtypes.NodeInfo
 	err = json.Unmarshal(bz, &txSearchRes)
 	if err != nil {
@@ -76,7 +79,10 @@ func GetNodeInfoFromAddress(address string, flowjuno string, startHeight uint64)
 	jsonData := map[string]string{
 		"query": queryStr,
 	}
-	jsonValue, _ := json.Marshal(jsonData)
+	jsonValue, err := json.Marshal(jsonData)
+	if err!=nil{
+		return nil,err
+	}
 	request, err := http.NewRequest("POST", flowjuno, bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return nil, err
